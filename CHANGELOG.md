@@ -3,7 +3,25 @@
 All notable changes to dauber are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
-## [0.1.8] - 2026-03-24
+## [0.1.8] - 2026-04-06
+
+### Changed
+
+- **Package renamed from `easel` to `dauber`** — all internal imports,
+  entry points, config paths (`dauber/config.toml`,
+  `~/.config/dauber/config.toml`), and documentation updated accordingly
+- First public release published to [PyPI](https://pypi.org/project/dauber/)
+- `pyproject.toml` expanded with `description`, `license`, `authors`,
+  `keywords`, `classifiers`, and `[project.urls]` for PyPI metadata
+- README updated with CI, PyPI version, Python version, and license badges
+
+### Added
+
+- `LICENSE` (MIT, 2025, Jerid Francom)
+- `justfile` with recipes covering setup, dev, code quality, testing,
+  build/release, Nix, and utility workflows
+- `.github/workflows/ci.yml`: lint, type-check, test (Python 3.11 + 3.12),
+  build, and trusted-publisher PyPI publish on release
 
 ### Fixed
 
