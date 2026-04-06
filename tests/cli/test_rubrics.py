@@ -1,12 +1,12 @@
-"""Tests for easel.cli.rubrics."""
+"""Tests for dauber.cli.rubrics."""
 
 import json
 from unittest.mock import AsyncMock, patch
 
 from typer.testing import CliRunner
 
-from easel.cli.app import app
-from easel.services import CanvasError
+from dauber.cli.app import app
+from dauber.services import CanvasError
 
 runner = CliRunner()
 
@@ -64,7 +64,7 @@ def _patch_context():
     mock_ctx.cache.resolve = AsyncMock(return_value="1")
     mock_ctx.close = AsyncMock()
     return patch(
-        "easel.cli.rubrics.get_context",
+        "dauber.cli.rubrics.get_context",
         return_value=mock_ctx,
     )
 
@@ -72,7 +72,7 @@ def _patch_context():
 # -- rubrics list --
 
 
-@patch("easel.cli.rubrics.list_rubrics", new_callable=AsyncMock)
+@patch("dauber.cli.rubrics.list_rubrics", new_callable=AsyncMock)
 def test_rubrics_list(mock_list):
     mock_list.return_value = MOCK_RUBRICS
     with _patch_context():
@@ -81,7 +81,7 @@ def test_rubrics_list(mock_list):
     assert "Essay Rubric" in result.output
 
 
-@patch("easel.cli.rubrics.list_rubrics", new_callable=AsyncMock)
+@patch("dauber.cli.rubrics.list_rubrics", new_callable=AsyncMock)
 def test_rubrics_list_json(mock_list):
     mock_list.return_value = MOCK_RUBRICS
     with _patch_context():
@@ -93,7 +93,7 @@ def test_rubrics_list_json(mock_list):
     assert '"Essay Rubric"' in result.output
 
 
-@patch("easel.cli.rubrics.list_rubrics", new_callable=AsyncMock)
+@patch("dauber.cli.rubrics.list_rubrics", new_callable=AsyncMock)
 def test_rubrics_list_error(mock_list):
     mock_list.side_effect = CanvasError("forbidden", status_code=403)
     with _patch_context():
@@ -105,7 +105,7 @@ def test_rubrics_list_error(mock_list):
 # -- rubrics show --
 
 
-@patch("easel.cli.rubrics.get_rubric", new_callable=AsyncMock)
+@patch("dauber.cli.rubrics.get_rubric", new_callable=AsyncMock)
 def test_rubrics_show(mock_get):
     mock_get.return_value = MOCK_RUBRIC_DETAIL
     with _patch_context():
@@ -114,7 +114,7 @@ def test_rubrics_show(mock_get):
     assert "Thesis" in result.output
 
 
-@patch("easel.cli.rubrics.get_rubric", new_callable=AsyncMock)
+@patch("dauber.cli.rubrics.get_rubric", new_callable=AsyncMock)
 def test_rubrics_show_json(mock_get):
     mock_get.return_value = MOCK_RUBRIC_DETAIL
     with _patch_context():
@@ -126,7 +126,7 @@ def test_rubrics_show_json(mock_get):
     assert '"Essay Rubric"' in result.output
 
 
-@patch("easel.cli.rubrics.get_rubric", new_callable=AsyncMock)
+@patch("dauber.cli.rubrics.get_rubric", new_callable=AsyncMock)
 def test_rubrics_show_error(mock_get):
     mock_get.side_effect = CanvasError("not found", status_code=404)
     with _patch_context():
@@ -137,7 +137,7 @@ def test_rubrics_show_error(mock_get):
 # -- rubrics create --
 
 
-@patch("easel.cli.rubrics.create_rubric", new_callable=AsyncMock)
+@patch("dauber.cli.rubrics.create_rubric", new_callable=AsyncMock)
 def test_rubrics_create(mock_create, tmp_path):
     mock_create.return_value = MOCK_CREATED
     spec_file = tmp_path / "rubric.json"
@@ -171,7 +171,7 @@ def test_rubrics_create_invalid_json(tmp_path):
     assert "Invalid JSON" in result.output
 
 
-@patch("easel.cli.rubrics.create_rubric", new_callable=AsyncMock)
+@patch("dauber.cli.rubrics.create_rubric", new_callable=AsyncMock)
 def test_rubrics_create_canvas_error(mock_create, tmp_path):
     mock_create.side_effect = CanvasError("unprocessable", status_code=422)
     spec_file = tmp_path / "rubric.json"
@@ -198,7 +198,7 @@ CSV_ROW = (
 )
 
 
-@patch("easel.cli.rubrics.create_rubric", new_callable=AsyncMock)
+@patch("dauber.cli.rubrics.create_rubric", new_callable=AsyncMock)
 def test_rubrics_import(mock_create, tmp_path):
     mock_create.return_value = MOCK_CREATED
     csv_file = tmp_path / "rubric.csv"
@@ -243,7 +243,7 @@ MOCK_ATTACH = {
 }
 
 
-@patch("easel.cli.rubrics.attach_rubric", new_callable=AsyncMock)
+@patch("dauber.cli.rubrics.attach_rubric", new_callable=AsyncMock)
 def test_rubrics_attach(mock_attach):
     mock_attach.return_value = MOCK_ATTACH
     with _patch_context():
@@ -255,7 +255,7 @@ def test_rubrics_attach(mock_attach):
     assert "5" in result.output
 
 
-@patch("easel.cli.rubrics.attach_rubric", new_callable=AsyncMock)
+@patch("dauber.cli.rubrics.attach_rubric", new_callable=AsyncMock)
 def test_rubrics_attach_error(mock_attach):
     mock_attach.side_effect = CanvasError("not found", status_code=404)
     with _patch_context():

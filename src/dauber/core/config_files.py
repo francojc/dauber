@@ -1,4 +1,4 @@
-"""Read and write easel config files (TOML)."""
+"""Read and write dauber config files (TOML)."""
 
 from __future__ import annotations
 
@@ -10,9 +10,9 @@ from typing import Any
 import tomli_w
 
 _xdg = Path(os.environ.get("XDG_CONFIG_HOME", "") or (Path.home() / ".config"))
-GLOBAL_CONFIG_DIR = _xdg / "easel"
+GLOBAL_CONFIG_DIR = _xdg / "dauber"
 GLOBAL_CONFIG_PATH = GLOBAL_CONFIG_DIR / "config.toml"
-LOCAL_CONFIG_PATH = Path("easel") / "config.toml"
+LOCAL_CONFIG_PATH = Path("dauber") / "config.toml"
 
 GLOBAL_FIELDS = {
     "name": "Instructor name",
@@ -39,7 +39,7 @@ LOCAL_FIELDS = {
 
 
 def read_global_config() -> dict[str, Any]:
-    """Read global config from $XDG_CONFIG_HOME/easel/config.toml.
+    """Read global config from $XDG_CONFIG_HOME/dauber/config.toml.
 
     Returns empty dict if file does not exist.
     """
@@ -50,7 +50,7 @@ def read_global_config() -> dict[str, Any]:
 
 
 def write_global_config(data: dict[str, Any]) -> Path:
-    """Write global config to $XDG_CONFIG_HOME/easel/config.toml.
+    """Write global config to $XDG_CONFIG_HOME/dauber/config.toml.
 
     Creates parent directories if needed. Returns the path written.
     """
@@ -61,7 +61,7 @@ def write_global_config(data: dict[str, Any]) -> Path:
 
 
 def read_local_config(base: Path | None = None) -> dict[str, Any]:
-    """Read local config from easel/config.toml.
+    """Read local config from dauber/config.toml.
 
     Args:
         base: Repository root. Defaults to cwd.
@@ -76,7 +76,7 @@ def read_local_config(base: Path | None = None) -> dict[str, Any]:
 
 
 def write_local_config(data: dict[str, Any], base: Path | None = None) -> Path:
-    """Write local config to easel/config.toml.
+    """Write local config to dauber/config.toml.
 
     Creates parent directories if needed. Returns the path written.
     """

@@ -1,5 +1,5 @@
 {
-  description = "easel - Canvas LMS CLI";
+  description = "dauber - Canvas LMS CLI";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";

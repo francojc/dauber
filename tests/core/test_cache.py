@@ -1,10 +1,10 @@
-"""Tests for easel.core.cache."""
+"""Tests for dauber.core.cache."""
 
 from unittest.mock import AsyncMock
 
 import pytest
 
-from easel.core.cache import CourseCache
+from dauber.core.cache import CourseCache
 
 
 @pytest.fixture()

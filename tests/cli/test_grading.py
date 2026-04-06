@@ -1,12 +1,12 @@
-"""Tests for easel.cli.grading."""
+"""Tests for dauber.cli.grading."""
 
 import json
 from unittest.mock import AsyncMock, patch
 
 from typer.testing import CliRunner
 
-from easel.cli.app import app
-from easel.services import CanvasError
+from dauber.cli.app import app
+from dauber.services import CanvasError
 
 runner = CliRunner()
 
@@ -48,7 +48,7 @@ def _patch_context():
     mock_ctx.cache.resolve = AsyncMock(return_value="1")
     mock_ctx.close = AsyncMock()
     return patch(
-        "easel.cli.grading.get_context",
+        "dauber.cli.grading.get_context",
         return_value=mock_ctx,
     )
 
@@ -56,7 +56,7 @@ def _patch_context():
 # -- grading submissions --
 
 
-@patch("easel.cli.grading.list_submissions", new_callable=AsyncMock)
+@patch("dauber.cli.grading.list_submissions", new_callable=AsyncMock)
 def test_grading_submissions(mock_list):
     mock_list.return_value = MOCK_SUBMISSIONS
     with _patch_context():
@@ -68,7 +68,7 @@ def test_grading_submissions(mock_list):
     assert "Alice Smith" in result.output
 
 
-@patch("easel.cli.grading.list_submissions", new_callable=AsyncMock)
+@patch("dauber.cli.grading.list_submissions", new_callable=AsyncMock)
 def test_grading_submissions_error(mock_list):
     mock_list.side_effect = CanvasError("forbidden", status_code=403)
     with _patch_context():
@@ -80,7 +80,7 @@ def test_grading_submissions_error(mock_list):
     assert "forbidden" in result.output
 
 
-@patch("easel.cli.grading.list_submissions", new_callable=AsyncMock)
+@patch("dauber.cli.grading.list_submissions", new_callable=AsyncMock)
 def test_grading_submissions_anonymize(mock_list):
     mock_list.return_value = [
         {
@@ -107,7 +107,7 @@ def test_grading_submissions_anonymize(mock_list):
 # -- grading show --
 
 
-@patch("easel.cli.grading.get_submission", new_callable=AsyncMock)
+@patch("dauber.cli.grading.get_submission", new_callable=AsyncMock)
 def test_grading_show(mock_get):
     mock_get.return_value = MOCK_SUBMISSION_DETAIL
     with _patch_context():
@@ -120,7 +120,7 @@ def test_grading_show(mock_get):
     assert "Alice" in result.output
 
 
-@patch("easel.cli.grading.get_submission", new_callable=AsyncMock)
+@patch("dauber.cli.grading.get_submission", new_callable=AsyncMock)
 def test_grading_show_anonymize(mock_get):
     mock_get.return_value = {
         "id": 501,
@@ -143,7 +143,7 @@ def test_grading_show_anonymize(mock_get):
     assert "Alice Smith" not in result.output
 
 
-@patch("easel.cli.grading.get_submission", new_callable=AsyncMock)
+@patch("dauber.cli.grading.get_submission", new_callable=AsyncMock)
 def test_grading_show_error(mock_get):
     mock_get.side_effect = CanvasError("not found", status_code=404)
     with _patch_context():
@@ -158,7 +158,7 @@ def test_grading_show_error(mock_get):
 # -- grading submit --
 
 
-@patch("easel.cli.grading.submit_grade", new_callable=AsyncMock)
+@patch("dauber.cli.grading.submit_grade", new_callable=AsyncMock)
 def test_grading_submit(mock_submit):
     mock_submit.return_value = MOCK_GRADE_RESULT
     with _patch_context():
@@ -170,7 +170,7 @@ def test_grading_submit(mock_submit):
     assert "85" in result.output
 
 
-@patch("easel.cli.grading.submit_grade", new_callable=AsyncMock)
+@patch("dauber.cli.grading.submit_grade", new_callable=AsyncMock)
 def test_grading_submit_with_comment(mock_submit):
     mock_submit.return_value = MOCK_GRADE_RESULT
     with _patch_context():
@@ -196,7 +196,7 @@ def test_grading_submit_with_comment(mock_submit):
     )
 
 
-@patch("easel.cli.grading.submit_grade", new_callable=AsyncMock)
+@patch("dauber.cli.grading.submit_grade", new_callable=AsyncMock)
 def test_grading_submit_error(mock_submit):
     mock_submit.side_effect = CanvasError("invalid", status_code=422)
     with _patch_context():
@@ -211,7 +211,7 @@ def test_grading_submit_error(mock_submit):
 # -- grading submit-rubric --
 
 
-@patch("easel.cli.grading.submit_rubric_grade", new_callable=AsyncMock)
+@patch("dauber.cli.grading.submit_rubric_grade", new_callable=AsyncMock)
 def test_grading_submit_rubric(mock_submit, tmp_path):
     mock_submit.return_value = MOCK_GRADE_RESULT
     assessment = {"_8027": {"points": 25, "comments": "Good"}}
@@ -256,7 +256,7 @@ def test_grading_submit_rubric_file_not_found():
     assert "File not found" in result.output
 
 
-@patch("easel.cli.grading.submit_rubric_grade", new_callable=AsyncMock)
+@patch("dauber.cli.grading.submit_rubric_grade", new_callable=AsyncMock)
 def test_grading_submit_rubric_error(mock_submit, tmp_path):
     mock_submit.side_effect = CanvasError("server error", status_code=500)
     assessment = {"_8027": {"points": 10}}

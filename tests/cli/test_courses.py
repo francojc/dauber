@@ -1,11 +1,11 @@
-"""Tests for easel.cli.courses."""
+"""Tests for dauber.cli.courses."""
 
 from unittest.mock import AsyncMock, patch
 
 from typer.testing import CliRunner
 
-from easel.cli.app import app
-from easel.services import CanvasError
+from dauber.cli.app import app
+from dauber.services import CanvasError
 
 runner = CliRunner()
 
@@ -49,7 +49,7 @@ def _patch_context():
     mock_ctx.close = AsyncMock()
 
     return patch(
-        "easel.cli.courses.get_context",
+        "dauber.cli.courses.get_context",
         return_value=mock_ctx,
     )
 
@@ -57,7 +57,7 @@ def _patch_context():
 # -- courses list --
 
 
-@patch("easel.cli.courses.list_courses", new_callable=AsyncMock)
+@patch("dauber.cli.courses.list_courses", new_callable=AsyncMock)
 def test_courses_list(mock_list):
     mock_list.return_value = MOCK_COURSES
     with _patch_context():
@@ -66,7 +66,7 @@ def test_courses_list(mock_list):
     assert "IS505" in result.output
 
 
-@patch("easel.cli.courses.list_courses", new_callable=AsyncMock)
+@patch("dauber.cli.courses.list_courses", new_callable=AsyncMock)
 def test_courses_list_json(mock_list):
     mock_list.return_value = MOCK_COURSES
     with _patch_context():
@@ -75,7 +75,7 @@ def test_courses_list_json(mock_list):
     assert '"IS505"' in result.output
 
 
-@patch("easel.cli.courses.list_courses", new_callable=AsyncMock)
+@patch("dauber.cli.courses.list_courses", new_callable=AsyncMock)
 def test_courses_list_csv(mock_list):
     mock_list.return_value = MOCK_COURSES
     with _patch_context():
@@ -86,7 +86,7 @@ def test_courses_list_csv(mock_list):
     assert "IS505" in lines[1]
 
 
-@patch("easel.cli.courses.list_courses", new_callable=AsyncMock)
+@patch("dauber.cli.courses.list_courses", new_callable=AsyncMock)
 def test_courses_list_concluded(mock_list):
     mock_list.return_value = []
     with _patch_context():
@@ -99,7 +99,7 @@ def test_courses_list_concluded(mock_list):
     )
 
 
-@patch("easel.cli.courses.list_courses", new_callable=AsyncMock)
+@patch("dauber.cli.courses.list_courses", new_callable=AsyncMock)
 def test_courses_list_error(mock_list):
     mock_list.side_effect = CanvasError("forbidden", status_code=403)
     with _patch_context():
@@ -111,7 +111,7 @@ def test_courses_list_error(mock_list):
 # -- courses show --
 
 
-@patch("easel.cli.courses.get_course", new_callable=AsyncMock)
+@patch("dauber.cli.courses.get_course", new_callable=AsyncMock)
 def test_courses_show(mock_get):
     mock_get.return_value = MOCK_COURSE_DETAIL
     with _patch_context():
@@ -120,7 +120,7 @@ def test_courses_show(mock_get):
     assert "IS505" in result.output
 
 
-@patch("easel.cli.courses.get_course", new_callable=AsyncMock)
+@patch("dauber.cli.courses.get_course", new_callable=AsyncMock)
 def test_courses_show_error(mock_get):
     mock_get.side_effect = CanvasError("not found", status_code=404)
     with _patch_context():
@@ -132,7 +132,7 @@ def test_courses_show_error(mock_get):
 # -- courses enrollments --
 
 
-@patch("easel.cli.courses.get_enrollments", new_callable=AsyncMock)
+@patch("dauber.cli.courses.get_enrollments", new_callable=AsyncMock)
 def test_courses_enrollments(mock_enroll):
     mock_enroll.return_value = MOCK_ENROLLMENTS
     with _patch_context():
@@ -141,7 +141,7 @@ def test_courses_enrollments(mock_enroll):
     assert "Alice Smith" in result.output
 
 
-@patch("easel.cli.courses.get_enrollments", new_callable=AsyncMock)
+@patch("dauber.cli.courses.get_enrollments", new_callable=AsyncMock)
 def test_courses_enrollments_error(mock_enroll):
     mock_enroll.side_effect = CanvasError("server error", status_code=500)
     with _patch_context():

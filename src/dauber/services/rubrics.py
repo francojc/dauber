@@ -7,8 +7,8 @@ from typing import Any
 
 import httpx
 
-from easel.core.client import CanvasClient
-from easel.services import CanvasError
+from dauber.core.client import CanvasClient
+from dauber.services import CanvasError
 
 
 async def list_rubrics(

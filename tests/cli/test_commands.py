@@ -1,11 +1,11 @@
-"""Tests for easel.cli.commands."""
+"""Tests for dauber.cli.commands."""
 
 from pathlib import Path
 from unittest.mock import patch
 
 from typer.testing import CliRunner
 
-from easel.cli.app import app
+from dauber.cli.app import app
 
 runner = CliRunner()
 
@@ -26,8 +26,8 @@ def test_commands_install_global(tmp_path):
     home = tmp_path / "home"
 
     with (
-        patch("easel.cli.commands._get_repo_root", return_value=repo),
-        patch("easel.cli.commands._COMMAND_GROUPS", ["assess"]),
+        patch("dauber.cli.commands._get_repo_root", return_value=repo),
+        patch("dauber.cli.commands._COMMAND_GROUPS", ["assess"]),
         patch("pathlib.Path.home", return_value=home),
     ):
         result = runner.invoke(app, ["commands", "install"])
@@ -45,8 +45,8 @@ def test_commands_install_local(tmp_path):
     project.mkdir()
 
     with (
-        patch("easel.cli.commands._get_repo_root", return_value=repo),
-        patch("easel.cli.commands._COMMAND_GROUPS", ["assess"]),
+        patch("dauber.cli.commands._get_repo_root", return_value=repo),
+        patch("dauber.cli.commands._COMMAND_GROUPS", ["assess"]),
         patch("pathlib.Path.cwd", return_value=project),
     ):
         result = runner.invoke(app, ["commands", "install", "--local"])
@@ -67,8 +67,8 @@ def test_commands_install_skip_existing(tmp_path):
     (existing / "setup.md").write_text("# old")
 
     with (
-        patch("easel.cli.commands._get_repo_root", return_value=repo),
-        patch("easel.cli.commands._COMMAND_GROUPS", ["assess"]),
+        patch("dauber.cli.commands._get_repo_root", return_value=repo),
+        patch("dauber.cli.commands._COMMAND_GROUPS", ["assess"]),
         patch("pathlib.Path.home", return_value=home),
     ):
         result = runner.invoke(app, ["commands", "install"])
@@ -87,8 +87,8 @@ def test_commands_install_overwrite(tmp_path):
     (existing / "setup.md").write_text("# old")
 
     with (
-        patch("easel.cli.commands._get_repo_root", return_value=repo),
-        patch("easel.cli.commands._COMMAND_GROUPS", ["assess"]),
+        patch("dauber.cli.commands._get_repo_root", return_value=repo),
+        patch("dauber.cli.commands._COMMAND_GROUPS", ["assess"]),
         patch("pathlib.Path.home", return_value=home),
     ):
         result = runner.invoke(app, ["commands", "install", "--overwrite"])
@@ -119,8 +119,8 @@ def test_commands_install_pi_local(tmp_path):
     project.mkdir()
 
     with (
-        patch("easel.cli.commands._get_repo_root", return_value=repo),
-        patch("easel.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
+        patch("dauber.cli.commands._get_repo_root", return_value=repo),
+        patch("dauber.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
         patch("pathlib.Path.cwd", return_value=project),
     ):
         result = runner.invoke(app, ["commands", "install", "--pi"])
@@ -138,8 +138,8 @@ def test_commands_install_pi_global(tmp_path):
     home = tmp_path / "home"
 
     with (
-        patch("easel.cli.commands._get_repo_root", return_value=repo),
-        patch("easel.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
+        patch("dauber.cli.commands._get_repo_root", return_value=repo),
+        patch("dauber.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
         patch("pathlib.Path.home", return_value=home),
     ):
         result = runner.invoke(app, ["commands", "install", "--pi", "--global"])
@@ -159,8 +159,8 @@ def test_commands_install_pi_skip_existing(tmp_path):
     (existing / "SKILL.md").write_text("# old")
 
     with (
-        patch("easel.cli.commands._get_repo_root", return_value=repo),
-        patch("easel.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
+        patch("dauber.cli.commands._get_repo_root", return_value=repo),
+        patch("dauber.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
         patch("pathlib.Path.cwd", return_value=project),
     ):
         result = runner.invoke(app, ["commands", "install", "--pi"])
@@ -179,8 +179,8 @@ def test_commands_install_pi_overwrite(tmp_path):
     (existing / "SKILL.md").write_text("# old")
 
     with (
-        patch("easel.cli.commands._get_repo_root", return_value=repo),
-        patch("easel.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
+        patch("dauber.cli.commands._get_repo_root", return_value=repo),
+        patch("dauber.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
         patch("pathlib.Path.cwd", return_value=project),
     ):
         result = runner.invoke(app, ["commands", "install", "--pi", "--overwrite"])

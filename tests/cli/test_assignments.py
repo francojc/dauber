@@ -1,11 +1,11 @@
-"""Tests for easel.cli.assignments."""
+"""Tests for dauber.cli.assignments."""
 
 from unittest.mock import AsyncMock, patch
 
 from typer.testing import CliRunner
 
-from easel.cli.app import app
-from easel.services import CanvasError
+from dauber.cli.app import app
+from dauber.services import CanvasError
 
 runner = CliRunner()
 
@@ -56,7 +56,7 @@ def _patch_context():
     mock_ctx.cache.resolve = AsyncMock(return_value="1")
     mock_ctx.close = AsyncMock()
     return patch(
-        "easel.cli.assignments.get_context",
+        "dauber.cli.assignments.get_context",
         return_value=mock_ctx,
     )
 
@@ -64,7 +64,7 @@ def _patch_context():
 # -- assignments list --
 
 
-@patch("easel.cli.assignments.list_assignments", new_callable=AsyncMock)
+@patch("dauber.cli.assignments.list_assignments", new_callable=AsyncMock)
 def test_assignments_list(mock_list):
     mock_list.return_value = MOCK_ASSIGNMENTS
     with _patch_context():
@@ -73,7 +73,7 @@ def test_assignments_list(mock_list):
     assert "Homework 1" in result.output
 
 
-@patch("easel.cli.assignments.list_assignments", new_callable=AsyncMock)
+@patch("dauber.cli.assignments.list_assignments", new_callable=AsyncMock)
 def test_assignments_list_json(mock_list):
     mock_list.return_value = MOCK_ASSIGNMENTS
     with _patch_context():
@@ -85,7 +85,7 @@ def test_assignments_list_json(mock_list):
     assert '"Homework 1"' in result.output
 
 
-@patch("easel.cli.assignments.list_assignments", new_callable=AsyncMock)
+@patch("dauber.cli.assignments.list_assignments", new_callable=AsyncMock)
 def test_assignments_list_error(mock_list):
     mock_list.side_effect = CanvasError("forbidden", status_code=403)
     with _patch_context():
@@ -97,7 +97,7 @@ def test_assignments_list_error(mock_list):
 # -- assignments show --
 
 
-@patch("easel.cli.assignments.get_assignment", new_callable=AsyncMock)
+@patch("dauber.cli.assignments.get_assignment", new_callable=AsyncMock)
 def test_assignments_show(mock_get):
     mock_get.return_value = MOCK_ASSIGNMENT_DETAIL
     with _patch_context():
@@ -107,7 +107,7 @@ def test_assignments_show(mock_get):
     assert "Homew" in result.output
 
 
-@patch("easel.cli.assignments.get_assignment", new_callable=AsyncMock)
+@patch("dauber.cli.assignments.get_assignment", new_callable=AsyncMock)
 def test_assignments_show_error(mock_get):
     mock_get.side_effect = CanvasError("not found", status_code=404)
     with _patch_context():
@@ -119,7 +119,7 @@ def test_assignments_show_error(mock_get):
 # -- assignments create --
 
 
-@patch("easel.cli.assignments.create_assignment", new_callable=AsyncMock)
+@patch("dauber.cli.assignments.create_assignment", new_callable=AsyncMock)
 def test_assignments_create(mock_create):
     mock_create.return_value = MOCK_CREATED
     with _patch_context():
@@ -139,7 +139,7 @@ def test_assignments_create(mock_create):
     assert "New Assignment" in result.output
 
 
-@patch("easel.cli.assignments.create_assignment", new_callable=AsyncMock)
+@patch("dauber.cli.assignments.create_assignment", new_callable=AsyncMock)
 def test_assignments_create_error(mock_create):
     mock_create.side_effect = CanvasError("invalid", status_code=422)
     with _patch_context():
@@ -154,7 +154,7 @@ def test_assignments_create_error(mock_create):
 # -- assignments update --
 
 
-@patch("easel.cli.assignments.update_assignment", new_callable=AsyncMock)
+@patch("dauber.cli.assignments.update_assignment", new_callable=AsyncMock)
 def test_assignments_update(mock_update):
     mock_update.return_value = MOCK_UPDATED
     with _patch_context():

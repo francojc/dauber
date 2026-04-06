@@ -13,10 +13,10 @@ import docx
 import httpx
 from pypdf import PdfReader
 
-from easel.core.client import CanvasClient
-from easel.services import CanvasError
-from easel.services.assignments import _strip_html
-from easel.services.grading import submit_rubric_grade
+from dauber.core.client import CanvasClient
+from dauber.services import CanvasError
+from dauber.services.assignments import _strip_html
+from dauber.services.grading import submit_rubric_grade
 
 
 def _extract_docx_text(data: bytes) -> str:

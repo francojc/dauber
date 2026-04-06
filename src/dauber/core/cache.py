@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from easel.core.client import CanvasClient
+from dauber.core.client import CanvasClient
 
 
 class CourseCache:

@@ -1,13 +1,13 @@
-"""Tests for easel.services.rubrics."""
+"""Tests for dauber.services.rubrics."""
 
 from unittest.mock import AsyncMock
 
 import httpx
 import pytest
 
-from easel.core.client import CanvasClient
-from easel.services import CanvasError
-from easel.services.rubrics import (
+from dauber.core.client import CanvasClient
+from dauber.services import CanvasError
+from dauber.services.rubrics import (
     attach_rubric,
     build_rubric_assessment_form_data,
     create_rubric,

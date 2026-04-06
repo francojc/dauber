@@ -1,9 +1,9 @@
-"""Tests for easel.cli._output — CSV format and format_output()."""
+"""Tests for dauber.cli._output — CSV format and format_output()."""
 
 import io
 import sys
 
-from easel.cli._output import OutputFormat, format_output
+from dauber.cli._output import OutputFormat, format_output
 
 
 def _capture_csv(data, headers=None):

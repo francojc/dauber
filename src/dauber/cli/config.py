@@ -1,4 +1,4 @@
-"""Config sub-app — manage global and local easel configuration."""
+"""Config sub-app — manage global and local dauber configuration."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from pathlib import Path
 
 import typer
 
-from easel.core.config_files import (
+from dauber.core.config_files import (
     GLOBAL_FIELDS,
     LOCAL_FIELDS,
     merge_configs,
@@ -44,7 +44,7 @@ def _coerce_value(key: str, raw: str) -> object:
 def config_init(
     base: str = typer.Option(".", "--base", help="Repository root directory."),
 ) -> None:
-    """Create or update local course config (./easel/config.toml).
+    """Create or update local course config (./dauber/config.toml).
 
     Prompts for course title, code, Canvas ID, term, feedback language,
     and other per-course settings. Pre-fills from global config when
@@ -85,7 +85,7 @@ def config_global(
         help="Write default config without prompting.",
     ),
 ) -> None:
-    """Set instructor-level defaults ($XDG_CONFIG_HOME/easel/config.toml).
+    """Set instructor-level defaults ($XDG_CONFIG_HOME/dauber/config.toml).
 
     Prompts for name, institution, educational level, feedback language,
     and other defaults shared across all courses. Use --defaults to
@@ -128,9 +128,9 @@ def config_show() -> None:
 
     if not global_cfg and not local_cfg:
         typer.echo("No configuration found.")
-        typer.echo("Run 'easel config global' or 'easel config init' to get started.")
+        typer.echo("Run 'dauber config global' or 'dauber config init' to get started.")
         typer.echo(
-            "Global: $XDG_CONFIG_HOME/easel/config.toml  Local: ./easel/config.toml"
+            "Global: $XDG_CONFIG_HOME/dauber/config.toml  Local: ./dauber/config.toml"
         )
         raise typer.Exit()
 

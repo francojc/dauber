@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from easel.core.cache import CourseCache
-from easel.core.client import CanvasClient
-from easel.core.config import Config
+from dauber.core.cache import CourseCache
+from dauber.core.client import CanvasClient
+from dauber.core.config import Config
 
 
 class EaselContext:

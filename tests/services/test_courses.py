@@ -1,13 +1,13 @@
-"""Tests for easel.services.courses."""
+"""Tests for dauber.services.courses."""
 
 from unittest.mock import AsyncMock
 
 import httpx
 import pytest
 
-from easel.core.client import CanvasClient
-from easel.services import CanvasError
-from easel.services.courses import get_course, get_enrollments, list_courses
+from dauber.core.client import CanvasClient
+from dauber.services import CanvasError
+from dauber.services.courses import get_course, get_enrollments, list_courses
 
 
 @pytest.fixture()

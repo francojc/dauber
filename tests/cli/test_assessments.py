@@ -1,12 +1,12 @@
-"""Tests for easel.cli.assessments."""
+"""Tests for dauber.cli.assessments."""
 
 import json
 from unittest.mock import AsyncMock, patch
 
 from typer.testing import CliRunner
 
-from easel.cli.app import app
-from easel.services import CanvasError
+from dauber.cli.app import app
+from dauber.services import CanvasError
 
 runner = CliRunner()
 
@@ -64,7 +64,7 @@ def _patch_context():
     mock_ctx.cache.resolve = AsyncMock(return_value="1")
     mock_ctx.close = AsyncMock()
     return patch(
-        "easel.cli.assessments.get_context",
+        "dauber.cli.assessments.get_context",
         return_value=mock_ctx,
     )
 
@@ -73,11 +73,11 @@ def _patch_context():
 
 
 @patch(
-    "easel.cli.assessments.fetch_submissions_with_content",
+    "dauber.cli.assessments.fetch_submissions_with_content",
     new_callable=AsyncMock,
 )
 @patch(
-    "easel.cli.assessments.fetch_assignment_with_rubric",
+    "dauber.cli.assessments.fetch_assignment_with_rubric",
     new_callable=AsyncMock,
 )
 def test_assess_setup(mock_fetch_assign, mock_fetch_subs, tmp_path):
@@ -107,7 +107,7 @@ def test_assess_setup(mock_fetch_assign, mock_fetch_subs, tmp_path):
 
 
 @patch(
-    "easel.cli.assessments.fetch_assignment_with_rubric",
+    "dauber.cli.assessments.fetch_assignment_with_rubric",
     new_callable=AsyncMock,
 )
 def test_assess_setup_error(mock_fetch):
@@ -122,11 +122,11 @@ def test_assess_setup_error(mock_fetch):
 
 
 @patch(
-    "easel.cli.assessments.fetch_submissions_with_content",
+    "dauber.cli.assessments.fetch_submissions_with_content",
     new_callable=AsyncMock,
 )
 @patch(
-    "easel.cli.assessments.fetch_assignment_with_rubric",
+    "dauber.cli.assessments.fetch_assignment_with_rubric",
     new_callable=AsyncMock,
 )
 def test_assess_setup_with_options(mock_fetch_assign, mock_fetch_subs, tmp_path):
@@ -164,11 +164,11 @@ def test_assess_setup_with_options(mock_fetch_assign, mock_fetch_subs, tmp_path)
 
 
 @patch(
-    "easel.cli.assessments.fetch_submissions_with_content",
+    "dauber.cli.assessments.fetch_submissions_with_content",
     new_callable=AsyncMock,
 )
 @patch(
-    "easel.cli.assessments.fetch_assignment_with_rubric",
+    "dauber.cli.assessments.fetch_assignment_with_rubric",
     new_callable=AsyncMock,
 )
 def test_assess_setup_anonymize(mock_fetch_assign, mock_fetch_subs, tmp_path):
@@ -345,7 +345,7 @@ def test_assess_submit_no_approved(tmp_path):
 
 
 @patch(
-    "easel.cli.assessments.submit_assessments",
+    "dauber.cli.assessments.submit_assessments",
     new_callable=AsyncMock,
 )
 def test_assess_submit_confirmed(mock_submit, tmp_path):
@@ -377,7 +377,7 @@ def test_assess_submit_confirmed(mock_submit, tmp_path):
 
 
 @patch(
-    "easel.cli.assessments.submit_assessments",
+    "dauber.cli.assessments.submit_assessments",
     new_callable=AsyncMock,
 )
 def test_assess_submit_canvas_error(mock_submit, tmp_path):

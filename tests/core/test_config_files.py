@@ -1,6 +1,6 @@
-"""Tests for easel.core.config_files."""
+"""Tests for dauber.core.config_files."""
 
-from easel.core.config_files import (
+from dauber.core.config_files import (
     merge_configs,
     read_global_config,
     read_local_config,
@@ -11,15 +11,15 @@ from easel.core.config_files import (
 
 def test_read_global_config_missing(tmp_path, monkeypatch):
     monkeypatch.setattr(
-        "easel.core.config_files.GLOBAL_CONFIG_PATH", tmp_path / "nope.toml"
+        "dauber.core.config_files.GLOBAL_CONFIG_PATH", tmp_path / "nope.toml"
     )
     assert read_global_config() == {}
 
 
 def test_write_and_read_global_config(tmp_path, monkeypatch):
     cfg_path = tmp_path / "config.toml"
-    monkeypatch.setattr("easel.core.config_files.GLOBAL_CONFIG_PATH", cfg_path)
-    monkeypatch.setattr("easel.core.config_files.GLOBAL_CONFIG_DIR", tmp_path)
+    monkeypatch.setattr("dauber.core.config_files.GLOBAL_CONFIG_PATH", cfg_path)
+    monkeypatch.setattr("dauber.core.config_files.GLOBAL_CONFIG_DIR", tmp_path)
 
     data = {"name": "Test User", "institution": "Test U", "level": "undergraduate"}
     result = write_global_config(data)
@@ -49,7 +49,7 @@ def test_write_and_read_local_config(tmp_path):
         "formality": "casual",
     }
     path = write_local_config(data, tmp_path)
-    assert path == tmp_path / "easel" / "config.toml"
+    assert path == tmp_path / "dauber" / "config.toml"
     assert path.is_file()
 
     loaded = read_local_config(tmp_path)
@@ -93,9 +93,9 @@ def test_write_local_creates_directories(tmp_path):
 
 def test_write_global_creates_directories(tmp_path, monkeypatch):
     nested = tmp_path / "deep" / "dir"
-    monkeypatch.setattr("easel.core.config_files.GLOBAL_CONFIG_DIR", nested)
+    monkeypatch.setattr("dauber.core.config_files.GLOBAL_CONFIG_DIR", nested)
     monkeypatch.setattr(
-        "easel.core.config_files.GLOBAL_CONFIG_PATH", nested / "config.toml"
+        "dauber.core.config_files.GLOBAL_CONFIG_PATH", nested / "config.toml"
     )
     write_global_config({"name": "Test"})
     assert (nested / "config.toml").is_file()
@@ -104,10 +104,10 @@ def test_write_global_creates_directories(tmp_path, monkeypatch):
 def test_xdg_config_home_respected(tmp_path, monkeypatch):
     """XDG_CONFIG_HOME is respected when the module constants are recomputed."""
     xdg_dir = tmp_path / "custom-xdg"
-    monkeypatch.setattr("easel.core.config_files.GLOBAL_CONFIG_DIR", xdg_dir / "easel")
+    monkeypatch.setattr("dauber.core.config_files.GLOBAL_CONFIG_DIR", xdg_dir / "dauber")
     monkeypatch.setattr(
-        "easel.core.config_files.GLOBAL_CONFIG_PATH",
-        xdg_dir / "easel" / "config.toml",
+        "dauber.core.config_files.GLOBAL_CONFIG_PATH",
+        xdg_dir / "dauber" / "config.toml",
     )
     write_global_config({"name": "XDG User"})
     loaded = read_global_config()

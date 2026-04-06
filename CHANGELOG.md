@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to easel are documented in this file.
+All notable changes to dauber are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [0.1.8] - 2026-03-24
@@ -26,8 +26,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
   `assess-ai-pass`, `assess-refine`, `assess-submit`, `assignments-create`,
   `content-publish`, `course-overview`, `course-setup`, `discuss-announce`,
   `grading-overview`, `rubrics-create`
-- `easel commands install --pi` installs Pi skills to `./.pi/skills/` (local)
-- `easel commands install --pi --global` installs to `~/.pi/agent/skills/`
+- `dauber commands install --pi` installs Pi skills to `./.pi/skills/` (local)
+- `dauber commands install --pi --global` installs to `~/.pi/agent/skills/`
 - `--global` flag on `commands install` (Pi-only; raises error without `--pi`)
 - Mutual-exclusion guard: `--pi` and `--local` raise an error (different
   harnesses and different directory conventions)
@@ -44,7 +44,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
-- `easel rubrics` sub-app with five commands: `list`, `show <id>`,
+- `dauber rubrics` sub-app with five commands: `list`, `show <id>`,
   `create --file <path>`, `import --csv <path>`, `attach <rubric_id> <assignment_id>`
 - `create_rubric` service: validates criteria schema before any network
   call, encodes bracket-notation form-data, raises `CanvasError` on HTTP
@@ -67,14 +67,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ### Changed
 
 - `assignments rubrics` and `assignments rubric` commands removed from
-  `easel assignments`; all rubric commands now live under `easel rubrics`
+  `dauber assignments`; all rubric commands now live under `dauber rubrics`
 - `assignments/create.md` Step 5 simplified: inline JSON example and
   Option A/B branching replaced with a one-line handoff to `/rubrics:create`
 
 ### Fixed
 
 - `rubrics` command group missing from `_COMMAND_GROUPS` in
-  `cli/commands.py`; `easel commands install` now copies
+  `cli/commands.py`; `dauber commands install` now copies
   `rubrics/create.md` to the target commands directory
 
 ## [0.1.5] - 2026-02-25
@@ -97,7 +97,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 - `course` changed from positional argument to `--course`/`-c` option
   across all 29 commands in 7 CLI modules. Fixes greedy positional
-  parsing where `easel assignments rubric 660168` consumed `660168`
+  parsing where `dauber assignments rubric 660168` consumed `660168`
   as the course instead of `assignment_id` (Issue #6)
 
 ## [0.1.3] - 2026-02-25
@@ -105,7 +105,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ### Added
 
 - Config-driven defaults: commands read `canvas_course_id` from
-  `easel/config.toml` when the course argument is omitted
+  `dauber/config.toml` when the course argument is omitted
 - `resolve_course()` helper falls back to local then global config
 - `assess setup` options (`--level`, `--feedback-language`,
   `--language-learning`, `--language-level`, `--formality`,
@@ -125,17 +125,17 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 ### Added
 
 - XDG-compliant global config: respects `$XDG_CONFIG_HOME`
-  (default `~/.config/easel/config.toml`)
-- `--defaults` flag on `easel config global` for non-interactive setup
-- `--local` flag on `easel commands install` to install skill commands
+  (default `~/.config/dauber/config.toml`)
+- `--defaults` flag on `dauber config global` for non-interactive setup
+- `--local` flag on `dauber commands install` to install skill commands
   into the current repo's `.claude/commands/` instead of globally
-- `easel commands install` now covers all 6 command groups (assess,
+- `dauber commands install` now covers all 6 command groups (assess,
   assignments, content, course, discuss, grading)
 
 ### Changed
 
 - Local config moved from `.claude/course_parameters.yaml` (YAML)
-  to `./easel/config.toml` (TOML)
+  to `./dauber/config.toml` (TOML)
 - Improved `--help` text across all sub-apps and commands
 - README rewritten as a user-facing document with standard structure
 
@@ -191,12 +191,12 @@ Initial release. Full Canvas LMS CLI for instructor workflows.
 - `--test` flag for Canvas API connectivity check
 - 234 tests passing across services and CLI layers
 
-[0.1.8]: https://github.com/francojc/easel/compare/v0.1.7...v0.1.8
-[0.1.7]: https://github.com/francojc/easel/compare/v0.1.6...v0.1.7
-[0.1.6]: https://github.com/francojc/easel/compare/v0.1.5...v0.1.6
-[0.1.5]: https://github.com/francojc/easel/compare/v0.1.4...v0.1.5
-[0.1.4]: https://github.com/francojc/easel/compare/v0.1.3...v0.1.4
-[0.1.3]: https://github.com/francojc/easel/compare/v0.1.2...v0.1.3
-[0.1.2]: https://github.com/francojc/easel/compare/v0.1.1...v0.1.2
-[0.1.1]: https://github.com/francojc/easel/compare/v0.1.0...v0.1.1
-[0.1.0]: https://github.com/francojc/easel/releases/tag/v0.1.0
+[0.1.8]: https://github.com/francojc/dauber/compare/v0.1.7...v0.1.8
+[0.1.7]: https://github.com/francojc/dauber/compare/v0.1.6...v0.1.7
+[0.1.6]: https://github.com/francojc/dauber/compare/v0.1.5...v0.1.6
+[0.1.5]: https://github.com/francojc/dauber/compare/v0.1.4...v0.1.5
+[0.1.4]: https://github.com/francojc/dauber/compare/v0.1.3...v0.1.4
+[0.1.3]: https://github.com/francojc/dauber/compare/v0.1.2...v0.1.3
+[0.1.2]: https://github.com/francojc/dauber/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/francojc/dauber/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/francojc/dauber/releases/tag/v0.1.0

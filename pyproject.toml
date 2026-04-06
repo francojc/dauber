@@ -3,8 +3,26 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "easel"
+name = "dauber"
 version = "0.1.8"
+description = "Command-line interface for the Canvas LMS API"
+readme = "README.md"
+license = "MIT"
+authors = [
+  { name = "Jerid Francom", email = "francojc@wfu.edu" },
+]
+keywords = ["canvas", "lms", "cli", "grading", "courses", "academic", "teaching"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Education",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Education",
+  "Topic :: Utilities",
+]
 requires-python = ">=3.11"
 dependencies = [
   "httpx>=0.27",
@@ -19,11 +37,16 @@ dependencies = [
   "pypdf>=4.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/francojc/dauber"
+Repository = "https://github.com/francojc/dauber"
+Changelog = "https://github.com/francojc/dauber/blob/main/CHANGELOG.md"
+
 [project.scripts]
-easel = "easel.cli.app:main"
+dauber = "dauber.cli.app:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/easel"]
+packages = ["src/dauber"]
 
 [dependency-groups]
 dev = ["pytest>=8.0", "pytest-asyncio>=0.24", "pytest-cov>=6.0", "ruff>=0.8"]

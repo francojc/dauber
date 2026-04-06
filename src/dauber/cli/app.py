@@ -1,4 +1,4 @@
-"""Main Typer app and global options for easel."""
+"""Main Typer app and global options for dauber."""
 
 from __future__ import annotations
 
@@ -7,23 +7,23 @@ from typing import Optional
 
 import typer
 
-from easel import __version__
-from easel.cli._context import EaselContext, get_context
-from easel.cli._output import OutputFormat
+from dauber import __version__
+from dauber.cli._context import EaselContext, get_context
+from dauber.cli._output import OutputFormat
 
-from easel.cli.assessments import assess_app
-from easel.cli.assignments import assignments_app
-from easel.cli.commands import commands_app
-from easel.cli.config import config_app
-from easel.cli.courses import courses_app
-from easel.cli.discussions import discussions_app
-from easel.cli.grading import grading_app
-from easel.cli.modules import modules_app
-from easel.cli.pages import pages_app
-from easel.cli.rubrics import rubrics_app
+from dauber.cli.assessments import assess_app
+from dauber.cli.assignments import assignments_app
+from dauber.cli.commands import commands_app
+from dauber.cli.config import config_app
+from dauber.cli.courses import courses_app
+from dauber.cli.discussions import discussions_app
+from dauber.cli.grading import grading_app
+from dauber.cli.modules import modules_app
+from dauber.cli.pages import pages_app
+from dauber.cli.rubrics import rubrics_app
 
 app = typer.Typer(
-    name="easel",
+    name="dauber",
     help="Canvas LMS CLI — manage courses, assignments, grading, "
     "and content from the terminal.",
 )
@@ -41,7 +41,7 @@ app.add_typer(grading_app)
 
 def _version_callback(value: bool) -> None:
     if value:
-        typer.echo(f"easel {__version__}")
+        typer.echo(f"dauber {__version__}")
         raise typer.Exit()
 
 
@@ -112,7 +112,7 @@ def callback(
         help="Show current configuration.",
     ),
 ) -> None:
-    """Global options for easel."""
+    """Global options for dauber."""
     ctx.ensure_object(dict)
     ctx.obj["format"] = OutputFormat(fmt)
     _ = get_context(ctx.obj)  # initialize EaselContext on ctx.obj

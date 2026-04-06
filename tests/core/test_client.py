@@ -1,10 +1,10 @@
-"""Tests for easel.core.client."""
+"""Tests for dauber.core.client."""
 
 import httpx
 import pytest
 
-from easel.core.client import CanvasClient
-from easel.core.config import Config
+from dauber.core.client import CanvasClient
+from dauber.core.config import Config
 
 
 @pytest.fixture()

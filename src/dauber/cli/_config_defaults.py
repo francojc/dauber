@@ -6,7 +6,7 @@ from typing import Any
 
 import typer
 
-from easel.core.config_files import read_global_config, read_local_config
+from dauber.core.config_files import read_global_config, read_local_config
 
 # Keys in config that map to assess setup CLI options.
 _ASSESS_CONFIG_KEYS = {

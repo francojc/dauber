@@ -1,8 +1,8 @@
-"""Tests for easel.core.config."""
+"""Tests for dauber.core.config."""
 
 import pytest
 
-from easel.core.config import Config
+from dauber.core.config import Config
 
 
 def test_defaults(monkeypatch):

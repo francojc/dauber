@@ -1,13 +1,13 @@
-"""Tests for easel.services.pages."""
+"""Tests for dauber.services.pages."""
 
 from unittest.mock import AsyncMock
 
 import httpx
 import pytest
 
-from easel.core.client import CanvasClient
-from easel.services import CanvasError
-from easel.services.pages import (
+from dauber.core.client import CanvasClient
+from dauber.services import CanvasError
+from dauber.services.pages import (
     _strip_html,
     create_page,
     delete_page,

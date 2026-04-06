@@ -8,12 +8,12 @@ from typing import Optional
 
 import typer
 
-from easel.cli._async import async_command
-from easel.cli._config_defaults import resolve_anonymize, resolve_course
-from easel.cli._context import get_context
-from easel.cli._output import format_output
-from easel.services import CanvasError
-from easel.services.grading import (
+from dauber.cli._async import async_command
+from dauber.cli._config_defaults import resolve_anonymize, resolve_course
+from dauber.cli._context import get_context
+from dauber.cli._output import format_output
+from dauber.services import CanvasError
+from dauber.services.grading import (
     get_submission,
     list_submissions,
     submit_grade,

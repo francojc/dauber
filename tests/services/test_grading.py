@@ -1,13 +1,13 @@
-"""Tests for easel.services.grading."""
+"""Tests for dauber.services.grading."""
 
 from unittest.mock import AsyncMock
 
 import httpx
 import pytest
 
-from easel.core.client import CanvasClient
-from easel.services import CanvasError
-from easel.services.grading import (
+from dauber.core.client import CanvasClient
+from dauber.services import CanvasError
+from dauber.services.grading import (
     get_submission,
     list_submissions,
     submit_grade,

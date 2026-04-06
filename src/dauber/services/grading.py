@@ -6,9 +6,9 @@ from typing import Any
 
 import httpx
 
-from easel.core.client import CanvasClient
-from easel.services import CanvasError
-from easel.services.rubrics import build_rubric_assessment_form_data
+from dauber.core.client import CanvasClient
+from dauber.services import CanvasError
+from dauber.services.rubrics import build_rubric_assessment_form_data
 
 
 async def list_submissions(

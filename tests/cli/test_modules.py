@@ -1,11 +1,11 @@
-"""Tests for easel.cli.modules."""
+"""Tests for dauber.cli.modules."""
 
 from unittest.mock import AsyncMock, patch
 
 from typer.testing import CliRunner
 
-from easel.cli.app import app
-from easel.services import CanvasError
+from dauber.cli.app import app
+from dauber.services import CanvasError
 
 runner = CliRunner()
 
@@ -54,7 +54,7 @@ def _patch_context():
     mock_ctx.cache.resolve = AsyncMock(return_value="1")
     mock_ctx.close = AsyncMock()
     return patch(
-        "easel.cli.modules.get_context",
+        "dauber.cli.modules.get_context",
         return_value=mock_ctx,
     )
 
@@ -62,7 +62,7 @@ def _patch_context():
 # -- modules list --
 
 
-@patch("easel.cli.modules.list_modules", new_callable=AsyncMock)
+@patch("dauber.cli.modules.list_modules", new_callable=AsyncMock)
 def test_modules_list(mock_list):
     mock_list.return_value = MOCK_MODULES
     with _patch_context():
@@ -71,7 +71,7 @@ def test_modules_list(mock_list):
     assert "Week 1" in result.output
 
 
-@patch("easel.cli.modules.list_modules", new_callable=AsyncMock)
+@patch("dauber.cli.modules.list_modules", new_callable=AsyncMock)
 def test_modules_list_json(mock_list):
     mock_list.return_value = MOCK_MODULES
     with _patch_context():
@@ -82,7 +82,7 @@ def test_modules_list_json(mock_list):
     assert '"Week 1"' in result.output
 
 
-@patch("easel.cli.modules.list_modules", new_callable=AsyncMock)
+@patch("dauber.cli.modules.list_modules", new_callable=AsyncMock)
 def test_modules_list_error(mock_list):
     mock_list.side_effect = CanvasError("forbidden", status_code=403)
     with _patch_context():
@@ -94,7 +94,7 @@ def test_modules_list_error(mock_list):
 # -- modules show --
 
 
-@patch("easel.cli.modules.get_module", new_callable=AsyncMock)
+@patch("dauber.cli.modules.get_module", new_callable=AsyncMock)
 def test_modules_show(mock_get):
     mock_get.return_value = MOCK_MODULE_DETAIL
     with _patch_context():
@@ -103,7 +103,7 @@ def test_modules_show(mock_get):
     assert "Week 1" in result.output
 
 
-@patch("easel.cli.modules.get_module", new_callable=AsyncMock)
+@patch("dauber.cli.modules.get_module", new_callable=AsyncMock)
 def test_modules_show_error(mock_get):
     mock_get.side_effect = CanvasError("not found", status_code=404)
     with _patch_context():
@@ -115,7 +115,7 @@ def test_modules_show_error(mock_get):
 # -- modules create --
 
 
-@patch("easel.cli.modules.create_module", new_callable=AsyncMock)
+@patch("dauber.cli.modules.create_module", new_callable=AsyncMock)
 def test_modules_create(mock_create):
     mock_create.return_value = MOCK_CREATED
     with _patch_context():
@@ -127,7 +127,7 @@ def test_modules_create(mock_create):
     assert "Week 3" in result.output
 
 
-@patch("easel.cli.modules.create_module", new_callable=AsyncMock)
+@patch("dauber.cli.modules.create_module", new_callable=AsyncMock)
 def test_modules_create_error(mock_create):
     mock_create.side_effect = CanvasError("invalid", status_code=422)
     with _patch_context():
@@ -139,7 +139,7 @@ def test_modules_create_error(mock_create):
 # -- modules update --
 
 
-@patch("easel.cli.modules.update_module", new_callable=AsyncMock)
+@patch("dauber.cli.modules.update_module", new_callable=AsyncMock)
 def test_modules_update(mock_update):
     mock_update.return_value = MOCK_UPDATED
     with _patch_context():
@@ -154,7 +154,7 @@ def test_modules_update(mock_update):
 # -- modules delete --
 
 
-@patch("easel.cli.modules.delete_module", new_callable=AsyncMock)
+@patch("dauber.cli.modules.delete_module", new_callable=AsyncMock)
 def test_modules_delete(mock_delete):
     mock_delete.return_value = {"id": "1", "deleted": True}
     with _patch_context():
@@ -163,7 +163,7 @@ def test_modules_delete(mock_delete):
     assert "Deleted" in result.output
 
 
-@patch("easel.cli.modules.delete_module", new_callable=AsyncMock)
+@patch("dauber.cli.modules.delete_module", new_callable=AsyncMock)
 def test_modules_delete_error(mock_delete):
     mock_delete.side_effect = CanvasError("not found", status_code=404)
     with _patch_context():

@@ -1,4 +1,4 @@
-"""Tests for easel.services.assessments."""
+"""Tests for dauber.services.assessments."""
 
 import io
 import json
@@ -9,9 +9,9 @@ import httpx
 import pytest
 from pypdf import PdfWriter
 
-from easel.core.client import CanvasClient
-from easel.services import CanvasError
-from easel.services.assessments import (
+from dauber.core.client import CanvasClient
+from dauber.services import CanvasError
+from dauber.services.assessments import (
     build_assessment_structure,
     fetch_assignment_with_rubric,
     fetch_submissions_with_content,

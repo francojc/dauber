@@ -1,9 +1,14 @@
-# easel
+# dauber
+
+[![CI](https://github.com/francojc/dauber/actions/workflows/ci.yml/badge.svg)](https://github.com/francojc/dauber/actions/workflows/ci.yml)
+[![PyPI version](https://img.shields.io/pypi/v/dauber)](https://pypi.org/project/dauber/)
+[![Python versions](https://img.shields.io/pypi/pyversions/dauber)](https://pypi.org/project/dauber/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A command-line interface for the Canvas LMS API. Manage courses,
 assignments, grading, and content from the terminal.
 
-easel also serves as a backend for
+dauber also serves as a backend for
 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill
 commands, enabling AI-assisted grading workflows via `--format json`.
 
@@ -12,11 +17,11 @@ commands, enabling AI-assisted grading workflows via `--format json`.
 **Requirements:** Python 3.11+ and [uv](https://docs.astral.sh/uv/).
 
 ```sh
-git clone https://github.com/francojc/easel.git
-cd easel
+git clone https://github.com/francojc/dauber.git
+cd dauber
 ```
 
-Install `easel` to `~/.local/bin/` so it's available system-wide:
+Install `dauber` to `~/.local/bin/` so it's available system-wide:
 
 ```sh
 uv tool install -e .
@@ -30,7 +35,7 @@ uv tool install -e . --force
 ```
 
 If you prefer to run from the project directory without a global
-install, use `uv run easel` instead (after `uv sync`).
+install, use `uv run dauber` instead (after `uv sync`).
 
 Set two environment variables for Canvas API access:
 
@@ -45,24 +50,24 @@ from your Canvas account settings under "Approved Integrations."
 Verify the install and connection:
 
 ```sh
-easel --version
-easel --test
+dauber --version
+dauber --test
 ```
 
 ## Quick start
 
 ```sh
 # List your courses
-easel courses list
+dauber courses list
 
 # List assignments for a course (accepts codes or numeric IDs)
-easel assignments list --course IS505
+dauber assignments list --course IS505
 
 # View submissions for an assignment
-easel grading submissions --course IS505 42
+dauber grading submissions --course IS505 42
 
 # Set up course-level config
-easel config init
+dauber config init
 ```
 
 All commands accept `--format` (`-f`) with four output modes:
@@ -76,35 +81,35 @@ All commands accept `--format` (`-f`) with four output modes:
 
 ## Configuration
 
-easel uses two TOML config files. Local values override global.
+dauber uses two TOML config files. Local values override global.
 
 **Global** (instructor defaults shared across courses):
 
 ```
-$XDG_CONFIG_HOME/easel/config.toml    # default: ~/.config/easel/config.toml
+$XDG_CONFIG_HOME/dauber/config.toml    # default: ~/.config/dauber/config.toml
 ```
 
 Set up interactively or write defaults without prompting:
 
 ```sh
-easel config global              # interactive prompts
-easel config global --defaults   # write starter config
+dauber config global              # interactive prompts
+dauber config global --defaults   # write starter config
 ```
 
 **Local** (per-course settings in the repo root):
 
 ```
-./easel/config.toml
+./dauber/config.toml
 ```
 
 ```sh
-easel config init                # interactive prompts, pre-fills from global
+dauber config init                # interactive prompts, pre-fills from global
 ```
 
 **View merged config:**
 
 ```sh
-easel config show                # shows each value with [global] or [local] source
+dauber config show                # shows each value with [global] or [local] source
 ```
 
 ## Commands
@@ -112,9 +117,9 @@ easel config show                # shows each value with [global] or [local] sou
 ### courses
 
 ```
-easel courses list [--concluded]
-easel courses show [--course COURSE]
-easel courses enrollments [--course COURSE]
+dauber courses list [--concluded]
+dauber courses show [--course COURSE]
+dauber courses enrollments [--course COURSE]
 ```
 
 List, inspect, and view enrollments for your courses. The `--course`
@@ -124,10 +129,10 @@ When omitted, falls back to `canvas_course_id` in your config file.
 ### assignments
 
 ```
-easel assignments list [--course COURSE]
-easel assignments show [--course COURSE] <assignment-id>
-easel assignments create [--course COURSE] <name> [--points N] [--due ISO] [--publish]
-easel assignments update [--course COURSE] <assignment-id> [--name ...] [--points N]
+dauber assignments list [--course COURSE]
+dauber assignments show [--course COURSE] <assignment-id>
+dauber assignments create [--course COURSE] <name> [--points N] [--due ISO] [--publish]
+dauber assignments update [--course COURSE] <assignment-id> [--name ...] [--points N]
 ```
 
 Create, update, list, and inspect assignments. For interactive guided
@@ -137,11 +142,11 @@ creation with defaults, validation, and rubric handoff, see
 ### rubrics
 
 ```
-easel rubrics list [--course COURSE]
-easel rubrics show [--course COURSE] <rubric-id>
-easel rubrics create [--course COURSE] --file <path>
-easel rubrics import [--course COURSE] --csv <path>
-easel rubrics attach [--course COURSE] <rubric-id> <assignment-id> [--use-for-grading]
+dauber rubrics list [--course COURSE]
+dauber rubrics show [--course COURSE] <rubric-id>
+dauber rubrics create [--course COURSE] --file <path>
+dauber rubrics import [--course COURSE] --csv <path>
+dauber rubrics attach [--course COURSE] <rubric-id> <assignment-id> [--use-for-grading]
 ```
 
 List, inspect, create, and attach rubrics. `show` looks up a rubric by
@@ -174,10 +179,10 @@ Example JSON for `create`:
 ### grading
 
 ```
-easel grading submissions [--course COURSE] <assignment-id> [--anonymize]
-easel grading show [--course COURSE] <assignment-id> <user-id> [--anonymize]
-easel grading submit [--course COURSE] <assignment-id> <user-id> <grade> [--comment ...]
-easel grading submit-rubric [--course COURSE] <assignment-id> <user-id> <file> [--comment ...]
+dauber grading submissions [--course COURSE] <assignment-id> [--anonymize]
+dauber grading show [--course COURSE] <assignment-id> <user-id> [--anonymize]
+dauber grading submit [--course COURSE] <assignment-id> <user-id> <grade> [--comment ...]
+dauber grading submit-rubric [--course COURSE] <assignment-id> <user-id> <file> [--comment ...]
 ```
 
 View submissions, inspect individual student work, and post grades.
@@ -188,10 +193,10 @@ distribution stats and missing-submission flags across a cohort, see
 ### assess
 
 ```
-easel assess setup [--course COURSE] <assignment-id> [--exclude-graded] [--anonymize]
-easel assess load <file>
-easel assess update <file> <user-id> [--rubric-json ...] [--approved]
-easel assess submit <file> [--course COURSE] <assignment-id> [--confirm]
+dauber assess setup [--course COURSE] <assignment-id> [--exclude-graded] [--anonymize]
+dauber assess load <file>
+dauber assess update <file> <user-id> [--rubric-json ...] [--approved]
+dauber assess submit <file> [--course COURSE] <assignment-id> [--confirm]
 ```
 
 Full rubric-based assessment workflow: fetch assignment data into a
@@ -204,21 +209,21 @@ the full AI grading pipeline use `/assess:setup` → `/assess:ai-pass`
 ### modules
 
 ```
-easel modules list [--course COURSE] [--items] [--search ...]
-easel modules show [--course COURSE] <module-id>
-easel modules create [--course COURSE] <name> [--position N] [--publish]
-easel modules update [--course COURSE] <module-id> [--name ...] [--publish/--unpublish]
-easel modules delete [--course COURSE] <module-id>
+dauber modules list [--course COURSE] [--items] [--search ...]
+dauber modules show [--course COURSE] <module-id>
+dauber modules create [--course COURSE] <name> [--position N] [--publish]
+dauber modules update [--course COURSE] <module-id> [--name ...] [--publish/--unpublish]
+dauber modules delete [--course COURSE] <module-id>
 ```
 
 ### pages
 
 ```
-easel pages list [--course COURSE] [--search ...] [--sort title|created_at|updated_at]
-easel pages show [--course COURSE] <page-url>
-easel pages create [--course COURSE] <title> [--body ...] [--publish]
-easel pages update [--course COURSE] <page-url> [--title ...] [--body ...]
-easel pages delete [--course COURSE] <page-url>
+dauber pages list [--course COURSE] [--search ...] [--sort title|created_at|updated_at]
+dauber pages show [--course COURSE] <page-url>
+dauber pages create [--course COURSE] <title> [--body ...] [--publish]
+dauber pages update [--course COURSE] <page-url> [--title ...] [--body ...]
+dauber pages delete [--course COURSE] <page-url>
 ```
 
 Pages are identified by their URL slug (e.g., `syllabus-spring-2026`).
@@ -228,10 +233,10 @@ module placement, see `/content:publish`.
 ### discussions
 
 ```
-easel discussions list [--course COURSE] [--announcements]
-easel discussions show [--course COURSE] <topic-id>
-easel discussions create [--course COURSE] <title> [--message ...] [--announcement] [--publish]
-easel discussions update [--course COURSE] <topic-id> [--title ...] [--message ...]
+dauber discussions list [--course COURSE] [--announcements]
+dauber discussions show [--course COURSE] <topic-id>
+dauber discussions create [--course COURSE] <title> [--message ...] [--announcement] [--publish]
+dauber discussions update [--course COURSE] <topic-id> [--title ...] [--message ...]
 ```
 
 Pass `--announcements` to list only announcements. Use `--announcement`
@@ -242,9 +247,9 @@ loop, see `/discuss:announce`.
 ### config
 
 ```
-easel config init [--base .]
-easel config global [--defaults]
-easel config show
+dauber config init [--base .]
+dauber config global [--defaults]
+dauber config show
 ```
 
 See [Configuration](#configuration) above for details.
@@ -252,19 +257,19 @@ See [Configuration](#configuration) above for details.
 ### commands
 
 ```
-easel commands install [--overwrite] [--local]
-easel commands install --pi [--overwrite]
-easel commands install --pi --global [--overwrite]
+dauber commands install [--overwrite] [--local]
+dauber commands install --pi [--overwrite]
+dauber commands install --pi --global [--overwrite]
 ```
 
 Installs bundled skill commands for either Claude Code or Pi.
 
 | Invocation | Target |
 |---|---|
-| `easel commands install` | `~/.claude/commands/` (Claude, global) |
-| `easel commands install --local` | `./.claude/commands/` (Claude, project) |
-| `easel commands install --pi` | `./.pi/skills/` (Pi, project) |
-| `easel commands install --pi --global` | `~/.pi/agent/skills/` (Pi, global) |
+| `dauber commands install` | `~/.claude/commands/` (Claude, global) |
+| `dauber commands install --local` | `./.claude/commands/` (Claude, project) |
+| `dauber commands install --pi` | `./.pi/skills/` (Pi, project) |
+| `dauber commands install --pi --global` | `~/.pi/agent/skills/` (Pi, global) |
 
 Pass `--overwrite` to replace existing files. See
 [Skill commands](#skill-commands) below.
@@ -272,11 +277,11 @@ Pass `--overwrite` to replace existing files. See
 ### Global options
 
 ```
-easel --version             # show version
-easel --test                # test Canvas API connection
-easel --config              # show API URL and token (masked)
-easel --format json <cmd>   # JSON output for any command
-easel --install-completion  # install shell tab-completion
+dauber --version             # show version
+dauber --test                # test Canvas API connection
+dauber --config              # show API URL and token (masked)
+dauber --format json <cmd>   # JSON output for any command
+dauber --install-completion  # install shell tab-completion
 ```
 
 ## Anonymizing student data
@@ -289,8 +294,8 @@ and `user_email` are replaced with empty strings. The numeric
 Affected commands: `assess setup`, `grading submissions`, `grading show`.
 
 ```sh
-easel assess setup --course IS505 42 --anonymize --format json
-easel grading submissions --course IS505 42 --anonymize
+dauber assess setup --course IS505 42 --anonymize --format json
+dauber grading submissions --course IS505 42 --anonymize
 ```
 
 This is opt-in. Without `--anonymize`, output includes full names and
@@ -298,13 +303,13 @@ emails as returned by the Canvas API.
 
 ## Skill commands
 
-Some easel commands are self-contained: you know the inputs, you run
+Some dauber commands are self-contained: you know the inputs, you run
 the command, you get the result. `courses list`, `assignments show`,
 `modules create`, and most read/write operations fall into this
 category — no skill needed.
 
 Other commands are most useful as building blocks. The skill commands
-below orchestrate sequences of easel calls, inject AI reasoning
+below orchestrate sequences of dauber calls, inject AI reasoning
 (drafting, scoring, normalizing), and manage state across steps.
 `--format json` is what makes this work: skills parse structured
 output from one command and feed it into the next.
@@ -313,10 +318,10 @@ Install all skills with:
 
 ```sh
 # Claude Code (global)
-easel commands install
+dauber commands install
 
 # Pi Agent Skills (project-local)
-easel commands install --pi
+dauber commands install --pi
 ```
 
 For Claude Code, this copies Markdown command files into
@@ -341,22 +346,22 @@ for user-wide availability.
 
 ### Writing custom skills
 
-Any script or Claude Code skill can call easel. A minimal example
+Any script or Claude Code skill can call dauber. A minimal example
 that lists ungraded submissions:
 
 ```sh
-easel grading submissions --course IS505 42 --format json \
+dauber grading submissions --course IS505 42 --format json \
   | jq '[.[] | select(.grade == null)]'
 ```
 
 Skills that need course context (feedback language, formality, etc.)
-read from `./easel/config.toml`. Run `easel config init` to set it up.
+read from `./dauber/config.toml`. Run `dauber config init` to set it up.
 
 ## Development
 
 ```sh
 uv sync                         # install dependencies
-uv run easel --help             # verify install
+uv run dauber --help             # verify install
 uv run pytest tests/            # run tests
 uv run ruff check src/ tests/   # lint
 uv run ruff format src/ tests/  # format

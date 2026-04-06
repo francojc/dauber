@@ -1,8 +1,8 @@
-"""Shared test fixtures for easel."""
+"""Shared test fixtures for dauber."""
 
 import pytest
 
-from easel.core.config import Config
+from dauber.core.config import Config
 
 
 @pytest.fixture()

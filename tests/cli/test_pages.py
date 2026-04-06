@@ -1,11 +1,11 @@
-"""Tests for easel.cli.pages."""
+"""Tests for dauber.cli.pages."""
 
 from unittest.mock import AsyncMock, patch
 
 from typer.testing import CliRunner
 
-from easel.cli.app import app
-from easel.services import CanvasError
+from dauber.cli.app import app
+from dauber.services import CanvasError
 
 runner = CliRunner()
 
@@ -48,7 +48,7 @@ def _patch_context():
     mock_ctx.cache.resolve = AsyncMock(return_value="1")
     mock_ctx.close = AsyncMock()
     return patch(
-        "easel.cli.pages.get_context",
+        "dauber.cli.pages.get_context",
         return_value=mock_ctx,
     )
 
@@ -56,7 +56,7 @@ def _patch_context():
 # -- pages list --
 
 
-@patch("easel.cli.pages.list_pages", new_callable=AsyncMock)
+@patch("dauber.cli.pages.list_pages", new_callable=AsyncMock)
 def test_pages_list(mock_list):
     mock_list.return_value = MOCK_PAGES
     with _patch_context():
@@ -65,7 +65,7 @@ def test_pages_list(mock_list):
     assert "Syllabus" in result.output
 
 
-@patch("easel.cli.pages.list_pages", new_callable=AsyncMock)
+@patch("dauber.cli.pages.list_pages", new_callable=AsyncMock)
 def test_pages_list_json(mock_list):
     mock_list.return_value = MOCK_PAGES
     with _patch_context():
@@ -76,7 +76,7 @@ def test_pages_list_json(mock_list):
     assert '"Syllabus"' in result.output
 
 
-@patch("easel.cli.pages.list_pages", new_callable=AsyncMock)
+@patch("dauber.cli.pages.list_pages", new_callable=AsyncMock)
 def test_pages_list_error(mock_list):
     mock_list.side_effect = CanvasError("forbidden", status_code=403)
     with _patch_context():
@@ -88,7 +88,7 @@ def test_pages_list_error(mock_list):
 # -- pages show --
 
 
-@patch("easel.cli.pages.get_page", new_callable=AsyncMock)
+@patch("dauber.cli.pages.get_page", new_callable=AsyncMock)
 def test_pages_show(mock_get):
     mock_get.return_value = MOCK_PAGE_DETAIL
     with _patch_context():
@@ -97,7 +97,7 @@ def test_pages_show(mock_get):
     assert "Syllabus" in result.output
 
 
-@patch("easel.cli.pages.get_page", new_callable=AsyncMock)
+@patch("dauber.cli.pages.get_page", new_callable=AsyncMock)
 def test_pages_show_error(mock_get):
     mock_get.side_effect = CanvasError("not found", status_code=404)
     with _patch_context():
@@ -109,7 +109,7 @@ def test_pages_show_error(mock_get):
 # -- pages create --
 
 
-@patch("easel.cli.pages.create_page", new_callable=AsyncMock)
+@patch("dauber.cli.pages.create_page", new_callable=AsyncMock)
 def test_pages_create(mock_create):
     mock_create.return_value = MOCK_CREATED
     with _patch_context():
@@ -129,7 +129,7 @@ def test_pages_create(mock_create):
     assert "New Page" in result.output
 
 
-@patch("easel.cli.pages.create_page", new_callable=AsyncMock)
+@patch("dauber.cli.pages.create_page", new_callable=AsyncMock)
 def test_pages_create_error(mock_create):
     mock_create.side_effect = CanvasError("invalid", status_code=422)
     with _patch_context():
@@ -141,7 +141,7 @@ def test_pages_create_error(mock_create):
 # -- pages update --
 
 
-@patch("easel.cli.pages.update_page", new_callable=AsyncMock)
+@patch("dauber.cli.pages.update_page", new_callable=AsyncMock)
 def test_pages_update(mock_update):
     mock_update.return_value = MOCK_UPDATED
     with _patch_context():
@@ -164,7 +164,7 @@ def test_pages_update(mock_update):
 # -- pages delete --
 
 
-@patch("easel.cli.pages.delete_page", new_callable=AsyncMock)
+@patch("dauber.cli.pages.delete_page", new_callable=AsyncMock)
 def test_pages_delete(mock_delete):
     mock_delete.return_value = {"url": "syllabus", "deleted": True}
     with _patch_context():
@@ -175,7 +175,7 @@ def test_pages_delete(mock_delete):
     assert "Deleted" in result.output
 
 
-@patch("easel.cli.pages.delete_page", new_callable=AsyncMock)
+@patch("dauber.cli.pages.delete_page", new_callable=AsyncMock)
 def test_pages_delete_error(mock_delete):
     mock_delete.side_effect = CanvasError("not found", status_code=404)
     with _patch_context():

@@ -1,4 +1,4 @@
-"""Manage easel skill commands — install to Claude Code or Pi Agent Skills."""
+"""Manage dauber skill commands — install to Claude Code or Pi Agent Skills."""
 
 from __future__ import annotations
 
@@ -38,7 +38,7 @@ _PI_SKILL_NAMES = [
 
 
 def _get_repo_root() -> Path:
-    """Return the easel repository root (four levels above this file)."""
+    """Return the dauber repository root (four levels above this file)."""
     return Path(__file__).resolve().parent.parent.parent.parent
 
 

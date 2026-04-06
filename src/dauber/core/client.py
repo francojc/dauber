@@ -8,7 +8,7 @@ from urllib.parse import urlencode
 
 import httpx
 
-from easel.core.config import Config
+from dauber.core.config import Config
 
 MAX_RETRIES = 3
 INITIAL_BACKOFF = 2  # seconds

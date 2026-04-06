@@ -2,8 +2,8 @@
 
 from typer.testing import CliRunner
 
-from easel import __version__
-from easel.cli.app import app
+from dauber import __version__
+from dauber.cli.app import app
 
 runner = CliRunner()
 

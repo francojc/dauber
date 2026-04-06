@@ -1,18 +1,18 @@
-"""Tests for easel.cli.config."""
+"""Tests for dauber.cli.config."""
 
 from unittest.mock import patch
 
 from typer.testing import CliRunner
 
-from easel.cli.app import app
+from dauber.cli.app import app
 
 runner = CliRunner()
 
 
 def test_config_show_no_config():
     with (
-        patch("easel.cli.config.read_global_config", return_value={}),
-        patch("easel.cli.config.read_local_config", return_value={}),
+        patch("dauber.cli.config.read_global_config", return_value={}),
+        patch("dauber.cli.config.read_local_config", return_value={}),
     ):
         result = runner.invoke(app, ["config", "show"])
         assert result.exit_code == 0
@@ -22,8 +22,8 @@ def test_config_show_no_config():
 def test_config_show_global_only():
     global_cfg = {"level": "undergraduate", "feedback_language": "English"}
     with (
-        patch("easel.cli.config.read_global_config", return_value=global_cfg),
-        patch("easel.cli.config.read_local_config", return_value={}),
+        patch("dauber.cli.config.read_global_config", return_value=global_cfg),
+        patch("dauber.cli.config.read_local_config", return_value={}),
     ):
         result = runner.invoke(app, ["config", "show"])
         assert result.exit_code == 0
@@ -35,8 +35,8 @@ def test_config_show_local_overrides_global():
     global_cfg = {"level": "graduate"}
     local_cfg = {"level": "undergraduate", "course_title": "Test Course"}
     with (
-        patch("easel.cli.config.read_global_config", return_value=global_cfg),
-        patch("easel.cli.config.read_local_config", return_value=local_cfg),
+        patch("dauber.cli.config.read_global_config", return_value=global_cfg),
+        patch("dauber.cli.config.read_local_config", return_value=local_cfg),
     ):
         result = runner.invoke(app, ["config", "show"])
         assert result.exit_code == 0
@@ -48,8 +48,8 @@ def test_config_show_local_overrides_global():
 def test_config_show_not_set_fields():
     local_cfg = {"course_title": "Test"}
     with (
-        patch("easel.cli.config.read_global_config", return_value={}),
-        patch("easel.cli.config.read_local_config", return_value=local_cfg),
+        patch("dauber.cli.config.read_global_config", return_value={}),
+        patch("dauber.cli.config.read_local_config", return_value=local_cfg),
     ):
         result = runner.invoke(app, ["config", "show"])
         assert result.exit_code == 0
@@ -73,11 +73,11 @@ def test_config_init_interactive(tmp_path):
         ]
     )
     with (
-        patch("easel.cli.config.read_global_config", return_value={}),
-        patch("easel.cli.config.read_local_config", return_value={}),
+        patch("dauber.cli.config.read_global_config", return_value={}),
+        patch("dauber.cli.config.read_local_config", return_value={}),
         patch(
-            "easel.cli.config.write_local_config",
-            return_value=tmp_path / "easel" / "config.toml",
+            "dauber.cli.config.write_local_config",
+            return_value=tmp_path / "dauber" / "config.toml",
         ) as mock_write,
     ):
         result = runner.invoke(
@@ -111,11 +111,11 @@ def test_config_init_prefills_from_global(tmp_path):
         ]
     )
     with (
-        patch("easel.cli.config.read_global_config", return_value=global_cfg),
-        patch("easel.cli.config.read_local_config", return_value={}),
+        patch("dauber.cli.config.read_global_config", return_value=global_cfg),
+        patch("dauber.cli.config.read_local_config", return_value={}),
         patch(
-            "easel.cli.config.write_local_config",
-            return_value=tmp_path / "easel" / "config.toml",
+            "dauber.cli.config.write_local_config",
+            return_value=tmp_path / "dauber" / "config.toml",
         ) as mock_write,
     ):
         result = runner.invoke(
@@ -139,9 +139,9 @@ def test_config_global_interactive(tmp_path):
         ]
     )
     with (
-        patch("easel.cli.config.read_global_config", return_value={}),
+        patch("dauber.cli.config.read_global_config", return_value={}),
         patch(
-            "easel.cli.config.write_global_config",
+            "dauber.cli.config.write_global_config",
             return_value=tmp_path / "config.toml",
         ) as mock_write,
     ):
@@ -167,9 +167,9 @@ def test_config_global_prefills_existing(tmp_path):
         ]
     )
     with (
-        patch("easel.cli.config.read_global_config", return_value=existing),
+        patch("dauber.cli.config.read_global_config", return_value=existing),
         patch(
-            "easel.cli.config.write_global_config",
+            "dauber.cli.config.write_global_config",
             return_value=tmp_path / "config.toml",
         ) as mock_write,
     ):
@@ -184,9 +184,9 @@ def test_config_global_prefills_existing(tmp_path):
 def test_config_global_defaults_flag(tmp_path):
     """--defaults writes config without prompting."""
     with (
-        patch("easel.cli.config.read_global_config", return_value={}),
+        patch("dauber.cli.config.read_global_config", return_value={}),
         patch(
-            "easel.cli.config.write_global_config",
+            "dauber.cli.config.write_global_config",
             return_value=tmp_path / "config.toml",
         ) as mock_write,
     ):
@@ -204,9 +204,9 @@ def test_config_global_defaults_preserves_existing(tmp_path):
     """--defaults merges existing values over defaults."""
     existing = {"name": "Jane Doe", "institution": "State U"}
     with (
-        patch("easel.cli.config.read_global_config", return_value=existing),
+        patch("dauber.cli.config.read_global_config", return_value=existing),
         patch(
-            "easel.cli.config.write_global_config",
+            "dauber.cli.config.write_global_config",
             return_value=tmp_path / "config.toml",
         ) as mock_write,
     ):
