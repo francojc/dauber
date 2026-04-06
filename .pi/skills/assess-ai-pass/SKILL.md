@@ -138,10 +138,10 @@ Provide complete assessment for all criteria now.
    - Count words in each feedback (must be 15-20)
    - Verify feedback is in the correct language (matches `metadata.feedback_language`)
 
-5. **Save assessment** using the easel CLI via Bash:
+5. **Save assessment** using the dauber CLI via Bash:
 
    ```bash
-   uv run easel assess update {assessment_file_path} {user_id} \
+   uv run dauber assess update {assessment_file_path} {user_id} \
      --rubric-json '{"criterion_id": {"points": X, "justification": "..."}, ...}' \
      --comment "Overall comment text" \
      --reviewed \

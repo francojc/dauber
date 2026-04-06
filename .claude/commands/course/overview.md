@@ -12,11 +12,11 @@ summary.
 
 Gather course details, module structure, assignments with due dates,
 enrollment counts, and upcoming deadlines into a single dashboard view.
-This replaces running 3-4 separate easel commands manually.
+This replaces running 3-4 separate dauber commands manually.
 
 ## Step 1: Load Course Parameters
 
-Read `easel/config.toml` to get `canvas_course_id`,
+Read `dauber/config.toml` to get `canvas_course_id`,
 `course_title`, `course_code`, `term`, and `year`.
 
 **If missing**: Report error and tell user to run `/course:setup` first. Stop.
@@ -28,13 +28,13 @@ Run all four queries. These are independent and can run in parallel:
 ### 2a. Course Details
 
 ```bash
-uv run easel courses show {canvas_course_id} --format json
+uv run dauber courses show {canvas_course_id} --format json
 ```
 
 ### 2b. Enrollment
 
 ```bash
-uv run easel courses enrollments {canvas_course_id} --format json
+uv run dauber courses enrollments {canvas_course_id} --format json
 ```
 
 Count by role: student, teacher, ta, observer.
@@ -42,7 +42,7 @@ Count by role: student, teacher, ta, observer.
 ### 2c. Assignments
 
 ```bash
-uv run easel assignments list {canvas_course_id} --format json
+uv run dauber assignments list {canvas_course_id} --format json
 ```
 
 For each assignment, capture: name, due_at, points_possible, published.
@@ -50,7 +50,7 @@ For each assignment, capture: name, due_at, points_possible, published.
 ### 2d. Modules
 
 ```bash
-uv run easel modules list {canvas_course_id} --items --format json
+uv run dauber modules list {canvas_course_id} --items --format json
 ```
 
 For each module, capture: name, position, published, items_count.
@@ -115,7 +115,7 @@ Modules ({total})
 
 ## Error Handling
 
-- If easel/config.toml missing: Report error, direct to `/course:setup`
+- If dauber/config.toml missing: Report error, direct to `/course:setup`
 - If any Canvas fetch fails: Report the error for that section, continue
   with remaining sections (partial dashboard is better than none)
 - If course has no assignments or modules: Display "None" for those sections

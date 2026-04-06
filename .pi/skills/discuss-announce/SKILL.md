@@ -12,12 +12,12 @@ user approval.
 
 Take a topic or rough notes, draft an announcement matching the course's
 tone and formality settings, present it for approval and editing, then post
-via the easel CLI. Keeps the instructor in the loop while saving time on
+via the dauber CLI. Keeps the instructor in the loop while saving time on
 routine communications.
 
 ## Step 1: Load Course Parameters
 
-Read `easel/config.toml` to get `canvas_course_id`,
+Read `dauber/config.toml` to get `canvas_course_id`,
 `course_title`, `course_code`, `feedback_language`, and `formality`.
 
 **If missing**: Report error and tell user to run `/course:setup` first. Stop.
@@ -35,7 +35,7 @@ The user provides `{{topic}}` which may be:
 ### 2b. Fetch Recent Announcements (for tone reference)
 
 ```bash
-uv run easel discussions list {canvas_course_id} --announcements --format json
+uv run dauber discussions list {canvas_course_id} --announcements --format json
 ```
 
 If there are recent announcements, note their titles and style to maintain
@@ -101,7 +101,7 @@ present the updated draft again. Repeat until approved or cancelled.
 Once approved, post the announcement:
 
 ```bash
-uv run easel discussions create {canvas_course_id} "{title}" \
+uv run dauber discussions create {canvas_course_id} "{title}" \
   --message "{announcement_body}" \
   --announcement \
   --publish \
@@ -132,18 +132,18 @@ ID: {announcement_id}
 The announcement is now visible to all enrolled students.
 
 To view:
-  uv run easel discussions show {canvas_course_id} {announcement_id}
+  uv run dauber discussions show {canvas_course_id} {announcement_id}
 
 To edit later:
-  uv run easel discussions update {canvas_course_id} {announcement_id} --message "..."
+  uv run dauber discussions update {canvas_course_id} {announcement_id} --message "..."
 ```
 
 ## Error Handling
 
-- If easel/config.toml missing: Direct to `/course:setup`
+- If dauber/config.toml missing: Direct to `/course:setup`
 - If posting fails: Report the Canvas API error, offer to retry or save
   the draft text so the user doesn't lose it
 - If shell escaping issues with body text: Write body to temp file and use
-  `$(cat /tmp/easel_announcement.html)` pattern
+  `$(cat /tmp/dauber_announcement.html)` pattern
 
 Begin drafting now.

@@ -4,7 +4,7 @@
 
 ## Starting question
 
-Is easel capable as-is to obfuscate user/student names to make data
+Is dauber capable as-is to obfuscate user/student names to make data
 passed through an LLM FERPA compliant? If not, what would it take to
 add a flag to commands that deal with importing and exporting student
 submissions?

@@ -21,7 +21,7 @@ Quarto output) with Canvas publishing.
 
 ## Step 1: Load Course Parameters
 
-Read `easel/config.toml` to get `canvas_course_id`.
+Read `dauber/config.toml` to get `canvas_course_id`.
 
 **If missing**: Report error and tell user to run `/course:setup` first. Stop.
 
@@ -73,7 +73,7 @@ Derive the page title from (in order of preference):
 Search Canvas for a page with the same title:
 
 ```bash
-uv run easel pages list {canvas_course_id} --search "{title}" --format json
+uv run dauber pages list {canvas_course_id} --search "{title}" --format json
 ```
 
 **If a matching page exists**: Use `AskUserQuestion` to ask:
@@ -89,7 +89,7 @@ If creating with a different title, ask for the new title.
 ### 4a. Create New Page
 
 ```bash
-uv run easel pages create {canvas_course_id} "{title}" \
+uv run dauber pages create {canvas_course_id} "{title}" \
   --body "{html_content}" \
   --publish \
   --format json
@@ -100,8 +100,8 @@ command substitution or pass it via stdin to avoid shell argument limits.
 For long content, write to a temp file first:
 
 ```bash
-uv run easel pages create {canvas_course_id} "{title}" \
-  --body "$(cat /tmp/easel_page_body.html)" \
+uv run dauber pages create {canvas_course_id} "{title}" \
+  --body "$(cat /tmp/dauber_page_body.html)" \
   --publish \
   --format json
 ```
@@ -109,7 +109,7 @@ uv run easel pages create {canvas_course_id} "{title}" \
 ### 4b. Update Existing Page
 
 ```bash
-uv run easel pages update {canvas_course_id} "{page_url_slug}" \
+uv run dauber pages update {canvas_course_id} "{page_url_slug}" \
   --body "{html_content}" \
   --publish \
   --format json
@@ -129,7 +129,7 @@ Use `AskUserQuestion` to ask:
 ### 5a. List Modules
 
 ```bash
-uv run easel modules list {canvas_course_id} --format json
+uv run dauber modules list {canvas_course_id} --format json
 ```
 
 Present modules as options via `AskUserQuestion`. Let the user select one.
@@ -137,11 +137,11 @@ Present modules as options via `AskUserQuestion`. Let the user select one.
 ### 5b. Add Page to Module
 
 The Canvas API requires adding a module item. This is not directly supported
-by the current easel CLI module commands. Report this to the user:
+by the current dauber CLI module commands. Report this to the user:
 
 ```
 Note: Module item addition requires the Canvas API module items endpoint,
-which is not yet implemented in the easel CLI. To add this page to the
+which is not yet implemented in the dauber CLI. To add this page to the
 module, use the Canvas web interface:
 
   1. Navigate to the module in Canvas
@@ -167,7 +167,7 @@ Published: Yes
 Module: {module_name or "Not added (manual step required)"}
 
 To view the page:
-  uv run easel pages show {canvas_course_id} "{page_url_slug}"
+  uv run dauber pages show {canvas_course_id} "{page_url_slug}"
 ```
 
 ## Error Handling

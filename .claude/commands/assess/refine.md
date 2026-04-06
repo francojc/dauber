@@ -223,10 +223,10 @@ Validation:
 
 - Show a confirmation prompt. If `dry_run=true`, exit after preview
 - If confirmed and `dry_run=false`:
-  - For each adjusted student, use the easel CLI via Bash:
+  - For each adjusted student, use the dauber CLI via Bash:
 
     ```bash
-    uv run easel assess update {assessment_file_path} {user_id} \
+    uv run dauber assess update {assessment_file_path} {user_id} \
       --rubric-json '{"criterion_id": {"points": X, "justification": "..."}, ...}' \
       --comment "Overall comment text" \
       --reviewed \

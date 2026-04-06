@@ -58,10 +58,10 @@ Score Statistics (approved only):
 
 ## Step 3: Dry Run Preview
 
-Run the easel CLI submit command without `--confirm` to get a dry run:
+Run the dauber CLI submit command without `--confirm` to get a dry run:
 
 ```bash
-uv run easel assess submit {assessment_file_path} {course_id} {assignment_id} --format json
+uv run dauber assess submit {assessment_file_path} {course_id} {assignment_id} --format json
 ```
 
 This shows what would be submitted without making changes. Build and display a preview from the assessment file data:
@@ -113,10 +113,10 @@ Use `AskUserQuestion` tool with:
 
 **If user confirms YES**:
 
-Run the easel CLI submit command with `--confirm`:
+Run the dauber CLI submit command with `--confirm`:
 
 ```bash
-uv run easel assess submit {assessment_file_path} {course_id} {assignment_id} --confirm --format json
+uv run dauber assess submit {assessment_file_path} {course_id} {assignment_id} --confirm --format json
 ```
 
 Report results:

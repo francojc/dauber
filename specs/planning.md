@@ -1,6 +1,6 @@
 # Development Project Planning
 
-**Project:** easel
+**Project:** dauber
 **Status:** v0.1.7 complete
 **Last Updated:** 2026-03-24
 
@@ -34,14 +34,14 @@
 - [x] Scriptable and composable -- exit codes, stderr for errors,
       stdout for data
 - [x] Usable as a backend for Claude Code assess/* skills via
-      `easel <cmd> --format json`
+      `dauber <cmd> --format json`
 - [ ] Native support for Pi coding agent via Agent Skills format
       (`.pi/skills/`) alongside the existing Claude Code format
 
 #### Non-Goals
 
 - No GUI or TUI beyond formatted terminal output
-- No MCP integration -- easel is a standalone CLI
+- No MCP integration -- dauber is a standalone CLI
 - No audit logging or sandbox config (canvas-mcp concerns)
 - No runtime dependency on canvas-mcp (reference only)
 
@@ -76,10 +76,10 @@
 ### Phase 0: Scaffolding (COMPLETE)
 
 - [x] Create pyproject.toml with hatchling build and entry point
-- [x] Set up src/easel/ directory structure (core, services, cli)
+- [x] Set up src/dauber/ directory structure (core, services, cli)
 - [x] Create Typer app skeleton with --version, --test, --config
 - [x] Implement async bridging and output formatting
-- [x] Verify `uv sync && uv run easel --help`
+- [x] Verify `uv sync && uv run dauber --help`
 
 ### Phase 1: Core Layer (COMPLETE)
 
@@ -101,7 +101,7 @@
 - [x] Assignments service (list, get, create, update) with HTML stripping
 - [x] Assignments CLI (list, show, create, update)
 - [x] Rubrics service (list, get, create, parse_rubric_csv, attach_rubric)
-- [x] Rubrics CLI (`easel rubrics list|show|create|import|attach`)
+- [x] Rubrics CLI (`dauber rubrics list|show|create|import|attach`)
 - [x] Grading service (submissions, get, submit grade, submit rubric grade)
 - [x] Grading CLI (submissions, show, submit, submit-rubric)
 - [x] Tests: 14 assignments svc, 8 rubrics svc, 10 grading svc,
@@ -113,7 +113,7 @@
   fetch_submissions_with_content, build_assessment_structure,
   load/save/update_assessment, get_assessment_stats,
   submit_assessments
-- [x] Assessment CLI: `easel assess setup|load|update|submit`
+- [x] Assessment CLI: `dauber assess setup|load|update|submit`
 - [x] Setup builds full assessment JSON (metadata + rubric + submissions)
 - [x] Submit uses dry-run by default, requires --confirm
 - [x] Tests: 22 service, 12 CLI (133 total)
@@ -133,9 +133,9 @@
 ### Phase 6: Polish (COMPLETE)
 
 - [x] Wire --test and --config callbacks (done in Phase 1)
-- [x] Migrate assess/* skill commands from MCP to easel CLI
-- [x] Add `easel commands install` CLI for distributing skill commands
-- [x] `easel config` sub-app (init, global, show)
+- [x] Migrate assess/* skill commands from MCP to dauber CLI
+- [x] Add `dauber commands install` CLI for distributing skill commands
+- [x] `dauber config` sub-app (init, global, show)
 - [x] Live smoke test against Canvas API (all 17 commands passed)
 - [x] Bug fix: --test event loop crash
 - [x] Shell completion support (Typer built-in --install-completion)
@@ -146,9 +146,9 @@
 
 - [x] Global config respects `$XDG_CONFIG_HOME` (default `~/.config`)
 - [x] Local config moved from `.claude/course_parameters.yaml` to
-      `./easel/config.toml` (TOML, not YAML)
-- [x] `--defaults` flag on `easel config global` for non-interactive setup
-- [x] `easel commands install` covers all 6 command groups
+      `./dauber/config.toml` (TOML, not YAML)
+- [x] `--defaults` flag on `dauber config global` for non-interactive setup
+- [x] `dauber commands install` covers all 6 command groups
 - [x] pyyaml dependency removed
 
 ### v0.1.3: Config-Driven Defaults (COMPLETE)
@@ -172,7 +172,7 @@
 
 ### v0.1.6: Rubrics Subcommand (COMPLETE)
 
-- [x] `easel rubrics` sub-app replacing `assignments rubrics|rubric`
+- [x] `dauber rubrics` sub-app replacing `assignments rubrics|rubric`
 - [x] `rubrics list` — list all course rubrics
 - [x] `rubrics show <id>` — show rubric by direct ID (no assignment needed)
 - [x] `rubrics create --file <path>` — create rubric from JSON file
@@ -190,7 +190,7 @@
       attachments; submission fetch includes `attachments` param so
       file-upload submissions appear in assessment JSON
 - [x] `python-docx` and `pypdf` added as runtime dependencies
-- [x] Fix: `rubrics` added to `_COMMAND_GROUPS` so `easel commands install`
+- [x] Fix: `rubrics` added to `_COMMAND_GROUPS` so `dauber commands install`
       copies `rubrics/create.md` to the target commands directory
 - [x] 288 tests total, ruff clean
 
@@ -198,7 +198,7 @@
 
 Add native support for the Pi coding agent harness alongside existing
 Claude Code slash-command support. Ship both formats in the repo
-(Option A) and extend `easel commands install` with a `--pi` flag.
+(Option A) and extend `dauber commands install` with a `--pi` flag.
 
 - [x] Add `.pi/skills/` directory with pre-converted `SKILL.md` files
       for all 11 commands (assess-setup, assess-ai-pass, assess-refine,
@@ -218,17 +218,17 @@ Claude Code slash-command support. Ship both formats in the repo
 #### CLI interface (new behaviour)
 
 ```
-easel commands install              # Claude → ~/.claude/commands/ (unchanged)
-easel commands install --local      # Claude → ./.claude/commands/ (unchanged)
-easel commands install --pi         # Pi     → ./.pi/skills/       (new)
-easel commands install --pi --global# Pi     → ~/.pi/agent/skills/ (new)
+dauber commands install              # Claude → ~/.claude/commands/ (unchanged)
+dauber commands install --local      # Claude → ./.claude/commands/ (unchanged)
+dauber commands install --pi         # Pi     → ./.pi/skills/       (new)
+dauber commands install --pi --global# Pi     → ~/.pi/agent/skills/ (new)
 ```
 
 #### Pi skill naming convention
 
 Each Claude `{group}/{file}.md` maps to a `{group}-{file}/SKILL.md`
 directory with a minimal frontmatter header (`name`, `description`).
-Body content is copied verbatim — the instructions call `easel` CLI
+Body content is copied verbatim — the instructions call `dauber` CLI
 commands which work identically under either harness.
 
 ### v0.1.5: Output and Usability Improvements (COMPLETE)
@@ -283,8 +283,8 @@ commands which work identically under either harness.
 
 ### Functional Criteria
 
-- [x] `easel courses list` returns live data in all three formats
-- [x] `easel assignments list <course> --format json` works for skills
+- [x] `dauber courses list` returns live data in all three formats
+- [x] `dauber assignments list <course> --format json` works for skills
 - [x] All implemented commands have service + CLI tests passing
 
 ### Quality Criteria
@@ -295,8 +295,8 @@ commands which work identically under either harness.
 
 ### Adoption Criteria
 
-- [x] assess/* skills can call easel via Bash instead of MCP tools
-- [x] `easel --help` documents all available commands
+- [x] assess/* skills can call dauber via Bash instead of MCP tools
+- [x] `dauber --help` documents all available commands
 - [x] Setup requires only `uv pip install -e .` and a Canvas API token
-- [x] Pi users can install skills with `easel commands install --pi`
+- [x] Pi users can install skills with `dauber commands install --pi`
       and use them without manual format conversion

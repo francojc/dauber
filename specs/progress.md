@@ -1,6 +1,6 @@
 # Development Project Progress
 
-**Project:** easel
+**Project:** dauber
 **Status:** v0.1.7 complete
 **Last Updated:** 2026-03-24
 
@@ -14,7 +14,7 @@
 
 ### Recent Accomplishments
 
-- Phase 0 complete: pyproject.toml, src/easel/ package structure,
+- Phase 0 complete: pyproject.toml, src/dauber/ package structure,
   Typer app skeleton, async bridge, output formatting, CanvasError
 - Phase 1 complete: Config (pydantic-settings), CanvasClient (httpx
   async with pagination and 429 retry), CourseCache (bidirectional
@@ -60,7 +60,7 @@
 - DOCX/PDF attachment text extraction: `_extract_attachment_text()`
   downloads Canvas file attachments and returns plain text for `.docx`
   and `.pdf`; `python-docx` and `pypdf` added as runtime dependencies
-- Fix: `rubrics` added to `_COMMAND_GROUPS` so `easel commands install`
+- Fix: `rubrics` added to `_COMMAND_GROUPS` so `dauber commands install`
   now installs `rubrics/create.md`
 - 288 total tests, all passing, ruff clean
 
@@ -68,8 +68,8 @@
 
 - `.pi/skills/` directory with 11 SKILL.md files (Pi Agent Skills format)
   converted from all existing Claude Code skill commands
-- `easel commands install --pi` installs skills to `./.pi/skills/`
-- `easel commands install --pi --global` installs to `~/.pi/agent/skills/`
+- `dauber commands install --pi` installs skills to `./.pi/skills/`
+- `dauber commands install --pi --global` installs to `~/.pi/agent/skills/`
 - Mutual-exclusion guards: `--pi`+`--local` and `--global` without `--pi`
 - Claude install logic refactored into `_install_claude_commands()` for symmetry
 - 6 new tests; 294 total, all passing, ruff clean
@@ -82,7 +82,7 @@
 
 ### Completed Milestones
 
-- [x] Phase 0: Scaffolding complete -- `easel --help` works
+- [x] Phase 0: Scaffolding complete -- `dauber --help` works
 - [x] Phase 1: Core layer -- config, client, cache tested (27 tests)
 - [x] Phase 2: Courses -- service + CLI + tests (44 tests total)
 - [x] Phase 3: Assignments + rubrics + grading (99 tests total)
@@ -146,13 +146,13 @@
 - [x] EaselContext (lazy init of config, client, cache)
 - [x] --test and --config callbacks (real implementations)
 - [x] Courses service: list_courses, get_course, get_enrollments
-- [x] Courses CLI: `easel courses list`, `show`, `enrollments`
+- [x] Courses CLI: `dauber courses list`, `show`, `enrollments`
 - [x] Assignments service: list, get, create, update (with HTML stripping)
 - [x] Rubrics service: list, get, bracket-notation form data builder
 - [x] Grading service: list submissions, get submission, submit grade,
   submit rubric grade
-- [x] Assignments CLI: `easel assignments list|show|create|update`
-- [x] Rubrics CLI: `easel rubrics list|show|create|import|attach`
+- [x] Assignments CLI: `dauber assignments list|show|create|update`
+- [x] Rubrics CLI: `dauber rubrics list|show|create|import|attach`
 - [x] `create_rubric` service: POST with bracket-notation form-data, schema validation
 - [x] `parse_rubric_csv` service: Canvas wide-format CSV → (title, criteria)
 - [x] `attach_rubric` service: PUT rubric_association for assignment linkage
@@ -161,31 +161,31 @@
   and parses `.docx`/`.pdf` Canvas attachments into plain text for assessment JSON;
   `python-docx` and `pypdf` runtime dependencies added
 - [x] `.pi/skills/` directory with 11 SKILL.md files (Pi Agent Skills format)
-- [x] `easel commands install --pi` and `--pi --global` flags
+- [x] `dauber commands install --pi` and `--pi --global` flags
 - [x] `_install_pi_skills()` and `_install_claude_commands()` helpers in
   `cli/commands.py`; mutual-exclusion guards for `--pi`/`--local` and
   `--global` without `--pi`
-- [x] Grading CLI: `easel grading submissions|show|submit|submit-rubric`
+- [x] Grading CLI: `dauber grading submissions|show|submit|submit-rubric`
 - [x] Assessment service: fetch assignment+rubric, fetch submissions
   with content, build/load/save/update JSON, stats, submit to Canvas
-- [x] Assessment CLI: `easel assess setup|load|update|submit`
-- [x] Commands CLI: `easel commands install` (copies .claude/commands/assess/*.md)
-- [x] Assess skill commands migrated from MCP to easel CLI (setup, ai-pass, refine, submit)
-- [x] Config sub-app: `easel config init|global|show` with TOML
+- [x] Assessment CLI: `dauber assess setup|load|update|submit`
+- [x] Commands CLI: `dauber commands install` (copies .claude/commands/assess/*.md)
+- [x] Assess skill commands migrated from MCP to dauber CLI (setup, ai-pass, refine, submit)
+- [x] Config sub-app: `dauber config init|global|show` with TOML
   file management, XDG support, and global-to-local inheritance
 - [x] Live smoke test: all 17 CLI commands verified against Canvas API
 - [x] Bug fix: --test callback event loop crash (combined into single
   async function)
 - [x] Modules service: list, get, create, update, delete
-- [x] Modules CLI: `easel modules list|show|create|update|delete`
+- [x] Modules CLI: `dauber modules list|show|create|update|delete`
 - [x] Pages service: list, get, create, update, delete (slug-based IDs)
-- [x] Pages CLI: `easel pages list|show|create|update|delete`
+- [x] Pages CLI: `dauber pages list|show|create|update|delete`
 - [x] Discussions service: list, get, create, update (with announcements)
-- [x] Discussions CLI: `easel discussions list|show|create|update`
+- [x] Discussions CLI: `dauber discussions list|show|create|update`
 - [x] `--anonymize` flag for FERPA-compliant PII stripping
 - [x] Expanded `.claude/commands/` with skill commands for assignments,
   content, course, discuss, grading
-- [x] `anonymize` field in local config and `easel config init`
+- [x] `anonymize` field in local config and `dauber config init`
 - [x] README `--anonymize` documentation and command signature updates
 - [x] `assess:setup` and `course:setup` skill commands updated for anonymize
 - [x] Config-driven defaults: `course` argument optional, reads from config
@@ -200,7 +200,7 @@
 
 ### Planned
 
-- [ ] Pi Agent Skills support (`--pi` flag on `easel commands install`)
+- [ ] Pi Agent Skills support (`--pi` flag on `dauber commands install`)
   - `.pi/skills/` directory with 11 pre-converted `SKILL.md` files
   - `_install_pi_skills()` in `cli/commands.py`; refactor Claude path
     into `_install_claude_commands()` for symmetry
@@ -290,8 +290,8 @@
 ### Next Release
 
 **v0.1.7** — Pi Agent Skills support
-- `easel commands install --pi` installs skills to `.pi/skills/`
-- `easel commands install --pi --global` installs to `~/.pi/agent/skills/`
+- `dauber commands install --pi` installs skills to `.pi/skills/`
+- `dauber commands install --pi --global` installs to `~/.pi/agent/skills/`
 - Ships 11 pre-converted `SKILL.md` files in `.pi/skills/`
 
 ### Release History

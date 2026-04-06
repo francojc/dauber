@@ -11,9 +11,9 @@ Initialize the grading workflow for Canvas assignment {{assignment_id}}.
 
 Create the assessment JSON file with all student submissions and rubric structure, ready for AI evaluation.
 
-## Step 1: Validate easel/config.toml
+## Step 1: Validate dauber/config.toml
 
-Check for `easel/config.toml` in the current repository.
+Check for `dauber/config.toml` in the current repository.
 
 **If missing**: Use `AskUserQuestion` to collect all fields, then create the file:
 
@@ -49,14 +49,14 @@ Notes on field values:
 
 ## Step 2: Generate Assessment Structure
 
-Fetch data from Canvas using the easel CLI, then construct the assessment file.
+Fetch data from Canvas using the dauber CLI, then construct the assessment file.
 
-### 2a. Run easel assess setup
+### 2a. Run dauber assess setup
 
-Use the Bash tool to run the easel CLI:
+Use the Bash tool to run the dauber CLI:
 
 ```bash
-uv run easel assess setup {canvas_course_id} {assignment_id} \
+uv run dauber assess setup {canvas_course_id} {assignment_id} \
   --course-name "{course_title}" \
   --level "{level}" \
   --feedback-language "{feedback_language_code}" \
@@ -70,10 +70,10 @@ uv run easel assess setup {canvas_course_id} {assignment_id} \
 
 Notes:
 
-- `{canvas_course_id}` comes from `easel/config.toml`
+- `{canvas_course_id}` comes from `dauber/config.toml`
 - `{assignment_id}` is the argument passed to this command
-- Only include `--language-learning` if `language_learning: true` in easel/config.toml
-- Only include `--anonymize` if `anonymize: true` in easel/config.toml
+- Only include `--language-learning` if `language_learning: true` in dauber/config.toml
+- Only include `--anonymize` if `anonymize: true` in dauber/config.toml
 - `--feedback-language` uses the mapped code ("es" or "en")
 - `--exclude-graded` skips already-graded submissions (default behavior)
 - `--format json` returns structured output for parsing
@@ -181,7 +181,7 @@ This allows subsequent commands to auto-discover the assessment file.
 - Automatically skips students who haven't submitted
 - **Excludes already-graded submissions by default** to prevent overwriting existing grades
 - **FERPA COMPLIANCE: Enrollment filtering enabled** - Only includes submissions from students enrolled in the specified course, preventing cross-section contamination in cross-listed assignments
-- **FERPA COMPLIANCE: PII anonymization** - When `anonymize: true` in easel/config.toml, student names and emails are stripped from the assessment JSON. The numeric `user_id` is retained for grade submission back to Canvas
+- **FERPA COMPLIANCE: PII anonymization** - When `anonymize: true` in dauber/config.toml, student names and emails are stripped from the assessment JSON. The numeric `user_id` is retained for grade submission back to Canvas
 - Creates fresh assessment file each time (timestamped to avoid conflicts)
 - Preserves all rubric details for AI evaluation step
 

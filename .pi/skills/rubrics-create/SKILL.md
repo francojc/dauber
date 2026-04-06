@@ -10,7 +10,7 @@ and optionally attach it to an assignment.
 
 ## Step 1: Load Course Parameters
 
-Read `easel/config.toml` to get `canvas_course_id`.
+Read `dauber/config.toml` to get `canvas_course_id`.
 
 **If missing**: Report error and tell user to run `/course:setup` first. Stop.
 
@@ -31,7 +31,7 @@ Use `AskUserQuestion`:
 Run:
 
 ```bash
-uv run easel rubrics import --course {canvas_course_id} --csv {path} --format json
+uv run dauber rubrics import --course {canvas_course_id} --csv {path} --format json
 ```
 
 ### JSON path
@@ -39,7 +39,7 @@ uv run easel rubrics import --course {canvas_course_id} --csv {path} --format js
 Run:
 
 ```bash
-uv run easel rubrics create --course {canvas_course_id} --file {path} --format json
+uv run dauber rubrics create --course {canvas_course_id} --file {path} --format json
 ```
 
 ### Guided path
@@ -78,7 +78,7 @@ Write the collected data to a temp file `/tmp/rubric_{canvas_course_id}.json`:
 Then run:
 
 ```bash
-uv run easel rubrics create --course {canvas_course_id} --file /tmp/rubric_{canvas_course_id}.json --format json
+uv run dauber rubrics create --course {canvas_course_id} --file /tmp/rubric_{canvas_course_id}.json --format json
 ```
 
 ## Step 4: Capture Rubric ID
@@ -101,7 +101,7 @@ Use `AskUserQuestion`:
 **If assignment ID provided**, run:
 
 ```bash
-uv run easel rubrics attach --course {canvas_course_id} {rubric_id} {assignment_id} --format json
+uv run dauber rubrics attach --course {canvas_course_id} {rubric_id} {assignment_id} --format json
 ```
 
 Report result:
@@ -116,7 +116,7 @@ Suggest:
 
 ```
 Next steps:
-  - View rubric:  uv run easel rubrics show --course {canvas_course_id} {rubric_id}
+  - View rubric:  uv run dauber rubrics show --course {canvas_course_id} {rubric_id}
   - Start grading: /assess:setup {assignment_id}
 ```
 

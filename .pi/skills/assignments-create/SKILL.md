@@ -11,12 +11,12 @@ sensible defaults, and validation.
 ## Task Overview
 
 Collect assignment details interactively, validate inputs, create the
-assignment via the easel CLI, and report the result. Provides guardrails
+assignment via the dauber CLI, and report the result. Provides guardrails
 for common mistakes like missing submission types or forgetting to publish.
 
 ## Step 1: Load Course Parameters
 
-Read `easel/config.toml` to get `canvas_course_id` and
+Read `dauber/config.toml` to get `canvas_course_id` and
 `course_title`.
 
 **If missing**: Report error and tell user to run `/course:setup` first. Stop.
@@ -80,7 +80,7 @@ If "Edit details", return to Step 2 and let the user change specific fields.
 Build and run the CLI command:
 
 ```bash
-uv run easel assignments create {canvas_course_id} "{assignment_name}" \
+uv run dauber assignments create {canvas_course_id} "{assignment_name}" \
   --points {points_possible} \
   --due "{due_date}" \
   --types "{submission_types}" \
@@ -124,10 +124,10 @@ Submission Types: {types}
 Published: {Yes/No}
 
 To view:
-  uv run easel assignments show {canvas_course_id} {assignment_id}
+  uv run dauber assignments show {canvas_course_id} {assignment_id}
 
 To update later:
-  uv run easel assignments update {canvas_course_id} {assignment_id} --name "..." --points ...
+  uv run dauber assignments update {canvas_course_id} {assignment_id} --name "..." --points ...
 
 Next steps:
   - Add a rubric in Canvas UI if needed
@@ -136,7 +136,7 @@ Next steps:
 
 ## Error Handling
 
-- If easel/config.toml missing: Direct to `/course:setup`
+- If dauber/config.toml missing: Direct to `/course:setup`
 - If assignment creation fails: Report the Canvas API error
 - If invalid date format: Ask user to re-enter in ISO 8601 format
 - If duplicate assignment name: Warn but proceed (Canvas allows duplicates)

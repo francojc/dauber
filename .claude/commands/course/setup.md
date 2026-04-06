@@ -6,7 +6,7 @@ allowed-tools: Read, Write, AskUserQuestion, Bash, Glob
 # Course Setup - Initialize Course Workspace
 
 Guide the user through first-time course configuration, validate Canvas
-connectivity, and create `easel/config.toml`.
+connectivity, and create `dauber/config.toml`.
 
 ## Task Overview
 
@@ -16,7 +16,7 @@ parameter file creation so that all downstream workflows have valid context.
 
 ## Step 1: Check Existing Configuration
 
-Look for `easel/config.toml` in the current repository.
+Look for `dauber/config.toml` in the current repository.
 
 **If present**: Read and display current values. Use `AskUserQuestion` to ask:
 
@@ -35,7 +35,7 @@ and update the file, then continue to Step 3.
 Run a quick connectivity check:
 
 ```bash
-uv run easel --test
+uv run dauber --test
 ```
 
 If this fails, report the error and tell the user to verify `CANVAS_API_KEY`
@@ -47,7 +47,7 @@ Stop here until connectivity is confirmed.
 Fetch the user's courses to help them identify the right one:
 
 ```bash
-uv run easel courses list --format json
+uv run dauber courses list --format json
 ```
 
 Display the results as a readable list showing course code, name, and term.
@@ -63,7 +63,7 @@ course code or ID directly.
 Once the user selects a course, fetch full details:
 
 ```bash
-uv run easel courses show {course_identifier} --format json
+uv run dauber courses show {course_identifier} --format json
 ```
 
 Extract: `id`, `course_code`, `name`, and `term` (from `enrollment_term_id`
@@ -94,9 +94,9 @@ four questions across one or two rounds:
 
 For non-language-learning courses, set `language_level: "NA"`.
 
-### 2f. Write easel/config.toml
+### 2f. Write dauber/config.toml
 
-Create `easel/config.toml` with all collected values:
+Create `dauber/config.toml` with all collected values:
 
 ```toml
 course_title = "{course_name}"
@@ -117,7 +117,7 @@ anonymize = {true_or_false}
 ### 3a. Fetch Enrollment Summary
 
 ```bash
-uv run easel courses enrollments {canvas_course_id} --format json
+uv run dauber courses enrollments {canvas_course_id} --format json
 ```
 
 Count enrollments by role (student, teacher, ta, observer).
@@ -125,7 +125,7 @@ Count enrollments by role (student, teacher, ta, observer).
 ### 3b. Fetch Assignment Overview
 
 ```bash
-uv run easel assignments list {canvas_course_id} --format json
+uv run dauber assignments list {canvas_course_id} --format json
 ```
 
 Count total assignments and note how many are published.
@@ -133,7 +133,7 @@ Count total assignments and note how many are published.
 ### 3c. Fetch Module Overview
 
 ```bash
-uv run easel modules list {canvas_course_id} --format json
+uv run dauber modules list {canvas_course_id} --format json
 ```
 
 Count total modules.
@@ -160,7 +160,7 @@ Course Content:
   Assignments: A (B published)
   Modules: C
 
-Parameters saved to: easel/config.toml
+Parameters saved to: dauber/config.toml
 
 Available workflows:
   /course:overview  - Course status dashboard
@@ -176,6 +176,6 @@ Available workflows:
 - If Canvas connectivity fails: Report error, ask user to check environment variables
 - If course not found: Report error with available courses list
 - If enrollment fetch fails: Report warning but continue (non-critical)
-- If `easel/` directory missing: Create it before writing config file
+- If `dauber/` directory missing: Create it before writing config file
 
 Begin setup now.

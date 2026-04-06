@@ -1,9 +1,9 @@
-# easel - Canvas LMS CLI
+# dauber - Canvas LMS CLI
 
 ## Commands
 
 - Build: `uv sync`
-- Run: `uv run easel <command>`
+- Run: `uv run dauber <command>`
 - Test: `uv run pytest tests/`
 - Lint: `uv run ruff check src/ tests/`
 - Format: `uv run ruff format src/ tests/`
@@ -11,7 +11,7 @@
 ## File structure
 
 ```
-src/easel/
+src/dauber/
 ├── core/         # HTTP client, config, caching, date utils, config files
 ├── services/     # Async business logic per Canvas entity
 └── cli/          # Typer commands, async bridging, output formatting
@@ -38,7 +38,7 @@ CanvasClient and return dicts/lists. CLI commands bridge async with
 ## Reference repo
 
 canvas-mcp (`~/.local/mcp/canvas-mcp/`) contains the business logic
-patterns easel adapts. Reference only -- no runtime dependency.
+patterns dauber adapts. Reference only -- no runtime dependency.
 
 ## Gotchas
 
@@ -57,8 +57,8 @@ patterns easel adapts. Reference only -- no runtime dependency.
   Use `_output.py`'s `format_output()` for consistent rendering. CSV
   writes header + data rows to stdout via `csv.writer` (no Rich markup).
 - Config files: global config is TOML at
-  `$XDG_CONFIG_HOME/easel/config.toml` (default `~/.config/easel/config.toml`),
-  local config is TOML at `./easel/config.toml`. The config sub-app
+  `$XDG_CONFIG_HOME/dauber/config.toml` (default `~/.config/dauber/config.toml`),
+  local config is TOML at `./dauber/config.toml`. The config sub-app
   (cli/config.py) handles both; core/config_files.py has the read/write
   helpers. No service layer needed (pure file I/O).
 - Event loop lifecycle: never call `asyncio.run()` twice for the same

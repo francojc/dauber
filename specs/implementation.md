@@ -1,6 +1,6 @@
 # Development Implementation Details
 
-**Project:** easel
+**Project:** dauber
 **Status:** v0.1.7 complete
 **Last Updated:** 2026-03-24
 
@@ -16,8 +16,8 @@
 ### Component Overview
 
 ```
-easel/
-├── src/easel/            # Application source
+dauber/
+├── src/dauber/            # Application source
 │   ├── __init__.py       # __version__
 │   ├── core/             # HTTP client, config, caching
 │   │   ├── client.py     # CanvasClient (httpx async)
@@ -239,13 +239,13 @@ easel/
     - **Dependencies:** services/discussions.py
 
 21. **core/config_files.py**
-    - **Purpose:** Read/write TOML config files for easel
+    - **Purpose:** Read/write TOML config files for dauber
     - **Public Interface:** `read_global_config()`,
       `write_global_config()`, `read_local_config()`,
       `write_local_config()`, `merge_configs()`
     - **Dependencies:** tomli-w, tomllib (stdlib)
-    - **Notes:** Global config at `$XDG_CONFIG_HOME/easel/config.toml`,
-      local config at `./easel/config.toml`.
+    - **Notes:** Global config at `$XDG_CONFIG_HOME/dauber/config.toml`,
+      local config at `./dauber/config.toml`.
       `LOCAL_FIELDS` defines the schema for the local config
       including `anonymize` (boolean) for FERPA PII stripping
 
@@ -284,7 +284,7 @@ easel/
 25. **`.pi/skills/` (static files, v0.1.7)**
     - **Purpose:** Pre-converted Pi Agent Skills versions of all 11
       Claude Code commands; shipped in the repo and installed via
-      `easel commands install --pi`
+      `dauber commands install --pi`
     - **Format:** Each skill is a directory named `{group}-{command}`
       containing a single `SKILL.md` with minimal frontmatter (`name`,
       `description`) and the original command body verbatim
@@ -320,11 +320,11 @@ easel/
 uv sync
 
 # Run CLI
-uv run easel --help
-uv run easel courses list
+uv run dauber --help
+uv run dauber courses list
 
 # Run with specific format
-uv run easel courses list --format json
+uv run dauber courses list --format json
 ```
 
 ### Code Standards
@@ -357,7 +357,7 @@ uv run pytest tests/services/
 uv run pytest tests/cli/
 
 # With coverage
-uv run pytest tests/ --cov=src/easel
+uv run pytest tests/ --cov=src/dauber
 ```
 
 ### Coverage Targets
@@ -418,15 +418,15 @@ uv run pytest tests/ --cov=src/easel
 
 | Date | Decision | Rationale | Alternatives Considered |
 |------|----------|-----------|------------------------|
-| 2026-02-22 | Extract from canvas-mcp as reference only | Keeps easel independent, avoids coupling to MCP framework | Import canvas-mcp as library (rejected: too much MCP baggage) |
+| 2026-02-22 | Extract from canvas-mcp as reference only | Keeps dauber independent, avoids coupling to MCP framework | Import canvas-mcp as library (rejected: too much MCP baggage) |
 | 2026-02-22 | Use hatchling build backend | Lightweight, supports src layout natively | setuptools (heavier), flit (less flexible) |
-| 2026-02-22 | Two test layers (services + CLI) | Clean separation, services test logic, CLI tests integration | Single test layer (insufficient coverage), three layers with tools/ (no MCP tools in easel) |
+| 2026-02-22 | Two test layers (services + CLI) | Clean separation, services test logic, CLI tests integration | Single test layer (insufficient coverage), three layers with tools/ (no MCP tools in dauber) |
 | 2026-02-22 | Mock httpx at transport level | Tests actual request construction, cleaner than monkeypatching | respx library (extra dep), monkeypatch (fragile) |
 | 2026-02-22 | CanvasClient class (not module functions) | Testable via DI, supports multiple configs, clean async lifecycle | Module-level functions like canvas-mcp (harder to test, global state) |
 | 2026-02-22 | AsyncMock for service tests, patch get_context for CLI tests | Clean separation: service tests mock client, CLI tests mock services. No real config needed. | Transport-level mocks for CLI tests (too deep, couples layers) |
 | 2026-02-22 | Rubric bracket-notation as a sync helper function | Reusable by grading service and future assessment workflow. Isolates Canvas encoding quirk. | Inline in grading service (harder to test), pydantic model (overkill) |
 | 2026-02-22 | HTML stripping in assignments service | Canvas returns HTML descriptions; stripping at service level keeps CLI clean | Strip in CLI layer (duplicates logic), use a library like beautifulsoup (heavy dep for simple case) |
-| 2026-02-22 | Assessment JSON as file-based interchange | Skills (assess:ai-pass, assess:refine) read/write JSON files; easel handles Canvas I/O, skills handle AI evaluation | Database (overkill), MCP tools (coupling), in-memory only (no persistence between skill invocations) |
+| 2026-02-22 | Assessment JSON as file-based interchange | Skills (assess:ai-pass, assess:refine) read/write JSON files; dauber handles Canvas I/O, skills handle AI evaluation | Database (overkill), MCP tools (coupling), in-memory only (no persistence between skill invocations) |
 | 2026-02-22 | Dry-run by default for assess submit | Prevents accidental grade submission; --confirm required for actual Canvas write | Auto-submit (dangerous), interactive prompt (harder to script) |
 | 2026-02-22 | Copy _strip_html into each service that needs it | Keeps services self-contained, no cross-service imports for a trivial helper | Shared utility module (premature abstraction for 3-line function) |
 | 2026-02-22 | Pages identified by URL slug, not numeric ID | Canvas API uses slugs for page endpoints; matches API semantics | Numeric IDs (not how Canvas pages work) |

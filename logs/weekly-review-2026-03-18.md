@@ -1,4 +1,4 @@
-# Weekly review: easel
+# Weekly review: dauber
 
 **Period:** 2026-02-23 to 2026-03-18
 
@@ -9,13 +9,13 @@
   `user_email` at the service layer; retains `user_id` for grade
   round-tripping. Expanded `.claude/commands/` with skill files for
   assignments, content, course, discuss, and grading workflows.
-  `anonymize` field added to local config and `easel config init`.
+  `anonymize` field added to local config and `dauber config init`.
 
 - **v0.1.2 -- XDG config system:** Global config relocated to
-  `$XDG_CONFIG_HOME/easel/config.toml` (default `~/.config/easel/`).
+  `$XDG_CONFIG_HOME/dauber/config.toml` (default `~/.config/dauber/`).
   Local config moved from `.claude/course_parameters.yaml` to
-  `./easel/config.toml` (TOML throughout). `--defaults` flag on
-  `easel config global` for non-interactive setup. pyyaml removed.
+  `./dauber/config.toml` (TOML throughout). `--defaults` flag on
+  `dauber config global` for non-interactive setup. pyyaml removed.
 
 - **v0.1.3 -- Config-driven defaults:** `course` argument made optional
   on all commands; falls back to `canvas_course_id` in config.

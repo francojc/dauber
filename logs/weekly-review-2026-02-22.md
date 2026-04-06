@@ -1,10 +1,10 @@
-# Weekly review: easel
+# Weekly review: dauber
 
 **Period:** 2026-02-16 to 2026-02-22
 
 ## Accomplished
 
-- **Full greenfield buildout (Phases 0-5):** Took easel from init commit
+- **Full greenfield buildout (Phases 0-5):** Took dauber from init commit
   to a working Canvas LMS CLI in a single day (18 commits on 2026-02-22).
   Core layer (config, async HTTP client, course cache), courses, assignments,
   rubrics, grading, assessment workflow, modules, pages, and discussions
@@ -20,8 +20,8 @@
   correctly.
 
 - **Skill commands migration:** assess/* skill commands (setup, ai-pass,
-  refine, submit) migrated from canvas-mcp to easel CLI. Added
-  `easel commands install` to copy skill files into project `.claude/commands/`.
+  refine, submit) migrated from canvas-mcp to dauber CLI. Added
+  `dauber commands install` to copy skill files into project `.claude/commands/`.
 
 - **Configuration refactor:** Env vars settled on `CANVAS_API_KEY` and
   `CANVAS_BASE_URL` after two rounds of renaming (CANVAS_API_TOKEN/URL ->
@@ -34,7 +34,7 @@
 ## In progress
 
 - **Phase 6 (polish):** ~40% complete. `commands install` CLI done, skill
-  commands migrated. Remaining: live smoke tests, `easel config` sub-app,
+  commands migrated. Remaining: live smoke tests, `dauber config` sub-app,
   shell completion, README, documentation pass.
 
 ## Stalled or blocked
@@ -46,7 +46,7 @@
 
 1. Run live smoke tests against Canvas API for all commands before adding
    more features -- confirm real-world behavior matches test expectations.
-2. Implement `easel config` sub-app (init/global/show) for repo-level
+2. Implement `dauber config` sub-app (init/global/show) for repo-level
    course_parameters.yaml setup.
 3. Add shell completion support (Typer has built-in support for this).
 4. Write the README with "Extending with AI" section covering skills and

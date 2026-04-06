@@ -1,4 +1,4 @@
-# Feature Spec: Pi Skills Support for `easel commands install`
+# Feature Spec: Pi Skills Support for `dauber commands install`
 
 **Status:** Proposed
 **Date:** 2026-03-24
@@ -7,7 +7,7 @@
 ## Problem Statement
 
 Easel bundles Claude Code slash commands (`.claude/commands/`) and can
-install them globally or locally via `easel commands install`. However,
+install them globally or locally via `dauber commands install`. However,
 Pi (another coding agent harness) uses a different skill format — the
 [Agent Skills standard](https://agentskills.io/specification) — with
 `SKILL.md` files inside named directories under `.pi/skills/`.
@@ -17,16 +17,16 @@ converting them. Easel should support both harnesses natively.
 
 ## Proposed Solution
 
-Add a `--pi` flag to `easel commands install` that installs skills in
+Add a `--pi` flag to `dauber commands install` that installs skills in
 Pi's Agent Skills format instead of Claude Code's slash-command format.
 
 ### CLI Interface
 
 ```
-easel commands install              # Claude → ~/.claude/commands/ (unchanged)
-easel commands install --local      # Claude → ./.claude/commands/ (unchanged)
-easel commands install --pi         # Pi     → ./.pi/skills/       (new)
-easel commands install --pi --global# Pi     → ~/.pi/agent/skills/ (new)
+dauber commands install              # Claude → ~/.claude/commands/ (unchanged)
+dauber commands install --local      # Claude → ./.claude/commands/ (unchanged)
+dauber commands install --pi         # Pi     → ./.pi/skills/       (new)
+dauber commands install --pi --global# Pi     → ~/.pi/agent/skills/ (new)
 ```
 
 The `--pi` flag:
@@ -48,7 +48,7 @@ schemas differ and Pi requires a specific directory structure.
 #### Option A: Ship both formats in the repo (recommended)
 
 ```
-easel/
+dauber/
 ├── .claude/commands/           # Claude Code format (existing)
 │   ├── assess/
 │   │   ├── setup.md
@@ -101,7 +101,7 @@ Each Claude command maps to one Pi skill. The conversion rules:
 | `allowed-tools` | — | Dropped (Pi doesn't use this) |
 
 The body content (everything after the closing `---`) is copied
-verbatim. No changes needed — the instructions reference `easel` CLI
+verbatim. No changes needed — the instructions reference `dauber` CLI
 commands which work identically regardless of harness.
 
 ### Pi Skill Naming Convention
@@ -125,9 +125,9 @@ Mapping from Claude's `{group}/{filename}.md`:
 
 ## Implementation Plan
 
-### 1. Create Pi skill files in the easel repo
+### 1. Create Pi skill files in the dauber repo
 
-Add `.pi/skills/` directory to the easel repo with pre-converted
+Add `.pi/skills/` directory to the dauber repo with pre-converted
 SKILL.md files for all 11 commands. Each has:
 
 ```markdown
@@ -284,8 +284,8 @@ def test_commands_install_pi_local(tmp_path):
     project.mkdir()
 
     with (
-        patch("easel.cli.commands._get_repo_root", return_value=repo),
-        patch("easel.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
+        patch("dauber.cli.commands._get_repo_root", return_value=repo),
+        patch("dauber.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
         patch("pathlib.Path.cwd", return_value=project),
     ):
         result = runner.invoke(app, ["commands", "install", "--pi"])
@@ -302,8 +302,8 @@ def test_commands_install_pi_global(tmp_path):
     home = tmp_path / "home"
 
     with (
-        patch("easel.cli.commands._get_repo_root", return_value=repo),
-        patch("easel.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
+        patch("dauber.cli.commands._get_repo_root", return_value=repo),
+        patch("dauber.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
         patch("pathlib.Path.home", return_value=home),
     ):
         result = runner.invoke(app, ["commands", "install", "--pi", "--global"])
@@ -322,8 +322,8 @@ def test_commands_install_pi_skip_existing(tmp_path):
     (existing / "SKILL.md").write_text("# old")
 
     with (
-        patch("easel.cli.commands._get_repo_root", return_value=repo),
-        patch("easel.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
+        patch("dauber.cli.commands._get_repo_root", return_value=repo),
+        patch("dauber.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
         patch("pathlib.Path.cwd", return_value=project),
     ):
         result = runner.invoke(app, ["commands", "install", "--pi"])
@@ -342,8 +342,8 @@ def test_commands_install_pi_overwrite(tmp_path):
     (existing / "SKILL.md").write_text("# old")
 
     with (
-        patch("easel.cli.commands._get_repo_root", return_value=repo),
-        patch("easel.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
+        patch("dauber.cli.commands._get_repo_root", return_value=repo),
+        patch("dauber.cli.commands._PI_SKILL_NAMES", ["assess-setup"]),
         patch("pathlib.Path.cwd", return_value=project),
     ):
         result = runner.invoke(app, ["commands", "install", "--pi", "--overwrite"])
@@ -371,7 +371,7 @@ def test_commands_install_global_without_pi(tmp_path):
 | File | Change |
 |---|---|
 | `.pi/skills/*/SKILL.md` (×11) | **New** — Pi-format skill files |
-| `src/easel/cli/commands.py` | Add `--pi` and `--global` flags, `_install_pi_skills()`, refactor existing into `_install_claude_commands()` |
+| `src/dauber/cli/commands.py` | Add `--pi` and `--global` flags, `_install_pi_skills()`, refactor existing into `_install_claude_commands()` |
 | `tests/cli/test_commands.py` | 6 new tests for Pi install paths |
 | `specs/planning.md` | Add v0.1.7 milestone |
 | `specs/progress.md` | Track Pi skills feature |
@@ -383,7 +383,7 @@ def test_commands_install_global_without_pi(tmp_path):
    the project tree, so cwd is the natural target.
 
 2. **Should we add a `--list` subcommand to show available skills?**
-   Nice to have but not blocking. Could be `easel commands list` showing
+   Nice to have but not blocking. Could be `dauber commands list` showing
    both Claude and Pi formats with their install status.
 
 3. **Should the Pi skill descriptions be enhanced beyond the Claude
