@@ -9,7 +9,7 @@ from dauber.core.client import CanvasClient
 from dauber.core.config import Config
 
 
-class EaselContext:
+class DauberContext:
     """Holds lazily-initialized core objects for CLI commands.
 
     Stored on ``typer.Context.obj["ctx"]`` by the app callback.
@@ -44,8 +44,8 @@ class EaselContext:
             await self._client.close()
 
 
-def get_context(ctx_obj: dict[str, Any]) -> EaselContext:
-    """Retrieve or create the EaselContext from a Typer context dict."""
+def get_context(ctx_obj: dict[str, Any]) -> DauberContext:
+    """Retrieve or create the DauberContext from a Typer context dict."""
     if "ctx" not in ctx_obj:
-        ctx_obj["ctx"] = EaselContext()
+        ctx_obj["ctx"] = DauberContext()
     return ctx_obj["ctx"]

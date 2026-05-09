@@ -145,7 +145,7 @@ def test_resolve_anonymize_defaults_false(_local, _global):
 
 
 def _patch_context(module_path):
-    """Patch EaselContext so CLI commands don't need real config."""
+    """Patch DauberContext so CLI commands don't need real config."""
     from unittest.mock import AsyncMock
 
     mock_ctx = AsyncMock()

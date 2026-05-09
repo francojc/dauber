@@ -8,7 +8,7 @@ from typing import Optional
 import typer
 
 from dauber import __version__
-from dauber.cli._context import EaselContext, get_context
+from dauber.cli._context import DauberContext, get_context
 from dauber.cli._output import OutputFormat
 
 from dauber.cli.assessments import assess_app
@@ -49,7 +49,7 @@ def _test_callback(value: bool) -> None:
     if value:
 
         async def _run_test() -> tuple[bool, str]:
-            ctx = EaselContext()
+            ctx = DauberContext()
             try:
                 return await ctx.client.test_connection()
             finally:
@@ -66,7 +66,7 @@ def _test_callback(value: bool) -> None:
 
 def _config_callback(value: bool) -> None:
     if value:
-        ctx = EaselContext()
+        ctx = DauberContext()
         try:
             cfg = ctx.config
         except ValueError as exc:
@@ -115,7 +115,7 @@ def callback(
     """Global options for dauber."""
     ctx.ensure_object(dict)
     ctx.obj["format"] = OutputFormat(fmt)
-    _ = get_context(ctx.obj)  # initialize EaselContext on ctx.obj
+    _ = get_context(ctx.obj)  # initialize DauberContext on ctx.obj
 
 
 def main() -> None:

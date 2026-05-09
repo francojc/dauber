@@ -3,6 +3,13 @@
 All notable changes to dauber are documented in this file.
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+### Changed
+
+- Renamed internal `EaselContext` class to `DauberContext` in
+  `cli/_context.py` and `cli/app.py` — missed in the v0.1.8 package rename
+
 ## [0.1.8] - 2026-04-06
 
 ### Changed

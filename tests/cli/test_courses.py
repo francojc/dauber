@@ -41,7 +41,7 @@ MOCK_ENROLLMENTS = [
 
 
 def _patch_context():
-    """Patch EaselContext so CLI commands don't need real config."""
+    """Patch DauberContext so CLI commands don't need real config."""
     mock_ctx = AsyncMock()
     mock_ctx.client = AsyncMock()
     mock_ctx.cache = AsyncMock()
