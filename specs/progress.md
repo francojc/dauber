@@ -1,16 +1,16 @@
 # Development Project Progress
 
 **Project:** dauber
-**Status:** v0.1.7 complete
-**Last Updated:** 2026-03-24
+**Status:** v0.1.8 complete
+**Last Updated:** 2026-04-06
 
 ## Current Status Overview
 
 ### Development Phase
 
-- **Current Phase:** v0.1.7 planning
-- **Phase Progress:** v0.1.6 feature-complete; v0.1.7 spec written, not yet implemented
-- **Overall Project Progress:** v0.1.0–v0.1.5 released; v0.1.6 code complete
+- **Current Phase:** Post-v0.1.8 — maintenance / feature planning
+- **Phase Progress:** All planned phases and milestones complete through v0.1.8
+- **Overall Project Progress:** v0.1.0–v0.1.8 released; project on PyPI
 
 ### Recent Accomplishments
 
@@ -64,6 +64,25 @@
   now installs `rubrics/create.md`
 - 288 total tests, all passing, ruff clean
 
+### Recent Accomplishments (v0.1.8)
+
+- Package renamed from `easel` to `dauber` — all internal imports, entry
+  points, config paths (`dauber/config.toml`, `~/.config/dauber/config.toml`),
+  and documentation updated
+- First public release published to PyPI
+- `pyproject.toml` expanded with description, license, authors, keywords,
+  classifiers, and `[project.urls]` for PyPI metadata
+- `LICENSE` (MIT) added
+- `justfile` with setup, dev, quality, test, build/release, Nix, and utility recipes
+- `.github/workflows/ci.yml`: lint, type-check, test (Python 3.11 + 3.12),
+  build, and trusted-publisher PyPI publish on release
+- PDF text extraction fix: `_normalize_extracted_text()` collapses
+  inter-word newlines from `pypdf` positional layouts into spaces
+- Assessment JSON now written with `ensure_ascii=False` — accented and
+  non-Latin characters stored as literal UTF-8
+- Discussion topic submissions added to assessment service
+- AGENTS.md replaces CLAUDE.md
+
 ### Recent Accomplishments (v0.1.7)
 
 - `.pi/skills/` directory with 11 SKILL.md files (Pi Agent Skills format)
@@ -100,6 +119,7 @@
 - [x] v0.1.5: CSV output format (#8) + file-based rubric grading (#9)
 - [x] v0.1.6: Rubrics subcommand (import CSV, attach, skill, DOCX/PDF extraction) — complete
 - [x] v0.1.7: Pi Agent Skills support — complete
+- [x] v0.1.8: Rename to dauber, PyPI publish, CI, assessment fixes — complete
 
 ### At-Risk Milestones
 
@@ -109,7 +129,7 @@
 
 ### Build Health
 
-- **Last Successful Build:** 2026-03-24 (`uv sync` + `uv run pytest tests/`)
+- **Last Successful Build:** 2026-04-06 (`uv sync` + `uv run pytest tests/`)
 - **Build Warnings:** None
 
 ### Test Results
@@ -200,14 +220,10 @@
 
 ### Planned
 
-- [ ] Pi Agent Skills support (`--pi` flag on `dauber commands install`)
-  - `.pi/skills/` directory with 11 pre-converted `SKILL.md` files
-  - `_install_pi_skills()` in `cli/commands.py`; refactor Claude path
-    into `_install_claude_commands()` for symmetry
-  - `--pi` (local default) and `--pi --global` install paths
-  - Mutual-exclusion guards: `--pi`+`--local` error; `--global` without
-    `--pi` error
-  - 6 new tests in `tests/cli/test_commands.py`
+- [ ] Add `pytest-cov` and measure test coverage
+- [ ] Integration tests against Canvas sandbox
+- [ ] Rename `EaselContext` → `DauberContext` in `cli/_context.py`
+  (internal class name missed in v0.1.8 rename)
 
 ### Deferred or Cut
 
@@ -268,18 +284,14 @@
 
 ### Immediate Actions (Next Session)
 
-- Tag and release v0.1.6
-- Update CHANGELOG.md with v0.1.6 changes
-- Bump version in pyproject.toml to 0.1.6
-- Begin v0.1.7: create `.pi/skills/` with converted SKILL.md files
+- Add `pytest-cov` and run first coverage report
+- Rename `EaselContext` → `DauberContext` (missed in v0.1.8 rename)
 
 ### Medium-term Goals (Next Few Sessions)
 
-- Implement `--pi` flag and `_install_pi_skills()` in `cli/commands.py`
-- Add 6 Pi install tests to `tests/cli/test_commands.py`
-- Add `pytest-cov` to measure test coverage
-- Consider announcement threading, module item CRUD, or batch grading
-  improvements for a later release
+- Plan v0.1.9: candidates include module item CRUD, announcement
+  threading, batch grading improvements, integration test suite
+- Write integration tests against Canvas sandbox
 
 ### Decisions Needed
 
@@ -289,15 +301,14 @@
 
 ### Next Release
 
-**v0.1.7** — Pi Agent Skills support
-- `dauber commands install --pi` installs skills to `.pi/skills/`
-- `dauber commands install --pi --global` installs to `~/.pi/agent/skills/`
-- Ships 11 pre-converted `SKILL.md` files in `.pi/skills/`
+**v0.1.9** — TBD (candidates: pytest-cov, EaselContext rename, module item
+CRUD, integration tests)
 
 ### Release History
 
 | Version | Date       | Key Changes                                              |
 |---------|------------|----------------------------------------------------------|
+| 0.1.8   | 2026-04-06 | Rename to dauber, PyPI publish, CI, PDF/unicode fixes    |
 | 0.1.7   | 2026-03-24 | Pi Agent Skills: --pi flag, .pi/skills/, 294 tests       |
 | 0.1.6   | 2026-03-24 | Rubrics sub-app, DOCX/PDF extraction, commands fix; 288 tests |
 | 0.1.5   | 2026-03-18 | CSV output format (#8), file-based rubric grading (#9)   |

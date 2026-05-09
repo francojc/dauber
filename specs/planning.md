@@ -1,8 +1,8 @@
 # Development Project Planning
 
 **Project:** dauber
-**Status:** v0.1.7 complete
-**Last Updated:** 2026-03-24
+**Status:** v0.1.8 complete
+**Last Updated:** 2026-04-06
 
 ## Project Overview
 
@@ -230,6 +230,24 @@ Each Claude `{group}/{file}.md` maps to a `{group}-{file}/SKILL.md`
 directory with a minimal frontmatter header (`name`, `description`).
 Body content is copied verbatim — the instructions call `dauber` CLI
 commands which work identically under either harness.
+
+### v0.1.8: Rename, PyPI Publish, CI (COMPLETE)
+
+- [x] Package renamed from `easel` to `dauber` — all internal imports,
+      entry points, config paths, and documentation updated
+- [x] First public release published to PyPI
+- [x] `pyproject.toml` expanded with description, license, authors,
+      keywords, classifiers, and `[project.urls]`
+- [x] `LICENSE` (MIT) added
+- [x] `justfile` with setup, dev, quality, test, build/release, Nix,
+      and utility recipes
+- [x] `.github/workflows/ci.yml`: lint, type-check, test (Python 3.11
+      + 3.12), build, and trusted-publisher PyPI publish on release
+- [x] PDF text extraction fix: `_normalize_extracted_text()` collapses
+      inter-word newlines from `pypdf` positional layouts
+- [x] Assessment JSON written with `ensure_ascii=False` for UTF-8 literals
+- [x] Discussion topic submissions added to assessment service
+- [x] AGENTS.md replaces CLAUDE.md
 
 ### v0.1.5: Output and Usability Improvements (COMPLETE)
 
