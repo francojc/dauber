@@ -1,8 +1,8 @@
 # Development Project Planning
 
 **Project:** dauber
-**Status:** v0.1.8 complete
-**Last Updated:** 2026-04-06
+**Status:** v0.1.9 planned
+**Last Updated:** 2026-05-10
 
 ## Project Overview
 
@@ -35,7 +35,7 @@
       stdout for data
 - [x] Usable as a backend for Claude Code assess/* skills via
       `dauber <cmd> --format json`
-- [ ] Native support for Pi coding agent via Agent Skills format
+- [x] Native support for Pi coding agent via Agent Skills format
       (`.pi/skills/`) alongside the existing Claude Code format
 
 #### Non-Goals

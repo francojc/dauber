@@ -1,8 +1,8 @@
 # Development Implementation Details
 
 **Project:** dauber
-**Status:** v0.1.7 complete
-**Last Updated:** 2026-03-24
+**Status:** v0.1.9 planned
+**Last Updated:** 2026-05-10
 
 ## Architecture
 
@@ -78,7 +78,9 @@ dauber/
 ├── logs/                 # Session and weekly logs
 ├── pyproject.toml        # Build config and dependencies
 ├── flake.nix             # Nix development environment
-└── CLAUDE.md             # Claude Code project instructions
+├── .github/workflows/ci.yml # GitHub Actions CI + PyPI publish
+├── justfile              # Developer task recipes
+└── AGENTS.md             # Agent project instructions
 ```
 
 ### Key Modules
@@ -356,15 +358,16 @@ uv run pytest tests/services/
 # CLI tests only
 uv run pytest tests/cli/
 
-# With coverage
-uv run pytest tests/ --cov=src/dauber
+# With coverage (v0.1.9 baseline target)
+uv run python -m pytest --cov=dauber --cov-report=term-missing tests/
 ```
 
 ### Coverage Targets
 
-- **Overall:** 80%+
+- **Current Baseline:** Not yet measured; v0.1.9 will record first baseline
+- **Overall:** 80%+ long-term target
 - **Critical Paths:** 90%+ for core/ (client, config, cache)
-- **Exclusions:** CLI output formatting (visual, hard to assert)
+- **Exclusions:** CLI output formatting details and generated/irrelevant files
 
 ### Test Data
 
@@ -383,7 +386,10 @@ uv run pytest tests/ --cov=src/dauber
 
 ### CI/CD Pipeline
 
-- Not yet configured (single developer, local testing)
+- GitHub Actions workflow in `.github/workflows/ci.yml`
+- Runs ruff format check, ruff lint, pyright, tests on Python 3.11/3.12,
+  and package build checks
+- Release event supports trusted-publisher PyPI publishing
 
 ### Release Process
 

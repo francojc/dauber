@@ -1,8 +1,8 @@
 # Development Project Progress
 
 **Project:** dauber
-**Status:** v0.1.8 complete
-**Last Updated:** 2026-04-06
+**Status:** v0.1.9 planned
+**Last Updated:** 2026-05-10
 
 ## Current Status Overview
 
