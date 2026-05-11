@@ -1,5 +1,6 @@
 # Brainstorm: FERPA-compliant anonymization for LLM workflows
 
+**Status:** Resolved in v0.1.1 – `--anonymize` shipped for grading and assessment workflows.
 **Date:** 2026-02-25
 
 ## Starting question

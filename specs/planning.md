@@ -233,7 +233,7 @@ commands which work identically under either harness.
 
 ### v0.1.8: Rename, PyPI Publish, CI (COMPLETE)
 
-- [x] Package renamed from `easel` to `dauber` — all internal imports,
+- [x] Package renamed from `easel` to `dauber` – all internal imports,
       entry points, config paths, and documentation updated
 - [x] First public release published to PyPI
 - [x] `pyproject.toml` expanded with description, license, authors,
@@ -248,6 +248,14 @@ commands which work identically under either harness.
 - [x] Assessment JSON written with `ensure_ascii=False` for UTF-8 literals
 - [x] Discussion topic submissions added to assessment service
 - [x] AGENTS.md replaces CLAUDE.md
+
+### v0.1.9: Quality Baseline + Module Item CRUD (PLANNED)
+
+See `specs/v0.1.9.md` for full milestone spec.
+
+- [ ] Configure and document coverage reporting; record first baseline
+- [ ] Add module item CRUD service functions and CLI commands
+- [ ] Add opt-in integration-test scaffold for Canvas sandbox checks
 
 ### v0.1.5: Output and Usability Improvements (COMPLETE)
 

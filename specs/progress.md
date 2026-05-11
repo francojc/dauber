@@ -8,8 +8,8 @@
 
 ### Development Phase
 
-- **Current Phase:** Post-v0.1.8 — maintenance / feature planning
-- **Phase Progress:** All planned phases and milestones complete through v0.1.8
+- **Current Phase:** v0.1.9 planning
+- **Phase Progress:** v0.1.9 scoped in `specs/v0.1.9.md`; implementation not started
 - **Overall Project Progress:** v0.1.0–v0.1.8 released; project on PyPI
 
 ### Recent Accomplishments
@@ -18,7 +18,7 @@
   Typer app skeleton, async bridge, output formatting, CanvasError
 - Phase 1 complete: Config (pydantic-settings), CanvasClient (httpx
   async with pagination and 429 retry), CourseCache (bidirectional
-  code/ID mapping), EaselContext (lazy init), --test and --config
+  code/ID mapping), DauberContext (lazy init), --test and --config
   callbacks wired to real implementations, 27 tests passing, ruff clean
 - Phase 2 complete: Courses service (list_courses, get_course,
   get_enrollments), courses CLI sub-app (list, show, enrollments),
@@ -95,7 +95,7 @@
 
 ### Active Work
 
-(none)
+- v0.1.9 planning: quality baseline, module item CRUD, integration-test scaffold
 
 ## Milestone Tracking
 
@@ -163,7 +163,7 @@
 - [x] Config via pydantic-settings (env vars, validation)
 - [x] CanvasClient (httpx async, pagination, 429 retry, form data)
 - [x] CourseCache (bidirectional code/ID mapping, smart resolution)
-- [x] EaselContext (lazy init of config, client, cache)
+- [x] DauberContext (lazy init of config, client, cache)
 - [x] --test and --config callbacks (real implementations)
 - [x] Courses service: list_courses, get_course, get_enrollments
 - [x] Courses CLI: `dauber courses list`, `show`, `enrollments`
@@ -220,10 +220,9 @@
 
 ### Planned
 
-- [ ] Add `pytest-cov` and measure test coverage
-- [ ] Integration tests against Canvas sandbox
-- [ ] Rename `EaselContext` → `DauberContext` in `cli/_context.py`
-  (internal class name missed in v0.1.8 rename)
+- [ ] v0.1.9: configure coverage reporting and record first baseline
+- [ ] v0.1.9: add module item CRUD service functions and CLI commands
+- [ ] v0.1.9: add opt-in integration-test scaffold for Canvas sandbox checks
 
 ### Deferred or Cut
 
@@ -237,6 +236,7 @@
 
 ### Recently Resolved
 
+- `EaselContext` renamed to `DauberContext` after the v0.1.8 package rename.
 - --test callback used two separate asyncio.run() calls; httpx client
   bound to first event loop caused crash on cleanup. Fixed by combining
   test + close into single async function.
@@ -284,14 +284,12 @@
 
 ### Immediate Actions (Next Session)
 
-- Add `pytest-cov` and run first coverage report
-- Rename `EaselContext` → `DauberContext` (missed in v0.1.8 rename)
+- Start v0.1.9 implementation: configure coverage reporting and run first baseline
 
 ### Medium-term Goals (Next Few Sessions)
 
-- Plan v0.1.9: candidates include module item CRUD, announcement
-  threading, batch grading improvements, integration test suite
-- Write integration tests against Canvas sandbox
+- Implement module item CRUD service functions and CLI commands
+- Add opt-in integration-test scaffold for Canvas sandbox checks
 
 ### Decisions Needed
 
@@ -301,8 +299,11 @@
 
 ### Next Release
 
-**v0.1.9** — TBD (candidates: pytest-cov, EaselContext rename, module item
-CRUD, integration tests)
+**v0.1.9** – Quality Baseline + Module Item CRUD
+
+- Coverage reporting configuration and measured baseline
+- Module item CRUD under `dauber modules`
+- Opt-in Canvas sandbox integration-test scaffold
 
 ### Release History
 
