@@ -25,7 +25,7 @@ class _HTMLStripper(HTMLParser):
         return "".join(self._parts).strip()
 
 
-def _strip_html(text: str) -> str:
+def _strip_html(text: str | None) -> str:
     """Remove HTML tags from *text*, returning plain text."""
     if not text:
         return ""

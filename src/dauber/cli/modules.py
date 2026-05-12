@@ -31,6 +31,12 @@ modules_app.add_typer(items_app)
 _ITEM_TYPES = {"Page", "Assignment", "Discussion", "File", "ExternalUrl", "SubHeader"}
 
 
+def _validation_error(message: str) -> None:
+    """Emit validation errors consistently across Typer/Click versions."""
+    typer.echo(message, err=True)
+    raise typer.Exit(2)
+
+
 def _validate_item_create(
     item_type: str,
     content_id: str | None,
@@ -38,15 +44,13 @@ def _validate_item_create(
     url: str | None,
 ) -> None:
     if item_type not in _ITEM_TYPES:
-        raise typer.BadParameter(
-            f"type must be one of: {', '.join(sorted(_ITEM_TYPES))}"
-        )
+        _validation_error(f"type must be one of: {', '.join(sorted(_ITEM_TYPES))}")
     if item_type == "Page" and not page_url:
-        raise typer.BadParameter("--page-url is required for Page items")
+        _validation_error("--page-url is required for Page items")
     if item_type in {"Assignment", "Discussion", "File"} and not content_id:
-        raise typer.BadParameter(f"--content-id is required for {item_type} items")
+        _validation_error(f"--content-id is required for {item_type} items")
     if item_type == "ExternalUrl" and not url:
-        raise typer.BadParameter("--url is required for ExternalUrl items")
+        _validation_error("--url is required for ExternalUrl items")
 
 
 @modules_app.command("list")
