@@ -24,7 +24,7 @@ courses_app = typer.Typer(name="courses", help="Manage Canvas courses.")
 @async_command
 async def courses_list(
     ctx: typer.Context,
-    concluded: Optional[bool] = typer.Option(
+    concluded: bool = typer.Option(
         False,
         "--concluded",
         help="Include completed courses.",

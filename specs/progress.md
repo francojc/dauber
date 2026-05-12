@@ -1,15 +1,15 @@
 # Development Project Progress
 
 **Project:** dauber
-**Status:** v0.1.9 planned
+**Status:** v0.1.9 complete
 **Last Updated:** 2026-05-10
 
 ## Current Status Overview
 
 ### Development Phase
 
-- **Current Phase:** v0.1.9 planning
-- **Phase Progress:** v0.1.9 scoped in `specs/v0.1.9.md`; implementation not started
+- **Current Phase:** v0.1.9 release ready
+- **Phase Progress:** v0.1.9 implemented: coverage baseline, module item CRUD, read-only integration scaffold
 - **Overall Project Progress:** v0.1.0–v0.1.8 released; project on PyPI
 
 ### Recent Accomplishments
@@ -95,7 +95,7 @@
 
 ### Active Work
 
-- v0.1.9 planning: quality baseline, module item CRUD, integration-test scaffold
+- v0.1.9 verification and release tagging
 
 ## Milestone Tracking
 
@@ -134,7 +134,7 @@
 
 ### Test Results
 
-- **Unit Tests:** 294 passing
+- **Unit Tests:** 311 passing
   - core: config 4, client 11, cache 9, config_files 9
   - services: courses 9, assignments 14, rubrics 18, grading 12,
     assessments 30, modules 14, pages 15, discussions 15
@@ -142,8 +142,8 @@
     assessments 13, modules 11, pages 12, discussions 12,
     config 8, config_defaults 14, commands 10, output 6
   - smoke: 3
-- **Integration Tests:** n/a
-- **Test Coverage:** Not yet measured
+- **Integration Tests:** read-only Canvas sandbox scaffold, skipped by default
+- **Test Coverage:** 90% statement/branch coverage baseline via `uv run python -m pytest --cov=dauber --cov-report=term-missing tests/`
 
 ### Open Defects
 
@@ -220,9 +220,7 @@
 
 ### Planned
 
-- [ ] v0.1.9: configure coverage reporting and record first baseline
-- [ ] v0.1.9: add module item CRUD service functions and CLI commands
-- [ ] v0.1.9: add opt-in integration-test scaffold for Canvas sandbox checks
+(none)
 
 ### Deferred or Cut
 
@@ -284,12 +282,12 @@
 
 ### Immediate Actions (Next Session)
 
-- Start v0.1.9 implementation: configure coverage reporting and run first baseline
+- Reconcile missing `v0.1.8` git tag, then tag and release v0.1.9
 
 ### Medium-term Goals (Next Few Sessions)
 
-- Implement module item CRUD service functions and CLI commands
-- Add opt-in integration-test scaffold for Canvas sandbox checks
+- Consider adding a coverage threshold after one baseline release
+- Consider opt-in mutating Canvas sandbox tests for module item CRUD
 
 ### Decisions Needed
 

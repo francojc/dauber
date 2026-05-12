@@ -170,3 +170,168 @@ def test_modules_delete_error(mock_delete):
         result = runner.invoke(app, ["modules", "delete", "--course", "IS505", "999"])
     assert result.exit_code == 1
     assert "not found" in result.output
+
+
+# -- module items --
+
+MOCK_ITEMS = [
+    {
+        "id": 10,
+        "title": "Intro",
+        "type": "Page",
+        "page_url": "intro",
+        "position": 1,
+        "indent": 0,
+        "published": True,
+    },
+]
+
+MOCK_ITEM = {
+    "id": 10,
+    "title": "Intro",
+    "type": "Page",
+    "page_url": "intro",
+    "position": 1,
+    "indent": 0,
+    "published": True,
+}
+
+
+@patch("dauber.cli.modules.list_module_items", new_callable=AsyncMock)
+def test_module_items_list(mock_list):
+    mock_list.return_value = MOCK_ITEMS
+    with _patch_context():
+        result = runner.invoke(
+            app, ["modules", "items", "list", "--course", "IS505", "1"]
+        )
+    assert result.exit_code == 0
+    assert "Intro" in result.output
+
+
+@patch("dauber.cli.modules.get_module_item", new_callable=AsyncMock)
+def test_module_items_show(mock_get):
+    mock_get.return_value = MOCK_ITEM
+    with _patch_context():
+        result = runner.invoke(
+            app, ["modules", "items", "show", "--course", "IS505", "1", "10"]
+        )
+    assert result.exit_code == 0
+    assert "Intro" in result.output
+
+
+@patch("dauber.cli.modules.create_module_item", new_callable=AsyncMock)
+def test_module_items_create_page(mock_create):
+    mock_create.return_value = MOCK_ITEM
+    with _patch_context():
+        result = runner.invoke(
+            app,
+            [
+                "modules",
+                "items",
+                "create",
+                "--course",
+                "IS505",
+                "1",
+                "Intro",
+                "--type",
+                "Page",
+                "--page-url",
+                "intro",
+            ],
+        )
+    assert result.exit_code == 0
+    assert "Intro" in result.output
+    mock_create.assert_awaited_once()
+
+
+@patch("dauber.cli.modules.create_module_item", new_callable=AsyncMock)
+def test_module_items_create_assignment(mock_create):
+    mock_create.return_value = {
+        "id": 11,
+        "title": "Essay",
+        "type": "Assignment",
+        "content_id": 42,
+    }
+    with _patch_context():
+        result = runner.invoke(
+            app,
+            [
+                "modules",
+                "items",
+                "create",
+                "--course",
+                "IS505",
+                "1",
+                "Essay",
+                "--type",
+                "Assignment",
+                "--content-id",
+                "42",
+            ],
+        )
+    assert result.exit_code == 0
+    assert "Essay" in result.output
+
+
+def test_module_items_create_page_requires_page_url():
+    with _patch_context():
+        result = runner.invoke(
+            app,
+            [
+                "modules",
+                "items",
+                "create",
+                "--course",
+                "IS505",
+                "1",
+                "Intro",
+                "--type",
+                "Page",
+            ],
+        )
+    assert result.exit_code != 0
+    assert "--page-url is required" in result.output
+
+
+@patch("dauber.cli.modules.update_module_item", new_callable=AsyncMock)
+def test_module_items_update(mock_update):
+    mock_update.return_value = {**MOCK_ITEM, "title": "Updated"}
+    with _patch_context():
+        result = runner.invoke(
+            app,
+            [
+                "modules",
+                "items",
+                "update",
+                "--course",
+                "IS505",
+                "1",
+                "10",
+                "--title",
+                "Updated",
+            ],
+        )
+    assert result.exit_code == 0
+    assert "Updated" in result.output
+
+
+@patch("dauber.cli.modules.delete_module_item", new_callable=AsyncMock)
+def test_module_items_delete(mock_delete):
+    mock_delete.return_value = {"id": "10", "deleted": True}
+    with _patch_context():
+        result = runner.invoke(
+            app, ["modules", "items", "delete", "--course", "IS505", "1", "10"]
+        )
+    assert result.exit_code == 0
+    assert "Deleted module item 10" in result.output
+
+
+@patch("dauber.cli.modules.list_module_items", new_callable=AsyncMock)
+def test_module_items_list_error(mock_list):
+    mock_list.side_effect = CanvasError("forbidden", status_code=403)
+    with _patch_context():
+        result = runner.invoke(
+            app, ["modules", "items", "list", "--course", "IS505", "1"]
+        )
+    assert result.exit_code == 1
+    assert "forbidden" in result.output

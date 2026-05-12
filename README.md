@@ -214,7 +214,15 @@ dauber modules show [--course COURSE] <module-id>
 dauber modules create [--course COURSE] <name> [--position N] [--publish]
 dauber modules update [--course COURSE] <module-id> [--name ...] [--publish/--unpublish]
 dauber modules delete [--course COURSE] <module-id>
+dauber modules items list [--course COURSE] <module-id>
+dauber modules items show [--course COURSE] <module-id> <item-id>
+dauber modules items create [--course COURSE] <module-id> <title> --type TYPE [--content-id ID] [--page-url SLUG] [--url URL]
+dauber modules items update [--course COURSE] <module-id> <item-id> [--title ...] [--position N]
+dauber modules items delete [--course COURSE] <module-id> <item-id>
 ```
+
+Module item types: `Page` uses `--page-url`; `Assignment`, `Discussion`, and
+`File` use `--content-id`; `ExternalUrl` uses `--url`; `SubHeader` needs only a title.
 
 ### pages
 
@@ -362,7 +370,9 @@ read from `./dauber/config.toml`. Run `dauber config init` to set it up.
 ```sh
 uv sync                         # install dependencies
 uv run dauber --help             # verify install
-uv run pytest tests/            # run tests
+uv run pytest tests/            # run tests (integration skipped by default)
+uv run python -m pytest --cov=dauber --cov-report=term-missing tests/  # coverage
+uv run python -m pytest tests/integration/ -m integration  # Canvas sandbox checks
 uv run ruff check src/ tests/   # lint
 uv run ruff format src/ tests/  # format
 ```
@@ -383,11 +393,14 @@ CLI (Typer) -> services (async) -> core (HTTP client, config, cache)
 
 ### Tests
 
-Tests are organized in two layers:
+Tests are organized in three layers:
 
 - `tests/services/` -- mock at the `CanvasClient` transport level
 - `tests/cli/` -- mock at the service function level, use
   `typer.testing.CliRunner`
+- `tests/integration/` -- read-only Canvas sandbox checks, skipped unless run
+  explicitly with `-m integration` and `CANVAS_API_KEY`, `CANVAS_BASE_URL`,
+  and `CANVAS_SANDBOX_COURSE_ID` set
 
 ## License
 

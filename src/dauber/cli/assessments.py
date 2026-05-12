@@ -89,13 +89,13 @@ async def assess_setup(
             "anonymize": anonymize,
         }
     )
-    course_name = defaults.get("course_name") or ""
-    level = defaults.get("level") or "undergraduate"
-    feedback_language = defaults.get("feedback_language") or "en"
-    language_learning = defaults.get("language_learning") or False
-    language_level = defaults.get("language_level") or "NA"
-    formality = defaults.get("formality") or "casual"
-    anonymize = defaults.get("anonymize") or False
+    course_name = str(defaults.get("course_name") or "")
+    level = str(defaults.get("level") or "undergraduate")
+    feedback_language = str(defaults.get("feedback_language") or "en")
+    language_learning = bool(defaults.get("language_learning") or False)
+    language_level = str(defaults.get("language_level") or "NA")
+    formality = str(defaults.get("formality") or "casual")
+    anonymize = bool(defaults.get("anonymize") or False)
 
     ectx = get_context(ctx.obj)
     fmt = ctx.obj["format"]

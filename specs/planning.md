@@ -1,7 +1,7 @@
 # Development Project Planning
 
 **Project:** dauber
-**Status:** v0.1.9 planned
+**Status:** v0.1.9 complete
 **Last Updated:** 2026-05-10
 
 ## Project Overview
@@ -249,13 +249,15 @@ commands which work identically under either harness.
 - [x] Discussion topic submissions added to assessment service
 - [x] AGENTS.md replaces CLAUDE.md
 
-### v0.1.9: Quality Baseline + Module Item CRUD (PLANNED)
+### v0.1.9: Quality Baseline + Module Item CRUD (COMPLETE)
 
-See `specs/v0.1.9.md` for full milestone spec.
-
-- [ ] Configure and document coverage reporting; record first baseline
-- [ ] Add module item CRUD service functions and CLI commands
-- [ ] Add opt-in integration-test scaffold for Canvas sandbox checks
+- [x] Configure and document coverage reporting; first baseline: 90%
+- [x] Add module item CRUD service functions and CLI commands under
+      `dauber modules items`
+- [x] Support Page (`--page-url`), Assignment/Discussion/File
+      (`--content-id`), ExternalUrl (`--url`), and SubHeader items
+- [x] Add opt-in read-only integration-test scaffold for Canvas sandbox checks
+- [x] 311 unit tests passing; integration tests skipped by default
 
 ### v0.1.5: Output and Usability Improvements (COMPLETE)
 
@@ -316,7 +318,7 @@ See `specs/v0.1.9.md` for full milestone spec.
 ### Quality Criteria
 
 - [x] ruff check and ruff format pass with no warnings
-- [ ] Test coverage measured (pytest-cov not yet added)
+- [x] Test coverage measured (90% baseline for v0.1.9)
 - [x] No critical defects in core HTTP/auth handling
 
 ### Adoption Criteria

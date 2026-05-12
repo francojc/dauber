@@ -5,10 +5,28 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.1.9] - 2026-05-11
+
+### Added
+
+- Coverage configuration and `just cov` recipe using `pytest-cov`; CI now runs
+  a coverage report without enforcing a threshold
+- `dauber modules items` subcommands for module item CRUD:
+  `list`, `show`, `create`, `update`, and `delete`
+- Module item service functions for Canvas `Page`, `Assignment`, `Discussion`,
+  `File`, `ExternalUrl`, and `SubHeader` items
+- Read-only Canvas sandbox integration-test scaffold under `tests/integration/`
+
 ### Changed
 
 - Renamed internal `EaselContext` class to `DauberContext` in
   `cli/_context.py` and `cli/app.py` — missed in the v0.1.8 package rename
+- README documents module item commands, coverage, and integration-test usage
+
+### Fixed
+
+- `.coverage`, `coverage.xml`, and `htmlcov/` are ignored; tracked coverage
+  artifact removed from source control
 
 ## [0.1.8] - 2026-04-06
 
@@ -216,6 +234,7 @@ Initial release. Full Canvas LMS CLI for instructor workflows.
 - `--test` flag for Canvas API connectivity check
 - 234 tests passing across services and CLI layers
 
+[0.1.9]: https://github.com/francojc/dauber/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/francojc/dauber/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/francojc/dauber/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/francojc/dauber/compare/v0.1.5...v0.1.6

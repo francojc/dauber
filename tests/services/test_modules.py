@@ -9,10 +9,15 @@ from dauber.core.client import CanvasClient
 from dauber.services import CanvasError
 from dauber.services.modules import (
     create_module,
+    create_module_item,
     delete_module,
+    delete_module_item,
     get_module,
+    get_module_item,
+    list_module_items,
     list_modules,
     update_module,
+    update_module_item,
 )
 
 
@@ -223,3 +228,127 @@ async def test_delete_module_http_error(client):
     with pytest.raises(CanvasError) as exc_info:
         await delete_module(client, "1", "999")
     assert exc_info.value.status_code == 404
+
+
+# -- module items --
+
+
+async def test_list_module_items(client):
+    client.get_paginated.return_value = [
+        {
+            "id": 10,
+            "title": "Intro",
+            "type": "Page",
+            "page_url": "intro",
+            "position": 1,
+        },
+        {"id": 11, "title": "Essay", "type": "Assignment", "content_id": 42},
+    ]
+
+    result = await list_module_items(client, "1", "2")
+    assert len(result) == 2
+    assert result[0]["title"] == "Intro"
+    assert result[0]["page_url"] == "intro"
+
+
+async def test_list_module_items_http_error(client):
+    client.get_paginated.side_effect = httpx.HTTPStatusError(
+        "error",
+        request=httpx.Request(
+            "GET", "https://canvas.test/api/v1/courses/1/modules/2/items"
+        ),
+        response=httpx.Response(403, text="forbidden"),
+    )
+    with pytest.raises(CanvasError) as exc_info:
+        await list_module_items(client, "1", "2")
+    assert exc_info.value.status_code == 403
+
+
+async def test_get_module_item(client):
+    client.request.return_value = {
+        "id": 10,
+        "title": "Intro",
+        "type": "Page",
+        "page_url": "intro",
+        "position": 1,
+    }
+
+    result = await get_module_item(client, "1", "2", "10")
+    assert result["id"] == 10
+    assert result["page_url"] == "intro"
+
+
+async def test_create_module_item_page(client):
+    client.request.return_value = {
+        "id": 10,
+        "title": "Intro",
+        "type": "Page",
+        "page_url": "intro",
+    }
+
+    result = await create_module_item(
+        client, "1", "2", "Intro", "Page", page_url="intro", position=1
+    )
+    assert result["id"] == 10
+
+    call_data = client.request.call_args.kwargs["data"]["module_item"]
+    assert call_data["type"] == "Page"
+    assert call_data["page_url"] == "intro"
+    assert call_data["position"] == 1
+
+
+async def test_create_module_item_assignment(client):
+    client.request.return_value = {
+        "id": 11,
+        "title": "Essay",
+        "type": "Assignment",
+        "content_id": 42,
+    }
+
+    result = await create_module_item(
+        client, "1", "2", "Essay", "Assignment", content_id="42"
+    )
+    assert result["content_id"] == 42
+
+    call_data = client.request.call_args.kwargs["data"]["module_item"]
+    assert call_data["content_id"] == "42"
+
+
+async def test_create_module_item_http_error(client):
+    client.request.side_effect = httpx.HTTPStatusError(
+        "error",
+        request=httpx.Request(
+            "POST", "https://canvas.test/api/v1/courses/1/modules/2/items"
+        ),
+        response=httpx.Response(422, text="invalid"),
+    )
+    with pytest.raises(CanvasError) as exc_info:
+        await create_module_item(client, "1", "2", "Bad", "SubHeader")
+    assert exc_info.value.status_code == 422
+
+
+async def test_update_module_item(client):
+    client.request.return_value = {
+        "id": 10,
+        "title": "Updated",
+        "type": "Page",
+        "indent": 1,
+    }
+
+    result = await update_module_item(client, "1", "2", "10", title="Updated")
+    assert result["title"] == "Updated"
+
+    call_data = client.request.call_args.kwargs["data"]["module_item"]
+    assert call_data == {"title": "Updated"}
+
+
+async def test_update_module_item_no_fields(client):
+    with pytest.raises(CanvasError, match="No fields to update"):
+        await update_module_item(client, "1", "2", "10")
+
+
+async def test_delete_module_item(client):
+    client.request.return_value = None
+
+    result = await delete_module_item(client, "1", "2", "10")
+    assert result == {"id": "10", "deleted": True}

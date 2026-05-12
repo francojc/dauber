@@ -104,7 +104,9 @@ def test_write_global_creates_directories(tmp_path, monkeypatch):
 def test_xdg_config_home_respected(tmp_path, monkeypatch):
     """XDG_CONFIG_HOME is respected when the module constants are recomputed."""
     xdg_dir = tmp_path / "custom-xdg"
-    monkeypatch.setattr("dauber.core.config_files.GLOBAL_CONFIG_DIR", xdg_dir / "dauber")
+    monkeypatch.setattr(
+        "dauber.core.config_files.GLOBAL_CONFIG_DIR", xdg_dir / "dauber"
+    )
     monkeypatch.setattr(
         "dauber.core.config_files.GLOBAL_CONFIG_PATH",
         xdg_dir / "dauber" / "config.toml",

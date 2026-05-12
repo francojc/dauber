@@ -47,6 +47,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: uv sync --group dev
       - run: uv run pytest --tb=short -q
+      - run: uv run python -m pytest --cov=dauber --cov-report=term-missing tests/
 
   build:
     name: Build

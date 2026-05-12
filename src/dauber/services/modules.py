@@ -1,4 +1,4 @@
-"""Modules service — list, detail, create, update, and delete."""
+"""Modules service — manage modules and module items."""
 
 from __future__ import annotations
 
@@ -185,3 +185,160 @@ async def delete_module(
         ) from exc
 
     return {"id": module_id, "deleted": True}
+
+
+_MODULE_ITEM_FIELDS = (
+    "id",
+    "title",
+    "type",
+    "content_id",
+    "html_url",
+    "url",
+    "page_url",
+    "external_url",
+    "position",
+    "indent",
+    "published",
+    "new_tab",
+    "completion_requirement",
+)
+
+
+def _project_module_item(item: dict[str, Any]) -> dict[str, Any]:
+    """Return stable, scriptable module item fields."""
+    return {field: item[field] for field in _MODULE_ITEM_FIELDS if field in item}
+
+
+async def list_module_items(
+    client: CanvasClient,
+    course_id: str,
+    module_id: str,
+) -> list[dict[str, Any]]:
+    """Fetch all items for a module."""
+    try:
+        items = await client.get_paginated(
+            f"/courses/{course_id}/modules/{module_id}/items",
+        )
+    except httpx.HTTPStatusError as exc:
+        raise CanvasError(
+            f"Failed to list items for module {module_id}: {exc.response.text}",
+            status_code=exc.response.status_code,
+        ) from exc
+
+    return [_project_module_item(item) for item in items]
+
+
+async def get_module_item(
+    client: CanvasClient,
+    course_id: str,
+    module_id: str,
+    item_id: str,
+) -> dict[str, Any]:
+    """Fetch a single module item."""
+    try:
+        item = await client.request(
+            "get",
+            f"/courses/{course_id}/modules/{module_id}/items/{item_id}",
+        )
+    except httpx.HTTPStatusError as exc:
+        raise CanvasError(
+            f"Failed to get module item {item_id}: {exc.response.text}",
+            status_code=exc.response.status_code,
+        ) from exc
+
+    return _project_module_item(item)
+
+
+async def create_module_item(
+    client: CanvasClient,
+    course_id: str,
+    module_id: str,
+    title: str,
+    item_type: str,
+    *,
+    content_id: str | None = None,
+    page_url: str | None = None,
+    url: str | None = None,
+    indent: int | None = None,
+    position: int | None = None,
+    published: bool | None = None,
+    new_tab: bool | None = None,
+) -> dict[str, Any]:
+    """Create a module item."""
+    payload: dict[str, Any] = {"title": title, "type": item_type}
+    if content_id is not None:
+        payload["content_id"] = content_id
+    if page_url is not None:
+        payload["page_url"] = page_url
+    if url is not None:
+        payload["url"] = url
+    if indent is not None:
+        payload["indent"] = indent
+    if position is not None:
+        payload["position"] = position
+    if published is not None:
+        payload["published"] = published
+    if new_tab is not None:
+        payload["new_tab"] = new_tab
+
+    try:
+        item = await client.request(
+            "post",
+            f"/courses/{course_id}/modules/{module_id}/items",
+            data={"module_item": payload},
+        )
+    except httpx.HTTPStatusError as exc:
+        raise CanvasError(
+            f"Failed to create module item: {exc.response.text}",
+            status_code=exc.response.status_code,
+        ) from exc
+
+    return _project_module_item(item)
+
+
+async def update_module_item(
+    client: CanvasClient,
+    course_id: str,
+    module_id: str,
+    item_id: str,
+    **kwargs: Any,
+) -> dict[str, Any]:
+    """Update a module item. Only non-None kwargs are sent."""
+    payload = {k: v for k, v in kwargs.items() if v is not None}
+    if not payload:
+        raise CanvasError("No fields to update.")
+
+    try:
+        item = await client.request(
+            "put",
+            f"/courses/{course_id}/modules/{module_id}/items/{item_id}",
+            data={"module_item": payload},
+        )
+    except httpx.HTTPStatusError as exc:
+        raise CanvasError(
+            f"Failed to update module item {item_id}: {exc.response.text}",
+            status_code=exc.response.status_code,
+        ) from exc
+
+    return _project_module_item(item)
+
+
+async def delete_module_item(
+    client: CanvasClient,
+    course_id: str,
+    module_id: str,
+    item_id: str,
+) -> dict[str, Any]:
+    """Delete a module item."""
+    try:
+        await client.request(
+            "delete",
+            f"/courses/{course_id}/modules/{module_id}/items/{item_id}",
+        )
+    except httpx.HTTPStatusError as exc:
+        raise CanvasError(
+            f"Failed to delete module item {item_id}: {exc.response.text}",
+            status_code=exc.response.status_code,
+        ) from exc
+
+    return {"id": item_id, "deleted": True}

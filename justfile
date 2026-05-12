@@ -68,7 +68,11 @@ test-unit:
 
 # Run tests with coverage report
 cov:
-  uv run pytest --cov=src/dauber --cov-report=term-missing
+  uv run python -m pytest --cov=dauber --cov-report=term-missing tests/
+
+# Run read-only Canvas sandbox integration tests
+integration:
+  uv run python -m pytest tests/integration/ -m integration
 
 # Run tests for a single module (e.g.: just test-mod test_courses)
 test-mod mod:
