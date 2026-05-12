@@ -138,7 +138,7 @@ def commands_install(
     global_: bool = typer.Option(
         False,
         "--global",
-        help="Install Pi skills to ~/.pi/agent/skills/ (requires --pi).",
+        help="Install Pi skills to ~/.pi/agent/skills/ (requires `pi`).",
     ),
 ) -> None:
     """Install bundled skill commands for Claude Code or Pi.
