@@ -5,159 +5,285 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/dauber)](https://pypi.org/project/dauber/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-A command-line interface for the Canvas LMS API. Manage courses,
-assignments, grading, and content from the terminal.
+Canvas LMS from your terminal. `dauber` lets instructors list courses, create assignments, manage pages and modules, inspect submissions, post grades, work with rubrics, and run AI-assisted grading workflows without clicking through Canvas.
 
-dauber also serves as a backend for
-[Claude Code](https://docs.anthropic.com/en/docs/claude-code) skill
-commands, enabling AI-assisted grading workflows via `--format json`.
+You do not need to be a programmer to use it. You need a terminal, Python, and a Canvas API token.
+
+## Contents
+
+- [Installation](#installation)
+- [First-time setup](#first-time-setup)
+- [Quick start](#quick-start)
+- [Global flags](#global-flags)
+- [Commands](#commands)
+  - [courses](#dauber-courses)
+  - [assignments](#dauber-assignments)
+  - [rubrics](#dauber-rubrics)
+  - [grading](#dauber-grading)
+  - [assess](#dauber-assess)
+  - [modules](#dauber-modules)
+  - [pages](#dauber-pages)
+  - [discussions](#dauber-discussions)
+  - [config](#dauber-config)
+  - [commands](#dauber-commands)
+- [Configuration](#configuration)
+- [Output formats](#output-formats)
+- [Anonymizing student data](#anonymizing-student-data)
+- [AI skill commands](#ai-skill-commands)
+- [Shell completions](#shell-completions)
+- [Development](#development)
+
+---
 
 ## Installation
 
-**Requirements:** Python 3.11+ and [uv](https://docs.astral.sh/uv/).
+### PyPI with uv, recommended
 
-```sh
-git clone https://github.com/francojc/dauber.git
-cd dauber
+[`uv`](https://docs.astral.sh/uv/) is a fast Python package installer. If you already have `uv`, install `dauber` as a command-line tool:
+
+```bash
+uv tool install dauber
+dauber --version
 ```
 
-Install `dauber` to `~/.local/bin/` so it's available system-wide:
+If your shell cannot find `dauber`, run:
 
-```sh
+```bash
+uv tool update-shell
+```
+
+Then restart your terminal.
+
+### Run once with uvx
+
+Use `uvx` when you want to try `dauber` without installing it permanently:
+
+```bash
+uvx dauber --version
+uvx dauber --help
+```
+
+You can run any command this way:
+
+```bash
+uvx dauber courses list
+```
+
+For regular use, `uv tool install dauber` is nicer because you can type `dauber` directly.
+
+### PyPI with pip
+
+If you prefer standard Python tooling:
+
+```bash
+pip install dauber
+dauber --version
+```
+
+Depending on your Python setup, you may need:
+
+```bash
+python -m pip install dauber
+dauber --version
+```
+
+If `dauber` is installed but not found, your Python scripts directory is probably not on your `PATH`.
+
+### From source
+
+Use this if you want latest code from GitHub or plan to edit `dauber` itself:
+
+```bash
+git clone https://github.com/francojc/dauber.git
+cd dauber
+uv tool install .
+dauber --version
+```
+
+For editable development install, where local code changes take effect immediately:
+
+```bash
 uv tool install -e .
 ```
 
-The `-e` (editable) flag means changes to the source take effect
-immediately without reinstalling. To update after a `git pull`:
+### Requirements
 
-```sh
-uv tool install -e . --force
+- Python 3.11 or newer
+- Canvas account with permission to use Canvas API
+- Canvas API token
+- Canvas base URL, usually something like `https://your-institution.instructure.com`
+
+---
+
+## First-time setup
+
+### 1. Get Canvas API token
+
+In Canvas, open:
+
+```text
+Account > Settings > Approved Integrations > New Access Token
 ```
 
-If you prefer to run from the project directory without a global
-install, use `uv run dauber` instead (after `uv sync`).
+Create a token, copy it, and keep it private. Treat it like a password.
 
-Set two environment variables for Canvas API access:
+### 2. Set environment variables
 
-```sh
+`dauber` reads Canvas credentials from environment variables.
+
+```bash
 export CANVAS_API_KEY="your-canvas-api-token"
 export CANVAS_BASE_URL="https://your-institution.instructure.com"
 ```
 
-The `/api/v1` path is appended automatically. Generate an API token
-from your Canvas account settings under "Approved Integrations."
+Do not include `/api/v1`; `dauber` adds that automatically.
 
-Verify the install and connection:
+To make these available every time you open your terminal, add those two lines to your shell config, such as `~/.zshrc` or `~/.bashrc`.
 
-```sh
-dauber --version
+### 3. Test connection
+
+```bash
 dauber --test
 ```
 
-## Quick start
+If connection works, try:
 
-```sh
-# List your courses
+```bash
 dauber courses list
+```
 
-# List assignments for a course (accepts codes or numeric IDs)
-dauber assignments list --course IS505
+### 4. Optional course config
 
-# View submissions for an assignment
-dauber grading submissions --course IS505 42
+Inside a course project folder, run:
 
-# Set up course-level config
+```bash
 dauber config init
 ```
 
-All commands accept `--format` (`-f`) with four output modes:
+This creates `./dauber/config.toml`, so you do not need to pass `--course` on every command.
 
-| Mode    | Use case                          |
-|---------|-----------------------------------|
-| `table` | Aligned columns (default)         |
-| `json`  | Machine-readable, for piping      |
-| `plain` | Simple key-value pairs            |
-| `csv`   | Header + rows, pipe to file/tools |
+---
 
-## Configuration
+## Quick start
 
-dauber uses two TOML config files. Local values override global.
+```bash
+# Show help
+dauber --help
 
-**Global** (instructor defaults shared across courses):
+# List your Canvas courses
+dauber courses list
 
-```
-$XDG_CONFIG_HOME/dauber/config.toml    # default: ~/.config/dauber/config.toml
-```
+# Show one course, using course code or Canvas numeric ID
+dauber courses show --course IS505
 
-Set up interactively or write defaults without prompting:
+# List assignments in a course
+dauber assignments list --course IS505
 
-```sh
-dauber config global              # interactive prompts
-dauber config global --defaults   # write starter config
-```
+# Show assignment details
+dauber assignments show --course IS505 42
 
-**Local** (per-course settings in the repo root):
+# View submissions
+dauber grading submissions --course IS505 42
 
-```
-./dauber/config.toml
-```
+# View submissions without student names/emails
+dauber grading submissions --course IS505 42 --anonymize
 
-```sh
-dauber config init                # interactive prompts, pre-fills from global
+# Save machine-readable JSON
+dauber grading submissions --course IS505 42 --format json > submissions.json
 ```
 
-**View merged config:**
+`IS505` is example course code. `42` is example Canvas assignment ID.
 
-```sh
-dauber config show                # shows each value with [global] or [local] source
-```
+---
+
+## Global flags
+
+These flags work from top-level `dauber` command.
+
+| Flag | Short | Description |
+|---|---|---|
+| `--help` | | Show help |
+| `--version` | `-V` | Print installed version |
+| `--format <mode>` | `-f` | Output format: `table`, `json`, `plain`, or `csv` |
+| `--test` | | Test Canvas API connection |
+| `--config` | | Show current API URL and masked token |
+| `--install-completion` | | Install shell tab-completion |
+| `--show-completion` | | Print completion script |
+
+---
 
 ## Commands
 
-### courses
+### `dauber courses`
 
-```
+List courses, inspect one course, and view enrollments.
+
+```text
 dauber courses list [--concluded]
 dauber courses show [--course COURSE]
 dauber courses enrollments [--course COURSE]
 ```
 
-List, inspect, and view enrollments for your courses. The `--course`
-option accepts course codes (e.g., `IS505`) or numeric Canvas IDs.
-When omitted, falls back to `canvas_course_id` in your config file.
+Examples:
 
-### assignments
-
+```bash
+dauber courses list
+dauber courses list --concluded
+dauber courses show --course IS505
+dauber courses enrollments --course IS505
 ```
+
+`--course` accepts course code, such as `IS505`, or numeric Canvas course ID.
+
+---
+
+### `dauber assignments`
+
+Create, update, list, and inspect assignments.
+
+```text
 dauber assignments list [--course COURSE]
-dauber assignments show [--course COURSE] <assignment-id>
-dauber assignments create [--course COURSE] <name> [--points N] [--due ISO] [--publish]
-dauber assignments update [--course COURSE] <assignment-id> [--name ...] [--points N]
+dauber assignments show [--course COURSE] ASSIGNMENT_ID
+dauber assignments create [--course COURSE] NAME [--points N] [--due ISO] [--publish]
+dauber assignments update [--course COURSE] ASSIGNMENT_ID [--name NAME] [--points N]
 ```
 
-Create, update, list, and inspect assignments. For interactive guided
-creation with defaults, validation, and rubric handoff, see
-`/assignments:create`.
+Examples:
 
-### rubrics
-
+```bash
+dauber assignments list --course IS505
+dauber assignments show --course IS505 42
+dauber assignments create --course IS505 "Reflection 1" --points 10 --publish
+dauber assignments update --course IS505 42 --points 15
 ```
+
+For guided AI-assisted assignment creation, install skill commands and use `/assignments:create`.
+
+---
+
+### `dauber rubrics`
+
+List, inspect, create, import, and attach rubrics.
+
+```text
 dauber rubrics list [--course COURSE]
-dauber rubrics show [--course COURSE] <rubric-id>
-dauber rubrics create [--course COURSE] --file <path>
-dauber rubrics import [--course COURSE] --csv <path>
-dauber rubrics attach [--course COURSE] <rubric-id> <assignment-id> [--use-for-grading]
+dauber rubrics show [--course COURSE] RUBRIC_ID
+dauber rubrics create [--course COURSE] --file PATH
+dauber rubrics import [--course COURSE] --csv PATH
+dauber rubrics attach [--course COURSE] RUBRIC_ID ASSIGNMENT_ID [--use-for-grading]
 ```
 
-List, inspect, create, and attach rubrics. `show` looks up a rubric by
-its direct ID. `create` reads a JSON file with `title` and `criteria`
-fields. `import` reads a Canvas-format CSV file (the wide-format
-template exported from Canvas). `attach` associates an existing rubric
-with an assignment; pass `--use-for-grading` to map rubric scores to
-the assignment grade. For guided format selection (CSV/JSON/interactive)
-and automatic create → attach sequencing, see `/rubrics:create`.
+Examples:
 
-Example JSON for `create`:
+```bash
+dauber rubrics list --course IS505
+dauber rubrics show --course IS505 123
+dauber rubrics create --course IS505 --file rubric.json
+dauber rubrics import --course IS505 --csv rubric.csv
+dauber rubrics attach --course IS505 123 42 --use-for-grading
+```
+
+Minimal rubric JSON:
 
 ```json
 {
@@ -176,231 +302,342 @@ Example JSON for `create`:
 }
 ```
 
-### grading
+---
 
-```
-dauber grading submissions [--course COURSE] <assignment-id> [--anonymize]
-dauber grading show [--course COURSE] <assignment-id> <user-id> [--anonymize]
-dauber grading submit [--course COURSE] <assignment-id> <user-id> <grade> [--comment ...]
-dauber grading submit-rubric [--course COURSE] <assignment-id> <user-id> <file> [--comment ...]
-```
+### `dauber grading`
 
 View submissions, inspect individual student work, and post grades.
-`submit-rubric` reads rubric criterion scores from a JSON file. For
-distribution stats and missing-submission flags across a cohort, see
-`/grading:overview`.
 
-### assess
-
-```
-dauber assess setup [--course COURSE] <assignment-id> [--exclude-graded] [--anonymize]
-dauber assess load <file>
-dauber assess update <file> <user-id> [--rubric-json ...] [--approved]
-dauber assess submit <file> [--course COURSE] <assignment-id> [--confirm]
+```text
+dauber grading submissions [--course COURSE] ASSIGNMENT_ID [--anonymize]
+dauber grading show [--course COURSE] ASSIGNMENT_ID USER_ID [--anonymize]
+dauber grading submit [--course COURSE] ASSIGNMENT_ID USER_ID GRADE [--comment TEXT]
+dauber grading submit-rubric [--course COURSE] ASSIGNMENT_ID USER_ID FILE [--comment TEXT]
 ```
 
-Full rubric-based assessment workflow: fetch assignment data into a
-local JSON file, update individual scores, and submit approved grades
-back to Canvas. Submit runs in dry-run mode by default; pass
-`--confirm` to post grades. These commands are building blocks; for
-the full AI grading pipeline use `/assess:setup` → `/assess:ai-pass`
-→ `/assess:refine` → `/assess:submit`.
+Examples:
 
-### modules
-
-```
-dauber modules list [--course COURSE] [--items] [--search ...]
-dauber modules show [--course COURSE] <module-id>
-dauber modules create [--course COURSE] <name> [--position N] [--publish]
-dauber modules update [--course COURSE] <module-id> [--name ...] [--publish/--unpublish]
-dauber modules delete [--course COURSE] <module-id>
-dauber modules items list [--course COURSE] <module-id>
-dauber modules items show [--course COURSE] <module-id> <item-id>
-dauber modules items create [--course COURSE] <module-id> <title> --type TYPE [--content-id ID] [--page-url SLUG] [--url URL]
-dauber modules items update [--course COURSE] <module-id> <item-id> [--title ...] [--position N]
-dauber modules items delete [--course COURSE] <module-id> <item-id>
+```bash
+dauber grading submissions --course IS505 42
+dauber grading submissions --course IS505 42 --anonymize
+dauber grading show --course IS505 42 1001
+dauber grading submit --course IS505 42 1001 9.5 --comment "Nice work."
+dauber grading submit-rubric --course IS505 42 1001 assessment.json
 ```
 
-Module item types: `Page` uses `--page-url`; `Assignment`, `Discussion`, and
-`File` use `--content-id`; `ExternalUrl` uses `--url`; `SubHeader` needs only a title.
+---
 
-### pages
+### `dauber assess`
 
+Rubric-based assessment workflow. Useful for staged grading and AI-assisted grading.
+
+```text
+dauber assess setup [--course COURSE] ASSIGNMENT_ID [--exclude-graded] [--anonymize]
+dauber assess load FILE
+dauber assess update FILE USER_ID [--rubric-json JSON] [--approved]
+dauber assess submit FILE [--course COURSE] ASSIGNMENT_ID [--confirm]
 ```
-dauber pages list [--course COURSE] [--search ...] [--sort title|created_at|updated_at]
-dauber pages show [--course COURSE] <page-url>
-dauber pages create [--course COURSE] <title> [--body ...] [--publish]
-dauber pages update [--course COURSE] <page-url> [--title ...] [--body ...]
-dauber pages delete [--course COURSE] <page-url>
+
+Typical flow:
+
+```bash
+dauber assess setup --course IS505 42 --anonymize --format json > assess.json
+dauber assess load assess.json
+dauber assess submit assess.json --course IS505 42        # dry run
+dauber assess submit assess.json --course IS505 42 --confirm
 ```
 
-Pages are identified by their URL slug (e.g., `syllabus-spring-2026`).
-To publish a local Markdown file with automatic HTML conversion and
-module placement, see `/content:publish`.
+`submit` runs dry-run by default. It only posts grades when `--confirm` is present.
 
-### discussions
+---
 
+### `dauber modules`
+
+Manage Canvas modules and module items.
+
+```text
+dauber modules list [--course COURSE] [--items] [--search TEXT]
+dauber modules show [--course COURSE] MODULE_ID
+dauber modules create [--course COURSE] NAME [--position N] [--publish]
+dauber modules update [--course COURSE] MODULE_ID [--name NAME] [--publish/--unpublish]
+dauber modules delete [--course COURSE] MODULE_ID
+
+dauber modules items list [--course COURSE] MODULE_ID
+dauber modules items show [--course COURSE] MODULE_ID ITEM_ID
+dauber modules items create [--course COURSE] MODULE_ID TITLE --type TYPE [--content-id ID] [--page-url SLUG] [--url URL]
+dauber modules items update [--course COURSE] MODULE_ID ITEM_ID [--title TITLE] [--position N]
+dauber modules items delete [--course COURSE] MODULE_ID ITEM_ID
 ```
+
+Module item types:
+
+| Type | Needed option |
+|---|---|
+| `Page` | `--page-url` |
+| `Assignment` | `--content-id` |
+| `Discussion` | `--content-id` |
+| `File` | `--content-id` |
+| `ExternalUrl` | `--url` |
+| `SubHeader` | none |
+
+---
+
+### `dauber pages`
+
+Create, update, list, inspect, and delete Canvas pages.
+
+```text
+dauber pages list [--course COURSE] [--search TEXT] [--sort title|created_at|updated_at]
+dauber pages show [--course COURSE] PAGE_URL
+dauber pages create [--course COURSE] TITLE [--body TEXT] [--publish]
+dauber pages update [--course COURSE] PAGE_URL [--title TITLE] [--body TEXT]
+dauber pages delete [--course COURSE] PAGE_URL
+```
+
+Example:
+
+```bash
+dauber pages create --course IS505 "Week 1 Overview" --body "Welcome to week 1." --publish
+```
+
+Canvas pages use URL slugs, such as `week-1-overview`.
+
+---
+
+### `dauber discussions`
+
+Manage Canvas discussions and announcements.
+
+```text
 dauber discussions list [--course COURSE] [--announcements]
-dauber discussions show [--course COURSE] <topic-id>
-dauber discussions create [--course COURSE] <title> [--message ...] [--announcement] [--publish]
-dauber discussions update [--course COURSE] <topic-id> [--title ...] [--message ...]
+dauber discussions show [--course COURSE] TOPIC_ID
+dauber discussions create [--course COURSE] TITLE [--message TEXT] [--announcement] [--publish]
+dauber discussions update [--course COURSE] TOPIC_ID [--title TITLE] [--message TEXT]
 ```
 
-Pass `--announcements` to list only announcements. Use `--announcement`
-when creating to post an announcement rather than a discussion topic.
-For AI-drafted announcement text with tone matching and an approval
-loop, see `/discuss:announce`.
+Examples:
 
-### config
-
+```bash
+dauber discussions list --course IS505
+dauber discussions list --course IS505 --announcements
+dauber discussions create --course IS505 "Reminder" --message "Project due Friday." --announcement --publish
 ```
-dauber config init [--base .]
+
+---
+
+### `dauber config`
+
+Manage global and course-local config files.
+
+```text
+dauber config init [--base PATH]
 dauber config global [--defaults]
 dauber config show
 ```
 
-See [Configuration](#configuration) above for details.
+Examples:
 
-### commands
-
+```bash
+dauber config global              # interactive global setup
+dauber config global --defaults   # write starter global config
+dauber config init                # create local ./dauber/config.toml
+dauber config show                # show merged config and sources
 ```
+
+---
+
+### `dauber commands`
+
+Install bundled AI skill commands for Claude Code or Pi.
+
+```text
 dauber commands install [--overwrite] [--local]
 dauber commands install --pi [--overwrite]
 dauber commands install --pi --global [--overwrite]
 ```
 
-Installs bundled skill commands for either Claude Code or Pi.
-
 | Invocation | Target |
 |---|---|
-| `dauber commands install` | `~/.claude/commands/` (Claude, global) |
-| `dauber commands install --local` | `./.claude/commands/` (Claude, project) |
-| `dauber commands install --pi` | `./.pi/skills/` (Pi, project) |
-| `dauber commands install --pi --global` | `~/.pi/agent/skills/` (Pi, global) |
+| `dauber commands install` | `~/.claude/commands/` |
+| `dauber commands install --local` | `./.claude/commands/` |
+| `dauber commands install --pi` | `./.pi/skills/` |
+| `dauber commands install --pi --global` | `~/.pi/agent/skills/` |
 
-Pass `--overwrite` to replace existing files. See
-[Skill commands](#skill-commands) below.
+Use `--overwrite` to replace existing files.
 
-### Global options
+---
 
+## Configuration
+
+`dauber` uses environment variables for Canvas credentials and TOML files for course defaults.
+
+### Required environment variables
+
+| Variable | Description |
+|---|---|
+| `CANVAS_API_KEY` | Canvas API token |
+| `CANVAS_BASE_URL` | Institution Canvas URL, without `/api/v1` |
+
+Example:
+
+```bash
+export CANVAS_API_KEY="your-canvas-api-token"
+export CANVAS_BASE_URL="https://your-institution.instructure.com"
 ```
-dauber --version             # show version
-dauber --test                # test Canvas API connection
-dauber --config              # show API URL and token (masked)
-dauber --format json <cmd>   # JSON output for any command
-dauber --install-completion  # install shell tab-completion
+
+### Config files
+
+Local config overrides global config.
+
+| Scope | Path | Purpose |
+|---|---|---|
+| Global | `~/.config/dauber/config.toml` | Instructor-wide defaults |
+| Local | `./dauber/config.toml` | Course/project-specific defaults |
+
+Create them with:
+
+```bash
+dauber config global
+dauber config init
 ```
+
+Show active settings:
+
+```bash
+dauber config show
+```
+
+---
+
+## Output formats
+
+Most commands support `--format` / `-f`.
+
+| Format | Best for |
+|---|---|
+| `table` | Reading in terminal, default |
+| `json` | Saving, piping to tools, AI workflows |
+| `plain` | Simple text output |
+| `csv` | Spreadsheets and data tools |
+
+Examples:
+
+```bash
+dauber courses list --format table
+dauber assignments list --course IS505 --format json
+dauber grading submissions --course IS505 42 --format csv > submissions.csv
+```
+
+---
 
 ## Anonymizing student data
 
-Commands that return student information support `--anonymize` to
-strip personally identifiable information. When enabled, `user_name`
-and `user_email` are replaced with empty strings. The numeric
-`user_id` is retained for grade submission round-tripping.
+Use `--anonymize` when output may be shared with an AI tool or saved outside Canvas.
 
-Affected commands: `assess setup`, `grading submissions`, `grading show`.
-
-```sh
+```bash
 dauber assess setup --course IS505 42 --anonymize --format json
 dauber grading submissions --course IS505 42 --anonymize
+dauber grading show --course IS505 42 1001 --anonymize
 ```
 
-This is opt-in. Without `--anonymize`, output includes full names and
-emails as returned by the Canvas API.
+With `--anonymize`, `user_name` and `user_email` are removed. `user_id` remains because Canvas needs it to submit grades back to correct student.
 
-## Skill commands
+Affected commands:
 
-Some dauber commands are self-contained: you know the inputs, you run
-the command, you get the result. `courses list`, `assignments show`,
-`modules create`, and most read/write operations fall into this
-category — no skill needed.
+- `assess setup`
+- `grading submissions`
+- `grading show`
 
-Other commands are most useful as building blocks. The skill commands
-below orchestrate sequences of dauber calls, inject AI reasoning
-(drafting, scoring, normalizing), and manage state across steps.
-`--format json` is what makes this work: skills parse structured
-output from one command and feed it into the next.
+---
 
-Install all skills with:
+## AI skill commands
 
-```sh
-# Claude Code (global)
+Some workflows need multiple `dauber` commands plus judgment, drafting, or normalization. `dauber commands install` copies ready-made skills for Claude Code or Pi.
+
+Install for Claude Code:
+
+```bash
 dauber commands install
+```
 
-# Pi Agent Skills (project-local)
+Install for Pi in current project:
+
+```bash
 dauber commands install --pi
 ```
 
-For Claude Code, this copies Markdown command files into
-`~/.claude/commands/`. Once installed, invoke them from Claude Code
-(e.g., `/assess:setup`, `/course:overview`).
+Skills included:
 
-For Pi, this copies `SKILL.md` files into `./.pi/skills/`. Once
-installed, the skills are available to the Pi coding agent from that
-project tree. Use `--pi --global` to install to `~/.pi/agent/skills/`
-for user-wide availability.
+| Skill | What it does |
+|---|---|
+| `/assess:setup` | Fetch submissions and rubric into local assessment file |
+| `/assess:ai-pass` | Draft AI rubric assessments |
+| `/assess:refine` | Normalize scores across cohort |
+| `/assess:submit` | Submit approved grades to Canvas |
+| `/assignments:create` | Guided assignment creation |
+| `/rubrics:create` | Guided rubric creation/import and attachment |
+| `/discuss:announce` | Draft and post announcement |
+| `/content:publish` | Publish Markdown/HTML as Canvas page |
+| `/grading:overview` | Analyze grade distribution and missing submissions |
+| `/course:overview` | Show course status dashboard |
+| `/course:setup` | First-time course setup |
 
-| Skill | CLI commands used | What it does |
-|---|---|---|
-| `/assess:setup` → `/assess:ai-pass` → `/assess:refine` → `/assess:submit` | `assess setup/load/update/submit` | Full AI grading pipeline: fetch submissions → AI-evaluate against rubric → normalize scores → post to Canvas |
-| `/assignments:create` | `assignments create` | Interactive parameter collection with defaults, validation, and rubric handoff |
-| `/rubrics:create` | `rubrics create/import/attach` | Guides format choice (CSV/JSON/interactive), sequences create → attach |
-| `/discuss:announce` | `discussions create --announcement` | AI-drafted announcement text with tone/formality matching and approval loop |
-| `/content:publish` | `pages create` | Markdown → HTML conversion, existing-page detection, module placement |
-| `/grading:overview` | `grading submissions` | Distribution stats (mean, median, quartiles) and missing-submission flags across the cohort |
-| `/course:overview` | `courses show`, `assignments list`, `modules list` | Unified dashboard: enrollment, upcoming deadlines, content counts |
-| `/course:setup` | `--test`, `courses show/enrollments`, `config init` | First-time course initialization with guided config creation |
+---
 
-### Writing custom skills
+## Shell completions
 
-Any script or Claude Code skill can call dauber. A minimal example
-that lists ungraded submissions:
+Install tab-completion for your current shell:
 
-```sh
-dauber grading submissions --course IS505 42 --format json \
-  | jq '[.[] | select(.grade == null)]'
+```bash
+dauber --install-completion
 ```
 
-Skills that need course context (feedback language, formality, etc.)
-read from `./dauber/config.toml`. Run `dauber config init` to set it up.
+Then restart your terminal.
+
+To inspect completion script instead:
+
+```bash
+dauber --show-completion
+```
+
+---
 
 ## Development
 
-```sh
+```bash
 uv sync                         # install dependencies
-uv run dauber --help             # verify install
-uv run pytest tests/            # run tests (integration skipped by default)
-uv run python -m pytest --cov=dauber --cov-report=term-missing tests/  # coverage
-uv run python -m pytest tests/integration/ -m integration  # Canvas sandbox checks
-uv run ruff check src/ tests/   # lint
-uv run ruff format src/ tests/  # format
+uv run dauber --help             # run from source
+uv run pytest tests/             # run tests
+uv run ruff check src/ tests/    # lint
+uv run ruff format src/ tests/   # format
+```
+
+With coverage:
+
+```bash
+uv run python -m pytest --cov=dauber --cov-report=term-missing tests/
+```
+
+Integration tests require live Canvas sandbox credentials:
+
+```bash
+CANVAS_SANDBOX_COURSE_ID=123 \
+CANVAS_API_KEY=... \
+CANVAS_BASE_URL=https://your-institution.instructure.com \
+uv run python -m pytest tests/integration/ -m integration
 ```
 
 ### Architecture
 
-```
+```text
 CLI (Typer) -> services (async) -> core (HTTP client, config, cache)
 ```
 
-- **Core** -- `CanvasClient` (httpx async, pagination, 429 retry),
-  `Config` (pydantic-settings), `CourseCache` (bidirectional code/ID
-  mapping), config file helpers (TOML).
-- **Services** -- Async functions per Canvas entity. Accept a
-  `CanvasClient`, return dicts/lists, raise `CanvasError` on failure.
-- **CLI** -- Typer commands that bridge async via decorator, format
-  output through `format_output()`, and exit with appropriate codes.
-
-### Tests
-
-Tests are organized in three layers:
-
-- `tests/services/` -- mock at the `CanvasClient` transport level
-- `tests/cli/` -- mock at the service function level, use
-  `typer.testing.CliRunner`
-- `tests/integration/` -- read-only Canvas sandbox checks, skipped unless run
-  explicitly with `-m integration` and `CANVAS_API_KEY`, `CANVAS_BASE_URL`,
-  and `CANVAS_SANDBOX_COURSE_ID` set
+- `src/dauber/core/`: HTTP client, settings, Canvas cache, config files
+- `src/dauber/services/`: async Canvas business logic
+- `src/dauber/cli/`: Typer commands, async bridge, output formatting
+- `tests/services/`: service tests, mocked at Canvas client layer
+- `tests/cli/`: CLI tests, mocked at service layer
 
 ## License
 
