@@ -1,8 +1,8 @@
 # Development Implementation Details
 
 **Project:** dauber
-**Status:** v0.1.9 planned
-**Last Updated:** 2026-05-10
+**Status:** v0.1.9 complete
+**Last Updated:** 2026-05-13
 
 ## Architecture
 
@@ -197,17 +197,24 @@ dauber/
     - **Dependencies:** services/assessments.py
 
 15. **services/modules.py**
-    - **Purpose:** Modules business logic (list, get, create, update, delete)
+    - **Purpose:** Modules and module item business logic
     - **Public Interface:** `list_modules()`, `get_module()`,
-      `create_module()`, `update_module()`, `delete_module()`
+      `create_module()`, `update_module()`, `delete_module()`,
+      `list_module_items()`, `get_module_item()`,
+      `create_module_item()`, `update_module_item()`,
+      `delete_module_item()`
     - **Dependencies:** core/client.py, CanvasError
     - **Notes:** `get_module()` fetches items via separate paginated
-      endpoint. Payload wrapped as `{"module": {...}}`
+      endpoint. Module payloads wrapped as `{"module": {...}}`; item
+      payloads wrapped as `{"module_item": {...}}`. Item creation
+      supports Page, Assignment, Discussion, File, ExternalUrl, and
+      SubHeader types.
 
 16. **cli/modules.py**
-    - **Purpose:** Typer sub-app for module commands
+    - **Purpose:** Typer sub-app for module and module item commands
     - **Public Interface:** `modules_app` with `list`, `show`,
-      `create`, `update`, `delete` commands
+      `create`, `update`, `delete`, plus nested `items` commands:
+      `list`, `show`, `create`, `update`, `delete`
     - **Dependencies:** services/modules.py
 
 17. **services/pages.py**
@@ -358,13 +365,16 @@ uv run pytest tests/services/
 # CLI tests only
 uv run pytest tests/cli/
 
-# With coverage (v0.1.9 baseline target)
+# With coverage (v0.1.9 baseline)
 uv run python -m pytest --cov=dauber --cov-report=term-missing tests/
+
+# Opt-in read-only Canvas integration tests
+uv run python -m pytest tests/integration/ -m integration
 ```
 
 ### Coverage Targets
 
-- **Current Baseline:** Not yet measured; v0.1.9 will record first baseline
+- **Current Baseline:** 90% statement/branch coverage measured for v0.1.9
 - **Overall:** 80%+ long-term target
 - **Critical Paths:** 90%+ for core/ (client, config, cache)
 - **Exclusions:** CLI output formatting details and generated/irrelevant files
@@ -374,6 +384,9 @@ uv run python -m pytest --cov=dauber --cov-report=term-missing tests/
 - **Fixtures:** `tests/conftest.py` for shared fixtures
 - **Mocks/Stubs:** unittest.mock for CanvasClient in service tests,
   service functions in CLI tests
+- **Integration:** `tests/integration/` is skipped by default and
+  requires `CANVAS_API_KEY`, `CANVAS_BASE_URL`, and
+  `CANVAS_SANDBOX_COURSE_ID`
 - **Test Databases:** None (all external calls mocked)
 
 ## Deployment
