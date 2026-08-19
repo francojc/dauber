@@ -297,6 +297,30 @@ async def test_create_module_item_page(client):
     assert form_data["module_item[position]"] == "1"
 
 
+async def test_create_module_item_external_url(client):
+    client.request.return_value = {
+        "id": 12,
+        "title": "Plan del día",
+        "type": "ExternalUrl",
+        "external_url": "https://example.org/plan.html",
+    }
+
+    result = await create_module_item(
+        client,
+        "1",
+        "2",
+        "Plan del día",
+        "ExternalUrl",
+        url="https://example.org/plan.html",
+    )
+
+    assert result["external_url"] == "https://example.org/plan.html"
+    call_data = client.request.call_args.kwargs["data"]["module_item"]
+    assert call_data["type"] == "ExternalUrl"
+    assert call_data["external_url"] == "https://example.org/plan.html"
+    assert "url" not in call_data
+
+
 async def test_create_module_item_assignment(client):
     client.request.return_value = {
         "id": 11,

@@ -1,7 +1,7 @@
 # Development Implementation Details
 
 **Project:** dauber
-**Status:** v0.1.10 release ready
+**Status:** v0.1.11 release ready
 **Last Updated:** 2026-08-19
 
 ## Architecture
@@ -208,7 +208,8 @@ dauber/
       endpoint. Module payloads wrapped as `{"module": {...}}`; item
       payloads wrapped as `{"module_item": {...}}`. Item creation
       supports Page, Assignment, Discussion, File, ExternalUrl, and
-      SubHeader types.
+      SubHeader types. `url` function argument maps to Canvas
+      `external_url` for ExternalUrl creation.
 
 16. **cli/modules.py**
     - **Purpose:** Typer sub-app for module and module item commands
@@ -368,7 +369,7 @@ uv run pytest tests/cli/
 # With coverage (v0.1.9 baseline)
 uv run python -m pytest --cov=dauber --cov-report=term-missing tests/
 
-# Opt-in read-only Canvas integration tests
+# Opt-in Canvas sandbox integration tests; creates and deletes temporary unpublished content
 uv run python -m pytest tests/integration/ -m integration
 
 # Module-item unit and CLI tests

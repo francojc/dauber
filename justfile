@@ -70,7 +70,7 @@ test-unit:
 cov:
   uv run python -m pytest --cov=dauber --cov-report=term-missing tests/
 
-# Run read-only Canvas sandbox integration tests
+# Run Canvas sandbox integration tests; creates and deletes temporary unpublished content
 integration:
   uv run python -m pytest tests/integration/ -m integration
 

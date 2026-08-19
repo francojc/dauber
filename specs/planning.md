@@ -1,7 +1,7 @@
 # Development Project Planning
 
 **Project:** dauber
-**Status:** v0.1.10 release ready
+**Status:** v0.1.11 release ready
 **Last Updated:** 2026-08-19
 
 ## Project Overview
@@ -248,6 +248,13 @@ commands which work identically under either harness.
 - [x] Assessment JSON written with `ensure_ascii=False` for UTF-8 literals
 - [x] Discussion topic submissions added to assessment service
 - [x] AGENTS.md replaces CLAUDE.md
+
+### v0.1.11: External URL Module Items (COMPLETE)
+
+- [x] Map `modules items create --type ExternalUrl --url URL` to Canvas `module_item[external_url]`
+- [x] Retain `--url` CLI flag
+- [x] Add service, CLI, and opt-in live sandbox smoke-test coverage
+- [x] 313 unit tests passing; ExternalUrl sandbox smoke test passed
 
 ### v0.1.10: Release Verification and Compatibility Fixes (COMPLETE)
 

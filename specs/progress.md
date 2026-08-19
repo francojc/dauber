@@ -1,16 +1,16 @@
 # Development Project Progress
 
 **Project:** dauber
-**Status:** v0.1.10 release ready
+**Status:** v0.1.11 release ready
 **Last Updated:** 2026-08-19
 
 ## Current Status Overview
 
 ### Development Phase
 
-- **Current Phase:** v0.1.10 release ready
-- **Phase Progress:** v0.1.10 prepared: Pyright type checking, resilient module-item validation, and live sandbox CRUD verification
-- **Overall Project Progress:** v0.1.0–v0.1.9 released; project on PyPI
+- **Current Phase:** v0.1.11 release ready
+- **Phase Progress:** ExternalUrl module items now use Canvas `external_url`; CLI, service, and live sandbox coverage added
+- **Overall Project Progress:** v0.1.0–v0.1.10 released; project on PyPI
 
 ### Recent Accomplishments
 
@@ -100,9 +100,16 @@
 - Verified live Canvas sandbox module-item CRUD: created, showed, listed, updated, and deleted a temporary `SubHeader` item; cleanup removed temporary module
 - 311 unit tests passing; module-focused suite has 41 passing tests
 
+### Recent Accomplishments (v0.1.11)
+
+- Fixed `ExternalUrl` module-item payloads to send Canvas `external_url` while retaining CLI `--url`
+- Added service and CLI tests for direct external-link creation
+- Added and passed live sandbox smoke test: temporary unpublished module and ExternalUrl item created, read, then deleted
+- 313 unit tests passing; Pyright, Ruff, and package build clean
+
 ### Active Work
 
-- v0.1.10 release tagging and PyPI publication
+- v0.1.11 release tagging and PyPI publication
 
 ## Milestone Tracking
 
@@ -141,7 +148,7 @@
 
 ### Test Results
 
-- **Unit Tests:** 311 passing
+- **Unit Tests:** 313 passing
   - core: config 4, client 11, cache 9, config_files 9
   - services: courses 9, assignments 14, rubrics 18, grading 12,
     assessments 30, modules 14, pages 15, discussions 15
@@ -149,7 +156,7 @@
     assessments 13, modules 11, pages 12, discussions 12,
     config 8, config_defaults 14, commands 10, output 6
   - smoke: 3
-- **Integration Tests:** read-only Canvas sandbox scaffold, skipped by default
+- **Integration Tests:** opt-in Canvas sandbox smoke tests; ExternalUrl test creates and deletes temporary unpublished content
 - **Test Coverage:** 90% statement/branch coverage baseline via `uv run python -m pytest --cov=dauber --cov-report=term-missing tests/`
 
 ### Open Defects
@@ -289,12 +296,12 @@
 
 ### Immediate Actions (Next Session)
 
-- Tag and release v0.1.10 to PyPI
+- Tag and release v0.1.11 to PyPI
 
 ### Medium-term Goals (Next Few Sessions)
 
 - Consider adding a coverage threshold after one baseline release
-- Consider opt-in mutating Canvas sandbox tests for module item CRUD
+- Expand opt-in sandbox coverage for other Canvas write operations
 
 ### Decisions Needed
 
@@ -304,16 +311,17 @@
 
 ### Next Release
 
-**v0.1.10** – Release Verification and Compatibility Fixes
+**v0.1.11** – External URL Module Items
 
-- Pyright development dependency and CI type checking
-- Cross-version-compatible module-item validation errors
-- Live Canvas sandbox verification for module-item CRUD
+- Canvas-compatible `external_url` payload for ExternalUrl module items
+- Existing `--url` CLI interface retained
+- Service, CLI, and live sandbox smoke-test coverage
 
 ### Release History
 
 | Version | Date       | Key Changes                                              |
 |---------|------------|----------------------------------------------------------|
+| 0.1.10  | 2026-08-19 | Type checking, resilient validation, sandbox CRUD        |
 | 0.1.9   | 2026-05-11 | Coverage baseline and module-item CRUD                   |
 | 0.1.8   | 2026-04-06 | Rename to dauber, PyPI publish, CI, PDF/unicode fixes    |
 | 0.1.7   | 2026-03-24 | Pi Agent Skills: --pi flag, .pi/skills/, 294 tests       |
