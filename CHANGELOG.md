@@ -5,6 +5,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.1.11] - 2026-08-19
+
+### Fixed
+
+- External URL module items now send Canvas's documented `module_item[external_url]` field instead of `module_item[url]`; CLI `--url` remains unchanged
+
+### Added
+
+- Opt-in live sandbox smoke test creates, reads, and deletes an `ExternalUrl` item in a temporary unpublished module
+
+### Verified
+
+- 313 unit tests, Ruff, Pyright, package build, and live ExternalUrl sandbox smoke test pass
+
 ## [0.1.10] - 2026-08-19
 
 ### Added
@@ -249,6 +263,7 @@ Initial release. Full Canvas LMS CLI for instructor workflows.
 - `--test` flag for Canvas API connectivity check
 - 234 tests passing across services and CLI layers
 
+[0.1.11]: https://github.com/francojc/dauber/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/francojc/dauber/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/francojc/dauber/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/francojc/dauber/compare/v0.1.7...v0.1.8

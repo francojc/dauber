@@ -1,4 +1,4 @@
-"""Read-only Canvas sandbox integration tests.
+"""Canvas sandbox connectivity integration test.
 
 Run explicitly with:
     uv run python -m pytest tests/integration/ -m integration

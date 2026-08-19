@@ -9,13 +9,13 @@ runner = CliRunner()
 
 
 def test_version_import():
-    assert __version__ == "0.1.10"
+    assert __version__ == "0.1.11"
 
 
 def test_cli_version():
     result = runner.invoke(app, ["--version"])
     assert result.exit_code == 0
-    assert "0.1.10" in result.output
+    assert "0.1.11" in result.output
 
 
 def test_cli_help():

@@ -271,7 +271,7 @@ async def create_module_item(
     if page_url is not None:
         payload["page_url"] = page_url
     if url is not None:
-        payload["url"] = url
+        payload["external_url"] = url
     if indent is not None:
         payload["indent"] = indent
     if position is not None:

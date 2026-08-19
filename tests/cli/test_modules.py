@@ -245,6 +245,36 @@ def test_module_items_create_page(mock_create):
 
 
 @patch("dauber.cli.modules.create_module_item", new_callable=AsyncMock)
+def test_module_items_create_external_url(mock_create):
+    mock_create.return_value = {
+        "id": 12,
+        "title": "Plan del día",
+        "type": "ExternalUrl",
+        "external_url": "https://example.org/plan.html",
+    }
+    with _patch_context():
+        result = runner.invoke(
+            app,
+            [
+                "modules",
+                "items",
+                "create",
+                "--course",
+                "IS505",
+                "2",
+                "Plan del día",
+                "--type",
+                "ExternalUrl",
+                "--url",
+                "https://example.org/plan.html",
+            ],
+        )
+    assert result.exit_code == 0
+    assert "Plan del día" in result.output
+    assert mock_create.await_args.kwargs["url"] == "https://example.org/plan.html"
+
+
+@patch("dauber.cli.modules.create_module_item", new_callable=AsyncMock)
 def test_module_items_create_assignment(mock_create):
     mock_create.return_value = {
         "id": 11,

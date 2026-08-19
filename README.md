@@ -380,6 +380,14 @@ Module item types:
 | `ExternalUrl` | `--url` |
 | `SubHeader` | none |
 
+For an `ExternalUrl` item, retain familiar `--url`; dauber sends Canvas API field `external_url`.
+
+Example:
+
+```bash
+dauber modules items create --course IS505 2 "Plan del día" --type ExternalUrl --url https://example.org/plan.html
+```
+
 ---
 
 ### `dauber pages`
@@ -618,7 +626,7 @@ With coverage:
 uv run python -m pytest --cov=dauber --cov-report=term-missing tests/
 ```
 
-Integration tests require live Canvas sandbox credentials:
+Integration tests require live Canvas sandbox credentials. They create and delete temporary unpublished module content, so use a dedicated sandbox course:
 
 ```bash
 CANVAS_SANDBOX_COURSE_ID=123 \
