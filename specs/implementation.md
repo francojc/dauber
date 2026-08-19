@@ -1,8 +1,8 @@
 # Development Implementation Details
 
 **Project:** dauber
-**Status:** v0.1.9 complete
-**Last Updated:** 2026-05-13
+**Status:** v0.1.10 release ready
+**Last Updated:** 2026-08-19
 
 ## Architecture
 
@@ -370,6 +370,9 @@ uv run python -m pytest --cov=dauber --cov-report=term-missing tests/
 
 # Opt-in read-only Canvas integration tests
 uv run python -m pytest tests/integration/ -m integration
+
+# Module-item unit and CLI tests
+uv run pytest tests/services/test_modules.py tests/cli/test_modules.py
 ```
 
 ### Coverage Targets

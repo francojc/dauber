@@ -5,6 +5,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.1.10] - 2026-08-19
+
+### Added
+
+- `pyright` to development dependencies and CI type-checking
+
+### Fixed
+
+- Module-item creation validation now emits consistent error messages and exit code 2 across supported Typer/Click versions
+- Page, assignment, discussion, and course-page HTML stripping accepts missing Canvas body fields
+
+### Verified
+
+- Live Canvas sandbox module-item CRUD: create, show, list, update, and delete a temporary `SubHeader` item; cleanup deleted temporary module
+
 ## [0.1.9] - 2026-05-11
 
 ### Added
@@ -234,6 +249,7 @@ Initial release. Full Canvas LMS CLI for instructor workflows.
 - `--test` flag for Canvas API connectivity check
 - 234 tests passing across services and CLI layers
 
+[0.1.10]: https://github.com/francojc/dauber/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/francojc/dauber/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/francojc/dauber/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/francojc/dauber/compare/v0.1.6...v0.1.7

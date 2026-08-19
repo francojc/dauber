@@ -1,16 +1,16 @@
 # Development Project Progress
 
 **Project:** dauber
-**Status:** v0.1.9 complete
-**Last Updated:** 2026-05-13
+**Status:** v0.1.10 release ready
+**Last Updated:** 2026-08-19
 
 ## Current Status Overview
 
 ### Development Phase
 
-- **Current Phase:** v0.1.9 release ready
-- **Phase Progress:** v0.1.9 implemented: coverage baseline, module item CRUD, read-only integration scaffold
-- **Overall Project Progress:** v0.1.0–v0.1.8 released; project on PyPI
+- **Current Phase:** v0.1.10 release ready
+- **Phase Progress:** v0.1.10 prepared: Pyright type checking, resilient module-item validation, and live sandbox CRUD verification
+- **Overall Project Progress:** v0.1.0–v0.1.9 released; project on PyPI
 
 ### Recent Accomplishments
 
@@ -93,9 +93,16 @@
 - Claude install logic refactored into `_install_claude_commands()` for symmetry
 - 6 new tests; 294 total, all passing, ruff clean
 
+### Recent Accomplishments (v0.1.10)
+
+- Added `pyright` development dependency and CI type-check job
+- Module-item create validation now returns consistent error messages and exit code 2 across supported Typer/Click versions
+- Verified live Canvas sandbox module-item CRUD: created, showed, listed, updated, and deleted a temporary `SubHeader` item; cleanup removed temporary module
+- 311 unit tests passing; module-focused suite has 41 passing tests
+
 ### Active Work
 
-- v0.1.9 verification and release tagging
+- v0.1.10 release tagging and PyPI publication
 
 ## Milestone Tracking
 
@@ -282,7 +289,7 @@
 
 ### Immediate Actions (Next Session)
 
-- Reconcile missing `v0.1.8` git tag, then tag and release v0.1.9
+- Tag and release v0.1.10 to PyPI
 
 ### Medium-term Goals (Next Few Sessions)
 
@@ -297,16 +304,17 @@
 
 ### Next Release
 
-**v0.1.9** – Quality Baseline + Module Item CRUD
+**v0.1.10** – Release Verification and Compatibility Fixes
 
-- Coverage reporting configuration and measured baseline
-- Module item CRUD under `dauber modules`
-- Opt-in Canvas sandbox integration-test scaffold
+- Pyright development dependency and CI type checking
+- Cross-version-compatible module-item validation errors
+- Live Canvas sandbox verification for module-item CRUD
 
 ### Release History
 
 | Version | Date       | Key Changes                                              |
 |---------|------------|----------------------------------------------------------|
+| 0.1.9   | 2026-05-11 | Coverage baseline and module-item CRUD                   |
 | 0.1.8   | 2026-04-06 | Rename to dauber, PyPI publish, CI, PDF/unicode fixes    |
 | 0.1.7   | 2026-03-24 | Pi Agent Skills: --pi flag, .pi/skills/, 294 tests       |
 | 0.1.6   | 2026-03-24 | Rubrics sub-app, DOCX/PDF extraction, commands fix; 288 tests |

@@ -1,8 +1,8 @@
 # Development Project Planning
 
 **Project:** dauber
-**Status:** v0.1.9 complete
-**Last Updated:** 2026-05-13
+**Status:** v0.1.10 release ready
+**Last Updated:** 2026-08-19
 
 ## Project Overview
 
@@ -248,6 +248,13 @@ commands which work identically under either harness.
 - [x] Assessment JSON written with `ensure_ascii=False` for UTF-8 literals
 - [x] Discussion topic submissions added to assessment service
 - [x] AGENTS.md replaces CLAUDE.md
+
+### v0.1.10: Release Verification and Compatibility Fixes (COMPLETE)
+
+- [x] Add Pyright to development dependencies and CI type checking
+- [x] Make module-item creation validation consistent across supported Typer/Click versions
+- [x] Verify module-item CRUD against a live Canvas sandbox; cleanup temporary module and item
+- [x] 311 unit tests passing; 41 module CLI/service tests passing
 
 ### v0.1.9: Quality Baseline + Module Item CRUD (COMPLETE)
 
