@@ -257,6 +257,8 @@ dauber assignments create --course IS505 "Reflection 1" --points 10 --publish
 dauber assignments update --course IS505 42 --points 15
 ```
 
+List table output includes `assignment_group_name` beside assignment name. `assignments list` and `assignments show` JSON output also include `assignment_group_id`, `assignment_group_name`, and `assignment_group_weight`.
+
 For guided AI-assisted assignment creation, install skill commands and use `/assignments:create`.
 
 ---

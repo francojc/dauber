@@ -44,7 +44,14 @@ async def assignments_list(
     format_output(
         data,
         fmt,
-        headers=["id", "name", "due_at", "points_possible", "published"],
+        headers=[
+            "id",
+            "name",
+            "assignment_group_name",
+            "due_at",
+            "points_possible",
+            "published",
+        ],
     )
 
 

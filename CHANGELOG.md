@@ -5,6 +5,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.1.13] - 2026-08-20
+
+### Added
+
+- Assignment list and show output now includes Canvas assignment-group ID, name, and weight
+
 ## [0.1.12] - 2026-08-20
 
 ### Added

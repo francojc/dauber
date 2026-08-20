@@ -34,6 +34,49 @@ def _strip_html(text: str | None) -> str:
     return stripper.get_text()
 
 
+async def _get_assignment_group_lookup(
+    client: CanvasClient,
+    course_id: str,
+) -> dict[int, dict[str, Any]]:
+    """Fetch assignment groups once and index them by Canvas group ID."""
+    try:
+        groups = await client.get_paginated(
+            f"/courses/{course_id}/assignment_groups",
+        )
+    except httpx.HTTPStatusError as exc:
+        raise CanvasError(
+            f"Failed to list assignment groups for course {course_id}: {exc.response.text}",
+            status_code=exc.response.status_code,
+        ) from exc
+
+    return {group["id"]: group for group in groups}
+
+
+def _assignment_group_fields(
+    assignment: dict[str, Any],
+    groups: dict[int, dict[str, Any]],
+) -> dict[str, int | str | float | None]:
+    """Project assignment-group metadata for an assignment."""
+    assignment_group_id = assignment.get("assignment_group_id")
+    if not isinstance(assignment_group_id, int):
+        return {
+            "assignment_group_id": None,
+            "assignment_group_name": None,
+            "assignment_group_weight": None,
+        }
+
+    group = groups.get(assignment_group_id)
+    name = group.get("name") if group else None
+    weight = group.get("group_weight") if group else None
+    return {
+        "assignment_group_id": assignment_group_id,
+        "assignment_group_name": name if isinstance(name, str) else None,
+        "assignment_group_weight": (
+            float(weight) if isinstance(weight, int | float) else None
+        ),
+    }
+
+
 async def list_assignments(
     client: CanvasClient,
     course_id: str,
@@ -54,10 +97,12 @@ async def list_assignments(
             status_code=exc.response.status_code,
         ) from exc
 
+    groups = await _get_assignment_group_lookup(client, course_id)
     return [
         {
             "id": a["id"],
             "name": a.get("name", ""),
+            **_assignment_group_fields(a, groups),
             "due_at": a.get("due_at", ""),
             "points_possible": a.get("points_possible", ""),
             "published": a.get("published", False),
@@ -89,9 +134,11 @@ async def get_assignment(
             status_code=exc.response.status_code,
         ) from exc
 
+    groups = await _get_assignment_group_lookup(client, course_id)
     return {
         "id": a["id"],
         "name": a.get("name", ""),
+        **_assignment_group_fields(a, groups),
         "description": _strip_html(a.get("description", "") or ""),
         "due_at": a.get("due_at", ""),
         "points_possible": a.get("points_possible", ""),

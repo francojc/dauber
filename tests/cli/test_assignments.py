@@ -1,7 +1,9 @@
 """Tests for dauber.cli.assignments."""
 
+import json
 from unittest.mock import AsyncMock, patch
 
+from rich.console import Console
 from typer.testing import CliRunner
 
 from dauber.cli.app import app
@@ -13,6 +15,9 @@ MOCK_ASSIGNMENTS = [
     {
         "id": 101,
         "name": "Homework 1",
+        "assignment_group_id": 10,
+        "assignment_group_name": "Essays",
+        "assignment_group_weight": 40.0,
         "due_at": "2026-02-01T23:59:00Z",
         "points_possible": 100,
         "published": True,
@@ -23,6 +28,9 @@ MOCK_ASSIGNMENTS = [
 MOCK_ASSIGNMENT_DETAIL = {
     "id": 101,
     "name": "Homework 1",
+    "assignment_group_id": 10,
+    "assignment_group_name": "Essays",
+    "assignment_group_weight": 40.0,
     "description": "Write an essay.",
     "due_at": "2026-02-01T23:59:00Z",
     "points_possible": 100,
@@ -71,6 +79,7 @@ def test_assignments_list(mock_list):
         result = runner.invoke(app, ["assignments", "list", "--course", "IS505"])
     assert result.exit_code == 0
     assert "Homework 1" in result.output
+    assert "Essays" in result.output
 
 
 @patch("dauber.cli.assignments.list_assignments", new_callable=AsyncMock)
@@ -82,7 +91,10 @@ def test_assignments_list_json(mock_list):
             ["--format", "json", "assignments", "list", "--course", "IS505"],
         )
     assert result.exit_code == 0
-    assert '"Homework 1"' in result.output
+    assignment = json.loads(result.output)[0]
+    assert assignment["assignment_group_id"] == 10
+    assert assignment["assignment_group_name"] == "Essays"
+    assert assignment["assignment_group_weight"] == 40.0
 
 
 @patch("dauber.cli.assignments.list_assignments", new_callable=AsyncMock)
@@ -100,11 +112,31 @@ def test_assignments_list_error(mock_list):
 @patch("dauber.cli.assignments.get_assignment", new_callable=AsyncMock)
 def test_assignments_show(mock_get):
     mock_get.return_value = MOCK_ASSIGNMENT_DETAIL
-    with _patch_context():
-        result = runner.invoke(app, ["assignments", "show", "--course", "IS505", "101"])
+    with _patch_context(), patch("dauber.cli._output.console", Console(width=200)):
+        result = runner.invoke(
+            app,
+            ["assignments", "show", "--course", "IS505", "101"],
+        )
     assert result.exit_code == 0
     assert "101" in result.output
     assert "Homew" in result.output
+    assert "Essays" in result.output
+    assert "40.0" in result.output
+
+
+@patch("dauber.cli.assignments.get_assignment", new_callable=AsyncMock)
+def test_assignments_show_json(mock_get):
+    mock_get.return_value = MOCK_ASSIGNMENT_DETAIL
+    with _patch_context():
+        result = runner.invoke(
+            app,
+            ["--format", "json", "assignments", "show", "--course", "IS505", "101"],
+        )
+    assert result.exit_code == 0
+    assignment = json.loads(result.output)
+    assert assignment["assignment_group_id"] == 10
+    assert assignment["assignment_group_name"] == "Essays"
+    assert assignment["assignment_group_weight"] == 40.0
 
 
 @patch("dauber.cli.assignments.get_assignment", new_callable=AsyncMock)

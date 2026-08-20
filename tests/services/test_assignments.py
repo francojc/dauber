@@ -1,6 +1,6 @@
 """Tests for dauber.services.assignments."""
 
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, call
 
 import httpx
 import pytest
@@ -41,35 +41,61 @@ def test_strip_html_no_tags():
 
 
 async def test_list_assignments(client):
-    client.get_paginated.return_value = [
-        {
-            "id": 101,
-            "name": "Homework 1",
-            "due_at": "2026-02-01T23:59:00Z",
-            "points_possible": 100,
-            "published": True,
-            "submission_types": ["online_upload", "online_text_entry"],
-        },
-        {
-            "id": 102,
-            "name": "Quiz 1",
-            "due_at": None,
-            "points_possible": 50,
-            "published": False,
-            "submission_types": ["online_quiz"],
-        },
+    client.get_paginated.side_effect = [
+        [
+            {
+                "id": 101,
+                "name": "Homework 1",
+                "assignment_group_id": 10,
+                "due_at": "2026-02-01T23:59:00Z",
+                "points_possible": 100,
+                "published": True,
+                "submission_types": ["online_upload", "online_text_entry"],
+            },
+            {
+                "id": 102,
+                "name": "Quiz 1",
+                "due_at": None,
+                "points_possible": 50,
+                "published": False,
+                "submission_types": ["online_quiz"],
+            },
+            {
+                "id": 103,
+                "name": "Unmatched assignment",
+                "assignment_group_id": 99,
+                "due_at": None,
+                "points_possible": 50,
+                "published": False,
+                "submission_types": [],
+            },
+        ],
+        [{"id": 10, "name": "Essays", "group_weight": 40}],
     ]
 
     result = await list_assignments(client, "1")
-    assert len(result) == 2
+    assert len(result) == 3
     assert result[0]["id"] == 101
     assert result[0]["name"] == "Homework 1"
+    assert result[0]["assignment_group_id"] == 10
+    assert result[0]["assignment_group_name"] == "Essays"
+    assert result[0]["assignment_group_weight"] == 40.0
     assert result[0]["submission_types"] == "online_upload, online_text_entry"
     assert result[1]["published"] is False
+    assert result[1]["assignment_group_id"] is None
+    assert result[1]["assignment_group_name"] is None
+    assert result[1]["assignment_group_weight"] is None
+    assert result[2]["assignment_group_id"] == 99
+    assert result[2]["assignment_group_name"] is None
+    assert result[2]["assignment_group_weight"] is None
+    assert (
+        client.get_paginated.await_args_list.count(call("/courses/1/assignment_groups"))
+        == 1
+    )
 
 
 async def test_list_assignments_empty(client):
-    client.get_paginated.return_value = []
+    client.get_paginated.side_effect = [[], []]
     result = await list_assignments(client, "1")
     assert result == []
 
@@ -87,6 +113,25 @@ async def test_list_assignments_http_error(client):
     assert exc_info.value.status_code == 403
 
 
+async def test_list_assignments_group_fetch_http_error(client):
+    client.get_paginated.side_effect = [
+        [{"id": 101, "name": "Homework 1"}],
+        httpx.HTTPStatusError(
+            "error",
+            request=httpx.Request(
+                "GET", "https://canvas.test/api/v1/courses/1/assignment_groups"
+            ),
+            response=httpx.Response(403, text="forbidden"),
+        ),
+    ]
+
+    with pytest.raises(CanvasError) as exc_info:
+        await list_assignments(client, "1")
+
+    assert exc_info.value.status_code == 403
+    assert "assignment groups for course 1" in exc_info.value.message
+
+
 # -- get_assignment --
 
 
@@ -94,6 +139,7 @@ async def test_get_assignment(client):
     client.request.return_value = {
         "id": 101,
         "name": "Homework 1",
+        "assignment_group_id": 10,
         "description": "<p>Write an essay.</p>",
         "due_at": "2026-02-01T23:59:00Z",
         "points_possible": 100,
@@ -103,9 +149,16 @@ async def test_get_assignment(client):
         "rubric_settings": {"points_possible": 10},
     }
 
+    client.get_paginated.return_value = [
+        {"id": 10, "name": "Essays", "group_weight": 40}
+    ]
+
     result = await get_assignment(client, "1", "101")
     assert result["id"] == 101
     assert result["description"] == "Write an essay."
+    assert result["assignment_group_id"] == 10
+    assert result["assignment_group_name"] == "Essays"
+    assert result["assignment_group_weight"] == 40.0
     assert result["rubric"] is not None
     assert result["rubric_settings"]["points_possible"] == 10
 
