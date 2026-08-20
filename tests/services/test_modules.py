@@ -291,10 +291,10 @@ async def test_create_module_item_page(client):
     )
     assert result["id"] == 10
 
-    call_data = client.request.call_args.kwargs["data"]["module_item"]
-    assert call_data["type"] == "Page"
-    assert call_data["page_url"] == "intro"
-    assert call_data["position"] == 1
+    form_data = dict(client.request.call_args.kwargs["form_data"])
+    assert form_data["module_item[type]"] == "Page"
+    assert form_data["module_item[page_url]"] == "intro"
+    assert form_data["module_item[position]"] == "1"
 
 
 async def test_create_module_item_assignment(client):
@@ -310,8 +310,60 @@ async def test_create_module_item_assignment(client):
     )
     assert result["content_id"] == 42
 
-    call_data = client.request.call_args.kwargs["data"]["module_item"]
-    assert call_data["content_id"] == "42"
+    form_data = dict(client.request.call_args.kwargs["form_data"])
+    assert form_data["module_item[content_id]"] == "42"
+
+
+async def test_create_module_item_external_url(client):
+    client.request.side_effect = [
+        {
+            "id": 12,
+            "title": "Resource",
+            "type": "ExternalUrl",
+            "external_url": "https://example.com/resource",
+            "indent": 1,
+            "position": 2,
+            "published": False,
+            "new_tab": False,
+        },
+        {
+            "id": 12,
+            "title": "Resource",
+            "type": "ExternalUrl",
+            "external_url": "https://example.com/resource",
+            "indent": 1,
+            "position": 2,
+            "published": True,
+            "new_tab": False,
+        },
+    ]
+
+    result = await create_module_item(
+        client,
+        "1",
+        "2",
+        "Resource",
+        "ExternalUrl",
+        url="https://example.com/resource",
+        indent=1,
+        position=2,
+        published=True,
+        new_tab=False,
+    )
+
+    assert result["external_url"] == "https://example.com/resource"
+    assert result["published"] is True
+
+    create_call, publish_call = client.request.await_args_list
+    assert create_call.kwargs["form_data"] == [
+        ("module_item[title]", "Resource"),
+        ("module_item[type]", "ExternalUrl"),
+        ("module_item[external_url]", "https://example.com/resource"),
+        ("module_item[indent]", "1"),
+        ("module_item[position]", "2"),
+        ("module_item[new_tab]", "false"),
+    ]
+    assert publish_call.kwargs["form_data"] == [("module_item[published]", "true")]
 
 
 async def test_create_module_item_http_error(client):
@@ -331,15 +383,35 @@ async def test_update_module_item(client):
     client.request.return_value = {
         "id": 10,
         "title": "Updated",
-        "type": "Page",
+        "type": "ExternalUrl",
+        "external_url": "https://example.com/updated",
         "indent": 1,
+        "position": 2,
+        "published": True,
+        "new_tab": False,
     }
 
-    result = await update_module_item(client, "1", "2", "10", title="Updated")
+    result = await update_module_item(
+        client,
+        "1",
+        "2",
+        "10",
+        title="Updated",
+        url="https://example.com/updated",
+        indent=1,
+        position=2,
+        published=True,
+        new_tab=False,
+    )
     assert result["title"] == "Updated"
-
-    call_data = client.request.call_args.kwargs["data"]["module_item"]
-    assert call_data == {"title": "Updated"}
+    assert client.request.call_args.kwargs["form_data"] == [
+        ("module_item[title]", "Updated"),
+        ("module_item[external_url]", "https://example.com/updated"),
+        ("module_item[indent]", "1"),
+        ("module_item[position]", "2"),
+        ("module_item[published]", "true"),
+        ("module_item[new_tab]", "false"),
+    ]
 
 
 async def test_update_module_item_no_fields(client):

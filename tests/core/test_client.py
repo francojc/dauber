@@ -1,5 +1,7 @@
 """Tests for dauber.core.client."""
 
+from urllib.parse import parse_qsl
+
 import httpx
 import pytest
 
@@ -209,6 +211,10 @@ async def test_form_data_tuples(client, mock_transport):
     async def handler(request):
         content_type = request.headers.get("content-type", "")
         assert "urlencoded" in content_type
+        assert parse_qsl(request.content.decode()) == [
+            ("rubric[title]", "Test"),
+            ("rubric[criteria][0][description]", "Quality"),
+        ]
         return httpx.Response(200, json={"ok": True})
 
     set_handler(handler)

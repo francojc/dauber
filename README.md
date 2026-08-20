@@ -627,6 +627,16 @@ CANVAS_BASE_URL=https://your-institution.instructure.com \
 uv run python -m pytest tests/integration/ -m integration
 ```
 
+The ExternalUrl CRUD integration test creates and deletes a temporary module. Enable it explicitly:
+
+```bash
+CANVAS_SANDBOX_COURSE_ID=123 \
+CANVAS_API_KEY=... \
+CANVAS_BASE_URL=https://your-institution.instructure.com \
+CANVAS_SANDBOX_WRITE_ENABLED=1 \
+uv run python -m pytest tests/integration/test_module_items.py -m integration
+```
+
 ### Architecture
 
 ```text

@@ -5,6 +5,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.1.12] - 2026-08-20
+
+### Added
+
+- Guarded live Canvas sandbox coverage for ExternalUrl module-item create, show, list, update, and delete operations
+
+### Fixed
+
+- Module-item create and update requests now use Canvas bracket-notation form encoding instead of JSON
+- ExternalUrl creation maps CLI `--url` to Canvas `external_url`
+- Module-item creation with `--publish` now publishes through Canvas's update endpoint, which is required because its create endpoint ignores `published`
+
 ## [0.1.10] - 2026-08-19
 
 ### Added

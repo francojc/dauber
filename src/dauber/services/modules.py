@@ -209,6 +209,21 @@ def _project_module_item(item: dict[str, Any]) -> dict[str, Any]:
     return {field: item[field] for field in _MODULE_ITEM_FIELDS if field in item}
 
 
+def _module_item_form_data(payload: dict[str, Any]) -> list[tuple[str, str]]:
+    """Encode module-item fields for Canvas bracket-notation form endpoints."""
+    if "url" in payload and "external_url" in payload:
+        raise CanvasError("Specify only one of url or external_url.")
+
+    pairs: list[tuple[str, str]] = []
+    for field, value in payload.items():
+        field = "external_url" if field == "url" else field
+        encoded_value = (
+            "true" if value is True else "false" if value is False else str(value)
+        )
+        pairs.append((f"module_item[{field}]", encoded_value))
+    return pairs
+
+
 async def list_module_items(
     client: CanvasClient,
     course_id: str,
@@ -271,13 +286,11 @@ async def create_module_item(
     if page_url is not None:
         payload["page_url"] = page_url
     if url is not None:
-        payload["url"] = url
+        payload["external_url"] = url
     if indent is not None:
         payload["indent"] = indent
     if position is not None:
         payload["position"] = position
-    if published is not None:
-        payload["published"] = published
     if new_tab is not None:
         payload["new_tab"] = new_tab
 
@@ -285,13 +298,22 @@ async def create_module_item(
         item = await client.request(
             "post",
             f"/courses/{course_id}/modules/{module_id}/items",
-            data={"module_item": payload},
+            form_data=_module_item_form_data(payload),
         )
     except httpx.HTTPStatusError as exc:
         raise CanvasError(
             f"Failed to create module item: {exc.response.text}",
             status_code=exc.response.status_code,
         ) from exc
+
+    if published is not None:
+        return await update_module_item(
+            client,
+            course_id,
+            module_id,
+            str(item["id"]),
+            published=published,
+        )
 
     return _project_module_item(item)
 
@@ -312,7 +334,7 @@ async def update_module_item(
         item = await client.request(
             "put",
             f"/courses/{course_id}/modules/{module_id}/items/{item_id}",
-            data={"module_item": payload},
+            form_data=_module_item_form_data(payload),
         )
     except httpx.HTTPStatusError as exc:
         raise CanvasError(
