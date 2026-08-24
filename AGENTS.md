@@ -7,6 +7,7 @@
 - Test: `uv run pytest tests/`
 - Lint: `uv run ruff check src/ tests/`
 - Format: `uv run ruff format src/ tests/`
+- Type-check: `uv run pyright src/` (runs in CI on 3.11/3.12)
 
 ## File structure
 

@@ -1,8 +1,8 @@
 # Development Implementation Details
 
 **Project:** dauber
-**Status:** v0.1.11 release ready
-**Last Updated:** 2026-08-19
+**Status:** v0.1.13 released (current)
+**Last Updated:** 2026-08-24
 
 ## Architecture
 
@@ -22,9 +22,8 @@ dauber/
 │   ├── core/             # HTTP client, config, caching
 │   │   ├── client.py     # CanvasClient (httpx async)
 │   │   ├── config.py     # Config (pydantic-settings)
-│   │   ├── config_files.py # YAML/TOML config file I/O
-│   │   ├── cache.py      # CourseCache (code/ID mapping)
-│   │   └── dates.py      # Date formatting utilities
+│   │   ├── config_files.py # TOML config file I/O
+│   │   └── cache.py      # CourseCache (code/ID mapping)
 │   ├── services/         # Async business logic per entity
 │   │   ├── __init__.py   # CanvasError exception
 │   │   ├── courses.py    # list, details, enrollments
@@ -49,6 +48,8 @@ dauber/
 │       ├── modules.py
 │       ├── pages.py
 │       ├── discussions.py
+│       ├── rubrics.py    # Rubrics sub-app (list, show, create, import, attach)
+│       ├── _config_defaults.py # Config-driven CLI defaults
 │       └── commands.py    # Commands sub-app (install, --pi)
 ├── .claude/commands/     # Claude Code slash-command format
 │   ├── assess/           # setup, ai-pass, refine, submit
@@ -139,11 +140,14 @@ dauber/
 
 9. **services/rubrics.py**
    - **Purpose:** Rubrics business logic and form data encoding
-   - **Public Interface:** `list_rubrics()`, `get_rubric()`,
+   - **Public Interface:** `list_rubrics()`, `get_rubric()`, `create_rubric()`,
+     `parse_rubric_csv()`, `attach_rubric()`,
      `build_rubric_assessment_form_data()` (sync helper)
    - **Dependencies:** core/client.py, CanvasError
    - **Notes:** `build_rubric_assessment_form_data()` handles Canvas
-     bracket-notation encoding for rubric assessments
+     bracket-notation encoding for rubric assessments. `parse_rubric_csv()`
+     parses Canvas wide-format CSV templates; `attach_rubric()` PUTs a
+     `rubric_association` to link a rubric to an assignment.
 
 10. **services/grading.py**
     - **Purpose:** Submissions and grade posting
@@ -154,10 +158,12 @@ dauber/
       `anonymize` kwarg to blank `user_name` for FERPA compliance
 
 11. **cli/assignments.py**
-    - **Purpose:** Typer sub-app for assignment and rubric commands
+    - **Purpose:** Typer sub-app for assignment commands
     - **Public Interface:** `assignments_app` with `list`, `show`,
-      `create`, `update`, `rubrics`, `rubric` commands
-    - **Dependencies:** services/assignments.py, services/rubrics.py
+      `create`, `update` commands
+    - **Dependencies:** services/assignments.py
+    - **Notes:** Rubric workflow moved to the dedicated `dauber rubrics`
+      sub-app (v0.1.6).
 
 12. **cli/grading.py**
     - **Purpose:** Typer sub-app for grading commands
@@ -209,7 +215,9 @@ dauber/
       payloads wrapped as `{"module_item": {...}}`. Item creation
       supports Page, Assignment, Discussion, File, ExternalUrl, and
       SubHeader types. `url` function argument maps to Canvas
-      `external_url` for ExternalUrl creation.
+      `external_url` for ExternalUrl creation. Item create/update use
+      Canvas bracket-notation form encoding (v0.1.12); `--publish`
+      routes through the update endpoint (create ignores `published`).
 
 16. **cli/modules.py**
     - **Purpose:** Typer sub-app for module and module item commands
@@ -341,7 +349,8 @@ uv run dauber courses list --format json
 
 - **Formatting:** ruff format (`uv run ruff format src/ tests/`)
 - **Linting:** ruff check (`uv run ruff check src/ tests/`)
-- **Type Checking:** None initially (pydantic handles runtime validation)
+- **Type Checking:** pyright (v0.1.10) via `uv run pyright src/`;
+  runs in CI on Python 3.11/3.12; pydantic handles runtime validation
 - **Naming Conventions:** snake_case for functions/variables,
   PascalCase for classes
 
