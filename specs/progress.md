@@ -1,16 +1,19 @@
 # Development Project Progress
 
 **Project:** dauber
-**Status:** v0.1.11 release ready
-**Last Updated:** 2026-08-19
+**Status:** v0.1.13 released (current)
+**Last Updated:** 2026-08-24
 
 ## Current Status Overview
 
 ### Development Phase
 
-- **Current Phase:** v0.1.11 release ready
-- **Phase Progress:** ExternalUrl module items now use Canvas `external_url`; CLI, service, and live sandbox coverage added
-- **Overall Project Progress:** v0.1.0–v0.1.10 released; project on PyPI
+- **Current Phase:** v0.1.13 released
+- **Phase Progress:** v0.1.13 adds assignment-group metadata; v0.1.12 added
+  ExternalUrl module-item CRUD with bracket-notation form encoding; v0.1.11
+  was the initial off-main ExternalUrl release, superseded by v0.1.12
+- **Overall Project Progress:** Phases 0–6 + v0.1.0–v0.1.13 milestones
+  complete; published on PyPI as 0.1.8, 0.1.9, 0.1.11–0.1.13
 
 ### Recent Accomplishments
 
@@ -93,23 +96,43 @@
 - Claude install logic refactored into `_install_claude_commands()` for symmetry
 - 6 new tests; 294 total, all passing, ruff clean
 
+### Recent Accomplishments (v0.1.13)
+
+- `assignments list` and `assignments show` output now includes Canvas
+  assignment-group ID, name, and weight
+
+### Recent Accomplishments (v0.1.12)
+
+- Guarded live Canvas sandbox coverage for ExternalUrl module-item create,
+  show, list, update, and delete operations
+- Module-item create/update requests now use Canvas bracket-notation form
+  encoding instead of JSON
+- ExternalUrl creation maps CLI `--url` to Canvas `external_url`
+- Module-item creation with `--publish` publishes through the update
+  endpoint; the create endpoint ignores `published`
+- Integration test renamed `test_module_external_url.py` →
+  `test_module_items.py`; refines the initial v0.1.11 release
+
+### Recent Accomplishments (v0.1.11)
+
+- Initial ExternalUrl module-item CRUD released to PyPI from side commit
+  5b0d0d6 (not on main); superseded by v0.1.12's refined version
+
 ### Recent Accomplishments (v0.1.10)
+
+Git-tagged and documented, but not published to PyPI — fixes were carried
+upstream by the 0.1.11 PyPI publish.
 
 - Added `pyright` development dependency and CI type-check job
 - Module-item create validation now returns consistent error messages and exit code 2 across supported Typer/Click versions
 - Verified live Canvas sandbox module-item CRUD: created, showed, listed, updated, and deleted a temporary `SubHeader` item; cleanup removed temporary module
 - 311 unit tests passing; module-focused suite has 41 passing tests
 
-### Recent Accomplishments (v0.1.11)
-
-- Fixed `ExternalUrl` module-item payloads to send Canvas `external_url` while retaining CLI `--url`
-- Added service and CLI tests for direct external-link creation
-- Added and passed live sandbox smoke test: temporary unpublished module and ExternalUrl item created, read, then deleted
-- 313 unit tests passing; Pyright, Ruff, and package build clean
-
 ### Active Work
 
-- v0.1.11 release tagging and PyPI publication
+- No in-progress feature work; 314 unit tests passing (2 live-sandbox
+  integration tests deselected by default)
+
 
 ## Milestone Tracking
 
@@ -131,9 +154,14 @@
 - [x] v0.1.3: Config-driven defaults (tagged)
 - [x] v0.1.4: Course option fix, issue #6 (tagged)
 - [x] v0.1.5: CSV output format (#8) + file-based rubric grading (#9)
-- [x] v0.1.6: Rubrics subcommand (import CSV, attach, skill, DOCX/PDF extraction) — complete
-- [x] v0.1.7: Pi Agent Skills support — complete
+- [x] v0.1.6: Rubrics subcommand (import CSV, attach, skill, DOCX/PDF extraction) — complete (internal milestone, not released)
+- [x] v0.1.7: Pi Agent Skills support — complete (internal milestone, not released)
 - [x] v0.1.8: Rename to dauber, PyPI publish, CI, assessment fixes — complete
+- [x] v0.1.10: Pyright type-checking + CI, module-item validation fixes,
+  sandbox CRUD verification — complete
+- [x] v0.1.11: Initial ExternalUrl CRUD (off-main side commit) — complete
+- [x] v0.1.12: ExternalUrl CRUD + bracket-notation form encoding — complete
+- [x] v0.1.13: Assignment-group metadata — complete
 
 ### At-Risk Milestones
 
@@ -148,7 +176,7 @@
 
 ### Test Results
 
-- **Unit Tests:** 313 passing
+- **Unit Tests:** 314 passing
   - core: config 4, client 11, cache 9, config_files 9
   - services: courses 9, assignments 14, rubrics 18, grading 12,
     assessments 30, modules 14, pages 15, discussions 15
@@ -156,7 +184,7 @@
     assessments 13, modules 11, pages 12, discussions 12,
     config 8, config_defaults 14, commands 10, output 6
   - smoke: 3
-- **Integration Tests:** opt-in Canvas sandbox smoke tests; ExternalUrl test creates and deletes temporary unpublished content
+- **Integration Tests:** read-only Canvas sandbox scaffold, skipped by default
 - **Test Coverage:** 90% statement/branch coverage baseline via `uv run python -m pytest --cov=dauber --cov-report=term-missing tests/`
 
 ### Open Defects
@@ -296,12 +324,13 @@
 
 ### Immediate Actions (Next Session)
 
-- Tag and release v0.1.11 to PyPI
+- Select next theme (candidates: coverage-threshold gate in CI, announcement
+  threading, batch grading improvements, mutating sandbox integration tests)
 
 ### Medium-term Goals (Next Few Sessions)
 
-- Consider adding a coverage threshold after one baseline release
-- Expand opt-in sandbox coverage for other Canvas write operations
+- Consider adding a coverage threshold after one more baseline release
+- Consider opt-in mutating Canvas sandbox tests for module item CRUD
 
 ### Decisions Needed
 
@@ -311,24 +340,28 @@
 
 ### Next Release
 
-**v0.1.11** – External URL Module Items
-
-- Canvas-compatible `external_url` payload for ExternalUrl module items
-- Existing `--url` CLI interface retained
-- Service, CLI, and live sandbox smoke-test coverage
+No release in flight. Next theme selection pending.
 
 ### Release History
 
 | Version | Date       | Key Changes                                              |
 |---------|------------|----------------------------------------------------------|
-| 0.1.10  | 2026-08-19 | Type checking, resilient validation, sandbox CRUD        |
+| 0.1.13  | 2026-08-20 | Assignment-group metadata in list/show                    |
+| 0.1.12  | 2026-08-20 | ExternalUrl module-item CRUD, bracket-notation form encoding |
+| 0.1.11  | 2026-08-19 | Initial ExternalUrl CRUD (off-main side commit, superseded) |
+| 0.1.10  | 2026-08-19 | Pyright + CI, module-item validation fixes, sandbox CRUD (tagged, not published to PyPI) |
 | 0.1.9   | 2026-05-11 | Coverage baseline and module-item CRUD                   |
 | 0.1.8   | 2026-04-06 | Rename to dauber, PyPI publish, CI, PDF/unicode fixes    |
-| 0.1.7   | 2026-03-24 | Pi Agent Skills: --pi flag, .pi/skills/, 294 tests       |
-| 0.1.6   | 2026-03-24 | Rubrics sub-app, DOCX/PDF extraction, commands fix; 288 tests |
+| 0.1.7   | 2026-03-24 | Pi Agent Skills: --pi flag, .pi/skills/, 294 tests  *    |
+| 0.1.6   | 2026-03-24 | Rubrics sub-app, DOCX/PDF extraction, commands fix; 288 tests * |
 | 0.1.5   | 2026-03-18 | CSV output format (#8), file-based rubric grading (#9)   |
 | 0.1.4   | 2026-02-25 | Course changed to --course/-c option (fix #6)            |
 | 0.1.3   | 2026-02-25 | Config-driven defaults, optional course arg              |
 | 0.1.2   | 2026-02-25 | XDG config, TOML local config, --defaults flag           |
 | 0.1.1   | 2026-02-25 | --anonymize flag, expanded skill commands                |
 | 0.1.0   | 2026-02-23 | Initial release (all core phases)                        |
+
+* 0.1.6/0.1.7 were internal milestone labels — never git-tagged nor
+  published to PyPI; their work shipped in 0.1.8 (first PyPI release).
+   v0.1.10 was git-tagged but never published to PyPI (carried upstream
+  by 0.1.11).

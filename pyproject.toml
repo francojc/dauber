@@ -4,13 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dauber"
-<<<<<<< HEAD
 version = "0.1.13"
-||||||| parent of 5b0d0d6 (chore(release): prepare v0.1.11)
-version = "0.1.10"
-=======
-version = "0.1.11"
->>>>>>> 5b0d0d6 (chore(release): prepare v0.1.11)
 description = "Command-line interface for the Canvas LMS API"
 readme = "README.md"
 license = "MIT"

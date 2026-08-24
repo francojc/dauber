@@ -5,7 +5,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
-<<<<<<< HEAD
 ## [0.1.13] - 2026-08-20
 
 ### Added
@@ -23,22 +22,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 - Module-item create and update requests now use Canvas bracket-notation form encoding instead of JSON
 - ExternalUrl creation maps CLI `--url` to Canvas `external_url`
 - Module-item creation with `--publish` now publishes through Canvas's update endpoint, which is required because its create endpoint ignores `published`
-||||||| parent of 5b0d0d6 (chore(release): prepare v0.1.11)
-=======
+
 ## [0.1.11] - 2026-08-19
-
-### Fixed
-
-- External URL module items now send Canvas's documented `module_item[external_url]` field instead of `module_item[url]`; CLI `--url` remains unchanged
 
 ### Added
 
-- Opt-in live sandbox smoke test creates, reads, and deletes an `ExternalUrl` item in a temporary unpublished module
+- Initial ExternalUrl module-item CRUD support, released to PyPI
 
-### Verified
+### Note
 
-- 313 unit tests, Ruff, Pyright, package build, and live ExternalUrl sandbox smoke test pass
->>>>>>> 5b0d0d6 (chore(release): prepare v0.1.11)
+- This release was tagged on a side commit (5b0d0d6), not on main. Its
+  work was subsequently reworked and released as v0.1.12 on main (which
+  renamed the integration test to `test_module_items.py` and expanded the
+  implementation). Tag kept for PyPI release integrity.
 
 ## [0.1.10] - 2026-08-19
 
@@ -112,6 +108,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [0.1.7] - 2026-03-24
 
+### Note
+
+Internal milestone label — never git-tagged nor published to PyPI as a
+discrete release. Work shipped in v0.1.8 (the first PyPI release).
+
 ### Added
 
 - `.pi/skills/` directory with 11 pre-converted Pi Agent Skills (`SKILL.md`)
@@ -134,6 +135,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
   symmetry with new `_install_pi_skills()`
 
 ## [0.1.6] - 2026-03-24
+
+### Note
+
+Internal milestone label — never git-tagged nor published to PyPI as a
+discrete release. Work shipped in v0.1.8 (the first PyPI release).
 
 ### Added
 
@@ -284,7 +290,6 @@ Initial release. Full Canvas LMS CLI for instructor workflows.
 - `--test` flag for Canvas API connectivity check
 - 234 tests passing across services and CLI layers
 
-[0.1.11]: https://github.com/francojc/dauber/compare/v0.1.10...v0.1.11
 [0.1.10]: https://github.com/francojc/dauber/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/francojc/dauber/compare/v0.1.8...v0.1.9
 [0.1.8]: https://github.com/francojc/dauber/compare/v0.1.7...v0.1.8

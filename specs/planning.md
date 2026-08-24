@@ -1,8 +1,8 @@
 # Development Project Planning
 
 **Project:** dauber
-**Status:** v0.1.11 release ready
-**Last Updated:** 2026-08-19
+**Status:** v0.1.13 released (current)
+**Last Updated:** 2026-08-24
 
 ## Project Overview
 
@@ -71,7 +71,8 @@
 - Canvas API token required via environment variable
 - Canvas rubric grading uses bracket-notation form data encoding
 
-## Timeline and Milestones
+
+### Initial Build Phases (Phase 0–6)
 
 ### Phase 0: Scaffolding (COMPLETE)
 
@@ -142,6 +143,8 @@
 - [x] README with full CLI reference and "Extending with AI" section
 - [x] Final documentation pass
 
+### Incremental Releases (v0.1.x)
+
 ### v0.1.2: XDG Configuration (COMPLETE)
 
 - [x] Global config respects `$XDG_CONFIG_HOME` (default `~/.config`)
@@ -170,7 +173,21 @@
       swallowed by optional `course` (Issue #6)
 - [x] Updated all CLI tests to use `--course` flag
 
-### v0.1.6: Rubrics Subcommand (COMPLETE)
+### v0.1.5: Output and Usability Improvements (COMPLETE)
+
+- [x] Add `--format csv` output format for pipeable tabular data
+      (Issue #8). Header row + data rows via `csv.writer` to stdout.
+      262 tests passing.
+- [x] Change `grading submit-rubric` `assessment_json` argument from
+      inline JSON text to a file path (Issue #9). Reads and parses
+      JSON from the specified file with file-not-found and invalid-JSON
+      error handling.
+
+### v0.1.6: Rubrics Subcommand (milestone — not released)
+
+Internal milestone label. Work landed on main, but was never git-tagged
+nor published to PyPI as a discrete release; shipped in v0.1.8 (the first
+PyPI release).
 
 - [x] `dauber rubrics` sub-app replacing `assignments rubrics|rubric`
 - [x] `rubrics list` — list all course rubrics
@@ -194,7 +211,11 @@
       copies `rubrics/create.md` to the target commands directory
 - [x] 288 tests total, ruff clean
 
-### v0.1.7: Pi Agent Skills Support (COMPLETE)
+### v0.1.7: Pi Agent Skills Support (milestone — not released)
+
+Internal milestone label. Work landed on main (commit 8f6d594), but was
+never git-tagged nor published to PyPI as a discrete release; shipped in
+v0.1.8 (the first PyPI release).
 
 Add native support for the Pi coding agent harness alongside existing
 Claude Code slash-command support. Ship both formats in the repo
@@ -249,20 +270,6 @@ commands which work identically under either harness.
 - [x] Discussion topic submissions added to assessment service
 - [x] AGENTS.md replaces CLAUDE.md
 
-### v0.1.11: External URL Module Items (COMPLETE)
-
-- [x] Map `modules items create --type ExternalUrl --url URL` to Canvas `module_item[external_url]`
-- [x] Retain `--url` CLI flag
-- [x] Add service, CLI, and opt-in live sandbox smoke-test coverage
-- [x] 313 unit tests passing; ExternalUrl sandbox smoke test passed
-
-### v0.1.10: Release Verification and Compatibility Fixes (COMPLETE)
-
-- [x] Add Pyright to development dependencies and CI type checking
-- [x] Make module-item creation validation consistent across supported Typer/Click versions
-- [x] Verify module-item CRUD against a live Canvas sandbox; cleanup temporary module and item
-- [x] 311 unit tests passing; 41 module CLI/service tests passing
-
 ### v0.1.9: Quality Baseline + Module Item CRUD (COMPLETE)
 
 - [x] Configure and document coverage reporting; first baseline: 90%
@@ -273,15 +280,37 @@ commands which work identically under either harness.
 - [x] Add opt-in read-only integration-test scaffold for Canvas sandbox checks
 - [x] 311 unit tests passing; integration tests skipped by default
 
-### v0.1.5: Output and Usability Improvements (COMPLETE)
+### v0.1.10: Release Verification and Compatibility Fixes (COMPLETE)
 
-- [x] Add `--format csv` output format for pipeable tabular data
-      (Issue #8). Header row + data rows via `csv.writer` to stdout.
-      262 tests passing.
-- [x] Change `grading submit-rubric` `assessment_json` argument from
-      inline JSON text to a file path (Issue #9). Reads and parses
-      JSON from the specified file with file-not-found and invalid-JSON
-      error handling.
+Git-tagged and documented, but **not published to PyPI** — PyPI jumped
+0.1.9 to 0.1.11, whose publish carried these fixes upstream.
+
+- [x] Add Pyright to development dependencies and CI type checking
+- [x] Make module-item creation validation consistent across supported Typer/Click versions
+- [x] Verify module-item CRUD against a live Canvas sandbox; cleanup temporary module and item
+- [x] 311 unit tests passing; 41 module CLI/service tests passing
+
+### v0.1.11: ExternalUrl CRUD — initial release (COMPLETE)
+
+- [x] Initial ExternalUrl module-item CRUD released to PyPI from a side
+      commit (5b0d0d6), not on main
+- [x] Superseded by v0.1.12's refined implementation on main; tag kept for
+      PyPI release integrity
+
+### v0.1.12: Module Item ExternalUrl + Form Encoding (COMPLETE)
+
+- [x] ExternalUrl module-item CRUD; CLI `--url` maps to Canvas `external_url`
+- [x] Module-item create/update use bracket-notation form encoding (was JSON)
+- [x] `--publish` routes through the update endpoint; the create endpoint
+      ignores `published`
+- [x] Guarded live-sandbox coverage for ExternalUrl ops; integration test
+      renamed `test_module_external_url.py` → `test_module_items.py`
+- [x] On main, this refines the initial v0.1.11 ExternalUrl release
+
+### v0.1.13: Assignment Group Metadata (COMPLETE)
+
+- [x] `assignments list` and `assignments show` output includes Canvas
+      assignment-group ID, name, and weight
 
 ## Resources and Requirements
 
