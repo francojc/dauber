@@ -18,7 +18,9 @@ MOCK_ASSIGNMENTS = [
         "assignment_group_id": 10,
         "assignment_group_name": "Essays",
         "assignment_group_weight": 40.0,
+        "unlock_at": "2026-01-25T00:00:00Z",
         "due_at": "2026-02-01T23:59:00Z",
+        "lock_at": "2026-02-08T00:00:00Z",
         "points_possible": 100,
         "published": True,
         "submission_types": "online_upload",
@@ -32,7 +34,9 @@ MOCK_ASSIGNMENT_DETAIL = {
     "assignment_group_name": "Essays",
     "assignment_group_weight": 40.0,
     "description": "Write an essay.",
+    "unlock_at": "2026-01-25T00:00:00Z",
     "due_at": "2026-02-01T23:59:00Z",
+    "lock_at": "2026-02-08T00:00:00Z",
     "points_possible": 100,
     "published": True,
     "submission_types": "online_upload",
@@ -43,7 +47,9 @@ MOCK_ASSIGNMENT_DETAIL = {
 MOCK_CREATED = {
     "id": 201,
     "name": "New Assignment",
+    "unlock_at": None,
     "due_at": None,
+    "lock_at": None,
     "points_possible": 50,
     "published": False,
 }
@@ -51,7 +57,9 @@ MOCK_CREATED = {
 MOCK_UPDATED = {
     "id": 101,
     "name": "Updated",
+    "unlock_at": None,
     "due_at": None,
+    "lock_at": None,
     "points_possible": 75,
     "published": True,
 }
@@ -75,7 +83,7 @@ def _patch_context():
 @patch("dauber.cli.assignments.list_assignments", new_callable=AsyncMock)
 def test_assignments_list(mock_list):
     mock_list.return_value = MOCK_ASSIGNMENTS
-    with _patch_context():
+    with _patch_context(), patch("dauber.cli._output.console", Console(width=200)):
         result = runner.invoke(app, ["assignments", "list", "--course", "IS505"])
     assert result.exit_code == 0
     assert "Homework 1" in result.output
@@ -154,7 +162,7 @@ def test_assignments_show_error(mock_get):
 @patch("dauber.cli.assignments.create_assignment", new_callable=AsyncMock)
 def test_assignments_create(mock_create):
     mock_create.return_value = MOCK_CREATED
-    with _patch_context():
+    with _patch_context(), patch("dauber.cli._output.console", Console(width=200)):
         result = runner.invoke(
             app,
             [
@@ -165,10 +173,19 @@ def test_assignments_create(mock_create):
                 "New Assignment",
                 "--points",
                 "50",
+                "--unlock-at",
+                "2026-01-25T00:00:00Z",
+                "--due",
+                "2026-02-01T23:59:00Z",
+                "--lock-at",
+                "2026-02-08T00:00:00Z",
             ],
         )
     assert result.exit_code == 0
     assert "New Assignment" in result.output
+    assert mock_create.await_args.kwargs["unlock_at"] == "2026-01-25T00:00:00Z"
+    assert mock_create.await_args.kwargs["due_at"] == "2026-02-01T23:59:00Z"
+    assert mock_create.await_args.kwargs["lock_at"] == "2026-02-08T00:00:00Z"
 
 
 @patch("dauber.cli.assignments.create_assignment", new_callable=AsyncMock)
@@ -196,3 +213,65 @@ def test_assignments_update(mock_update):
         )
     assert result.exit_code == 0
     assert "Updated" in result.output
+
+
+@patch("dauber.cli.assignments.update_assignment", new_callable=AsyncMock)
+def test_assignments_update_clears_dates(mock_update):
+    mock_update.return_value = MOCK_UPDATED
+    with _patch_context():
+        result = runner.invoke(
+            app,
+            [
+                "assignments",
+                "update",
+                "--course",
+                "IS505",
+                "101",
+                "--clear-unlock-at",
+                "--clear-due-at",
+                "--clear-lock-at",
+            ],
+        )
+    assert result.exit_code == 0
+    assert mock_update.await_args.kwargs["clear_unlock_at"] is True
+    assert mock_update.await_args.kwargs["clear_due_at"] is True
+    assert mock_update.await_args.kwargs["clear_lock_at"] is True
+
+
+def test_assignments_create_rejects_invalid_or_unordered_dates():
+    invalid = runner.invoke(
+        app,
+        ["assignments", "create", "Bad", "--unlock-at", "not-a-date"],
+    )
+    unordered = runner.invoke(
+        app,
+        [
+            "assignments",
+            "create",
+            "Bad",
+            "--unlock-at",
+            "2026-02-02T00:00:00Z",
+            "--due",
+            "2026-02-01T00:00:00Z",
+        ],
+    )
+    assert invalid.exit_code == 2
+    assert "--unlock-at must be an ISO 8601" in invalid.output
+    assert unordered.exit_code == 2
+    assert "Availability dates must satisfy" in unordered.output
+
+
+def test_assignments_update_rejects_set_and_clear_same_date():
+    result = runner.invoke(
+        app,
+        [
+            "assignments",
+            "update",
+            "101",
+            "--due",
+            "2026-02-01T00:00:00Z",
+            "--clear-due-at",
+        ],
+    )
+    assert result.exit_code == 2
+    assert "--due cannot be used with --clear-due-at" in result.output

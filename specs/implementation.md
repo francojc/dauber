@@ -136,7 +136,9 @@ dauber/
    - **Public Interface:** `list_assignments()`, `get_assignment()`,
      `create_assignment()`, `update_assignment()` -- all async
    - **Dependencies:** core/client.py, CanvasError
-   - **Notes:** Includes `_strip_html()` helper for description cleanup
+   - **Notes:** Includes `_strip_html()` helper for description cleanup.
+     Availability windows support `unlock_at`, `due_at`, and `lock_at`;
+     omitted update dates remain unchanged and explicit clear flags send `null`.
 
 9. **services/rubrics.py**
    - **Purpose:** Rubrics business logic and form data encoding
@@ -248,7 +250,8 @@ dauber/
     - **Dependencies:** core/client.py, CanvasError
     - **Notes:** Includes `_strip_html()` for message cleanup.
       Supports `only_announcements` filter. Flat JSON payload
-      (no wrapper key)
+      (no wrapper key). Planned v0.1.15 extension: scheduled announcement
+      publication, locking, message-file input, and richer projected fields.
 
 20. **cli/discussions.py**
     - **Purpose:** Typer sub-app for discussion commands
@@ -310,8 +313,10 @@ dauber/
       (e.g., `assess/ai-pass.md` → `assess-ai-pass/SKILL.md`)
     - **Notes:** Body content is copied verbatim from the Claude
       originals. `args`, `argument-hint`, and `allowed-tools` frontmatter
-      fields are dropped (Pi has no equivalent). Keeping both formats in
-      the repo avoids runtime conversion and makes each format reviewable.
+      fields are dropped (Pi has no equivalent). This duplicated-source model
+      has drifted from current CLI syntax; planned v0.2.0 work replaces it
+      with one canonical source, generated harness adapters, and CI checks
+      for embedded `dauber` invocations.
 
 ### Data Model
 
@@ -401,6 +406,39 @@ uv run pytest tests/services/test_modules.py tests/cli/test_modules.py
   requires `CANVAS_API_KEY`, `CANVAS_BASE_URL`, and
   `CANVAS_SANDBOX_COURSE_ID`
 - **Test Databases:** None (all external calls mocked)
+
+## Release Implementation
+
+### v0.1.14: Assignment Availability Windows (implemented; pending sandbox verification)
+
+- Assignment service payloads accept `unlock_at`, `due_at`, and `lock_at`;
+  all assignment projections include those fields.
+- CLI parses ISO 8601 date options and validates ordering only among dates
+  supplied in one request; Canvas remains final authority.
+- Omitted update dates remain unchanged. Explicit clear flags send `null`.
+- Service and CLI tests cover request construction, validation, and clears;
+  opt-in sandbox integration test covers create, update, clear, and cleanup.
+
+### v0.1.15: Announcement Operations
+
+- Keep announcements in `discussions` service and CLI: Canvas represents them
+  as discussion topics. Do not add separate announcement service prematurely.
+- Verify Canvas API support before exposing `delayed_post_at` and `lock_at`.
+- Add `--message-file`; CLI reads UTF-8 content before passing message to
+  service, avoiding shell quoting failure for long announcement bodies.
+- Expand output projections with scheduling, lock, pin, and URL metadata.
+- Update announcement workflow skill only after CLI interface is complete.
+
+### v0.2.0: Agent Skill Reset
+
+- Define canonical skill content and generate Claude/Pi adapters during build
+  or installation.
+- Retain multi-step workflows requiring judgment or coordination; remove thin
+  wrappers around one or two CLI calls.
+- Add a CI test that discovers embedded `dauber` commands and verifies their
+  syntax against fixture-backed CLI execution or maintained command contracts.
+- Update all examples to named `--course` syntax; positional course arguments
+  were removed in v0.1.4.
 
 ## Deployment
 

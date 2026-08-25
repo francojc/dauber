@@ -312,6 +312,43 @@ Git-tagged and documented, but **not published to PyPI** — PyPI jumped
 - [x] `assignments list` and `assignments show` output includes Canvas
       assignment-group ID, name, and weight
 
+### v0.1.14: Assignment Availability Windows (IMPLEMENTED – pending sandbox verification)
+
+- [x] Add `--unlock-at` and `--lock-at` to `assignments create` and `update`
+- [x] Include `unlock_at`, `due_at`, and `lock_at` in assignment list, show,
+      create, and update output; table order: unlock, due, lock
+- [x] Validate ISO 8601 input and supplied temporal ordering
+      (`unlock_at <= due_at <= lock_at`)
+- [x] Add explicit `--clear-unlock-at`, `--clear-due-at`, and `--clear-lock-at`
+      flags; omitted date options leave existing values unchanged
+- [x] Add service, CLI, and opt-in Canvas-sandbox tests for create, update, and
+      clearing availability dates
+
+### v0.1.15: Announcement Operations (PLANNED)
+
+- [ ] Extend discussion-topic create/update with announcement scheduling
+      (`--delayed-post-at`) and locking (`--lock-at`), subject to Canvas API
+      verification
+- [ ] Add `--message-file` for safe long or shell-sensitive announcement bodies
+- [ ] Return and display `delayed_post_at`, `lock_at`, `pinned`, and `html_url`
+- [ ] Add useful announcement-list filters after migration use confirms need
+      (`--published/--unpublished`, `--search`)
+- [ ] Repair `discuss-announce` workflow skill: use `--course`, preserve failed
+      drafts locally, and support scheduled versus immediate publication
+- [ ] Add mocked service/CLI tests and opt-in Canvas-sandbox mutation tests
+
+### v0.2.0: Agent Skill Reset (PLANNED)
+
+- [ ] Audit bundled skills; retain assessment workflow and only repeatedly used
+      orchestration skills
+- [ ] Remove or stop bundling thin CLI wrappers with little added value
+- [ ] Make CLI complete, safe, file-friendly, and scriptable; treat skills as
+      optional harness adapters rather than primary product API
+- [ ] Replace independently maintained Claude/Pi copies with one canonical
+      source and generated target format
+- [ ] Add CI smoke tests for every embedded `dauber` command invocation
+- [ ] Repair all positional-course invocations to use `--course`
+
 ## Resources and Requirements
 
 ### Development Environment
@@ -349,6 +386,8 @@ Git-tagged and documented, but **not published to PyPI** — PyPI jumped
   one-category-per-PR approach, defer non-essential entities.
 - Assessment workflow complexity. Mitigation: Phase 4 is self-contained,
   can ship without it.
+- Agent-skill duplication can drift from CLI interfaces. Mitigation: canonical
+  source, generated harness adapters, and CI command-invocation smoke tests.
 
 ## Success Metrics
 

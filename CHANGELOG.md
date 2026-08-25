@@ -5,6 +5,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Added
+
+- Assignment availability windows: `--unlock-at` and `--lock-at` for create and update, plus projections in list, show, create, and update output
+- Explicit `assignments update` clear flags: `--clear-unlock-at`, `--clear-due-at`, and `--clear-lock-at`
+- ISO 8601 date validation, supplied-date ordering checks, and opt-in Canvas sandbox coverage for availability windows
+
 ## [0.1.13] - 2026-08-20
 
 ### Added

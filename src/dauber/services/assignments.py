@@ -103,7 +103,9 @@ async def list_assignments(
             "id": a["id"],
             "name": a.get("name", ""),
             **_assignment_group_fields(a, groups),
+            "unlock_at": a.get("unlock_at", ""),
             "due_at": a.get("due_at", ""),
+            "lock_at": a.get("lock_at", ""),
             "points_possible": a.get("points_possible", ""),
             "published": a.get("published", False),
             "submission_types": ", ".join(a.get("submission_types", [])),
@@ -140,7 +142,9 @@ async def get_assignment(
         "name": a.get("name", ""),
         **_assignment_group_fields(a, groups),
         "description": _strip_html(a.get("description", "") or ""),
+        "unlock_at": a.get("unlock_at", ""),
         "due_at": a.get("due_at", ""),
+        "lock_at": a.get("lock_at", ""),
         "points_possible": a.get("points_possible", ""),
         "published": a.get("published", False),
         "submission_types": ", ".join(a.get("submission_types", [])),
@@ -155,7 +159,9 @@ async def create_assignment(
     name: str,
     *,
     points_possible: float | None = None,
+    unlock_at: str | None = None,
     due_at: str | None = None,
+    lock_at: str | None = None,
     submission_types: list[str] | None = None,
     published: bool = False,
 ) -> dict[str, Any]:
@@ -166,8 +172,12 @@ async def create_assignment(
     }
     if points_possible is not None:
         payload["points_possible"] = points_possible
+    if unlock_at is not None:
+        payload["unlock_at"] = unlock_at
     if due_at is not None:
         payload["due_at"] = due_at
+    if lock_at is not None:
+        payload["lock_at"] = lock_at
     if submission_types is not None:
         payload["submission_types"] = submission_types
 
@@ -186,7 +196,9 @@ async def create_assignment(
     return {
         "id": a["id"],
         "name": a.get("name", ""),
+        "unlock_at": a.get("unlock_at", ""),
         "due_at": a.get("due_at", ""),
+        "lock_at": a.get("lock_at", ""),
         "points_possible": a.get("points_possible", ""),
         "published": a.get("published", False),
     }
@@ -196,10 +208,21 @@ async def update_assignment(
     client: CanvasClient,
     course_id: str,
     assignment_id: str,
+    *,
+    clear_unlock_at: bool = False,
+    clear_due_at: bool = False,
+    clear_lock_at: bool = False,
     **kwargs: Any,
 ) -> dict[str, Any]:
-    """Update an existing assignment. Only non-None kwargs are sent."""
+    """Update an assignment, preserving omitted fields and explicitly clearing dates."""
     payload = {k: v for k, v in kwargs.items() if v is not None}
+    for field, clear in (
+        ("unlock_at", clear_unlock_at),
+        ("due_at", clear_due_at),
+        ("lock_at", clear_lock_at),
+    ):
+        if clear:
+            payload[field] = None
     if not payload:
         raise CanvasError("No fields to update.")
 
@@ -218,7 +241,9 @@ async def update_assignment(
     return {
         "id": a["id"],
         "name": a.get("name", ""),
+        "unlock_at": a.get("unlock_at", ""),
         "due_at": a.get("due_at", ""),
+        "lock_at": a.get("lock_at", ""),
         "points_possible": a.get("points_possible", ""),
         "published": a.get("published", False),
     }

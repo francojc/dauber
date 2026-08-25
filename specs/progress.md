@@ -130,8 +130,14 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Active Work
 
-- No in-progress feature work; 314 unit tests passing (2 live-sandbox
-  integration tests deselected by default)
+- v0.1.14 implementation complete: assignment availability windows
+  (`unlock_at`, `due_at`, `lock_at`), explicit date clearing, ISO validation,
+  unit/CLI tests, and opt-in sandbox coverage.
+- Pending: run guarded sandbox test against Canvas, then release v0.1.14.
+- v0.1.15: announcement operations (scheduling, locking, message-file input)
+- v0.2.0: agent-skill reset (canonical source, generated adapters, audit)
+- 319 unit tests passing (4 live-sandbox integration tests deselected by
+  default)
 
 
 ## Milestone Tracking
@@ -147,6 +153,12 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Upcoming Milestones
 
+- [ ] v0.1.14: Assignment availability windows implemented; pending guarded
+      Canvas sandbox verification and release
+- [ ] v0.1.15: Announcement operations — scheduling/locking API verification,
+      `--message-file`, richer outputs, repaired announcement skill
+- [ ] v0.2.0: Agent skill reset — audit, remove low-value wrappers, canonical
+      source + generated Claude/Pi adapters, CI command smoke tests
 - [x] Phase 6: Polish (shell completion, README, docs) -- complete
 - [x] 0.1.0 release (tagged)
 - [x] v0.1.1: Anonymize + skill commands (tagged)
@@ -262,7 +274,13 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Planned
 
-(none)
+- Keep announcements under `dauber discussions`; Canvas represents an
+  announcement as a discussion topic. Reconsider a separate CLI alias only
+  after migration use establishes need.
+- Validate assignment-date ordering for dates provided in one operation;
+  Canvas remains final authority for date-window policy.
+- Do not overload omitted update date options as clears. Use explicit clear
+  flags that send `null` to Canvas.
 
 ### Deferred or Cut
 
@@ -272,7 +290,10 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Known Debt
 
-(none -- greenfield project)
+- Bundled Claude and Pi skills duplicate content and have drifted from current
+  CLI syntax: several use positional course arguments removed in v0.1.4.
+  v0.2.0 resolves this with canonical source, generated adapters, and CI
+  validation of embedded `dauber` commands.
 
 ### Recently Resolved
 
@@ -324,23 +345,26 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Immediate Actions (Next Session)
 
-- Select next theme (candidates: coverage-threshold gate in CI, announcement
-  threading, batch grading improvements, mutating sandbox integration tests)
+- Run guarded v0.1.14 Canvas sandbox test; confirm date handling and `null`
+  clears before release.
 
 ### Medium-term Goals (Next Few Sessions)
 
-- Consider adding a coverage threshold after one more baseline release
-- Consider opt-in mutating Canvas sandbox tests for module item CRUD
+- Implement v0.1.15 announcement operations after Canvas API verification.
+- Complete v0.2.0 skill audit and canonical-source design.
+- Consider coverage threshold after one more baseline release.
 
 ### Decisions Needed
 
-(none)
+- Which non-assessment skills survive v0.2.0 audit: retain only workflows
+  demonstrating repeated migration value.
 
 ## Release Planning
 
 ### Next Release
 
-No release in flight. Next theme selection pending.
+v0.1.14: Assignment Availability Windows — implemented, pending guarded
+Canvas sandbox verification and release.
 
 ### Release History
 

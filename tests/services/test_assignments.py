@@ -47,7 +47,9 @@ async def test_list_assignments(client):
                 "id": 101,
                 "name": "Homework 1",
                 "assignment_group_id": 10,
+                "unlock_at": "2026-01-25T00:00:00Z",
                 "due_at": "2026-02-01T23:59:00Z",
+                "lock_at": "2026-02-08T00:00:00Z",
                 "points_possible": 100,
                 "published": True,
                 "submission_types": ["online_upload", "online_text_entry"],
@@ -80,6 +82,9 @@ async def test_list_assignments(client):
     assert result[0]["assignment_group_id"] == 10
     assert result[0]["assignment_group_name"] == "Essays"
     assert result[0]["assignment_group_weight"] == 40.0
+    assert result[0]["unlock_at"] == "2026-01-25T00:00:00Z"
+    assert result[0]["due_at"] == "2026-02-01T23:59:00Z"
+    assert result[0]["lock_at"] == "2026-02-08T00:00:00Z"
     assert result[0]["submission_types"] == "online_upload, online_text_entry"
     assert result[1]["published"] is False
     assert result[1]["assignment_group_id"] is None
@@ -141,7 +146,9 @@ async def test_get_assignment(client):
         "name": "Homework 1",
         "assignment_group_id": 10,
         "description": "<p>Write an essay.</p>",
+        "unlock_at": "2026-01-25T00:00:00Z",
         "due_at": "2026-02-01T23:59:00Z",
+        "lock_at": "2026-02-08T00:00:00Z",
         "points_possible": 100,
         "published": True,
         "submission_types": ["online_upload"],
@@ -159,6 +166,8 @@ async def test_get_assignment(client):
     assert result["assignment_group_id"] == 10
     assert result["assignment_group_name"] == "Essays"
     assert result["assignment_group_weight"] == 40.0
+    assert result["unlock_at"] == "2026-01-25T00:00:00Z"
+    assert result["lock_at"] == "2026-02-08T00:00:00Z"
     assert result["rubric"] is not None
     assert result["rubric_settings"]["points_possible"] == 10
 
@@ -202,7 +211,9 @@ async def test_create_assignment(client):
     client.request.return_value = {
         "id": 201,
         "name": "New Assignment",
+        "unlock_at": "2026-02-22T00:00:00Z",
         "due_at": "2026-03-01T23:59:00Z",
+        "lock_at": "2026-03-08T00:00:00Z",
         "points_possible": 50,
         "published": False,
     }
@@ -212,7 +223,9 @@ async def test_create_assignment(client):
         "1",
         "New Assignment",
         points_possible=50,
+        unlock_at="2026-02-22T00:00:00Z",
         due_at="2026-03-01T23:59:00Z",
+        lock_at="2026-03-08T00:00:00Z",
     )
     assert result["id"] == 201
     assert result["name"] == "New Assignment"
@@ -220,6 +233,11 @@ async def test_create_assignment(client):
     call_data = client.request.call_args.kwargs["data"]["assignment"]
     assert call_data["name"] == "New Assignment"
     assert call_data["points_possible"] == 50
+    assert call_data["unlock_at"] == "2026-02-22T00:00:00Z"
+    assert call_data["due_at"] == "2026-03-01T23:59:00Z"
+    assert call_data["lock_at"] == "2026-03-08T00:00:00Z"
+    assert result["unlock_at"] == "2026-02-22T00:00:00Z"
+    assert result["lock_at"] == "2026-03-08T00:00:00Z"
 
 
 async def test_create_assignment_http_error(client):
@@ -275,6 +293,33 @@ async def test_update_assignment_filters_none(client):
     call_data = client.request.call_args.kwargs["data"]["assignment"]
     assert "name" in call_data
     assert "due_at" not in call_data
+
+
+async def test_update_assignment_clears_availability_dates(client):
+    client.request.return_value = {
+        "id": 101,
+        "name": "Updated",
+        "unlock_at": None,
+        "due_at": None,
+        "lock_at": None,
+        "points_possible": 75,
+        "published": True,
+    }
+
+    result = await update_assignment(
+        client,
+        "1",
+        "101",
+        clear_unlock_at=True,
+        clear_due_at=True,
+        clear_lock_at=True,
+    )
+
+    call_data = client.request.call_args.kwargs["data"]["assignment"]
+    assert call_data == {"unlock_at": None, "due_at": None, "lock_at": None}
+    assert result["unlock_at"] is None
+    assert result["due_at"] is None
+    assert result["lock_at"] is None
 
 
 async def test_update_assignment_no_fields():
