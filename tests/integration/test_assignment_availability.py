@@ -32,15 +32,14 @@ def _missing_env() -> list[str]:
     missing = [name for name in _REQUIRED_ENV if not os.getenv(name)]
     if os.getenv("CANVAS_SANDBOX_WRITE_ENABLED") != "1":
         missing.append("CANVAS_SANDBOX_WRITE_ENABLED=1")
+    if os.getenv("CANVAS_SANDBOX_ID") and not os.getenv("CANVAS_SANDBOX_COURSE_ID"):
+        missing.append("(CANVAS_SANDBOX_ID set; expected CANVAS_SANDBOX_COURSE_ID)")
     return missing
 
 
 @pytest.mark.skipif(
     bool(_missing_env()),
-    reason=(
-        "requires CANVAS_API_KEY, CANVAS_BASE_URL, CANVAS_SANDBOX_COURSE_ID, "
-        "and CANVAS_SANDBOX_WRITE_ENABLED=1"
-    ),
+    reason=f"missing required environment: {', '.join(_missing_env())}",
 )
 async def test_assignment_availability_dates_create_update_and_clear() -> None:
     """Create, update, clear, and delete a sandbox assignment's dates."""

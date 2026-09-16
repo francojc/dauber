@@ -36,15 +36,14 @@ def _missing_env() -> list[str]:
     missing = [name for name in _REQUIRED_ENV if not os.getenv(name)]
     if os.getenv("CANVAS_SANDBOX_WRITE_ENABLED") != "1":
         missing.append("CANVAS_SANDBOX_WRITE_ENABLED=1")
+    if os.getenv("CANVAS_SANDBOX_ID") and not os.getenv("CANVAS_SANDBOX_COURSE_ID"):
+        missing.append("(CANVAS_SANDBOX_ID set; expected CANVAS_SANDBOX_COURSE_ID)")
     return missing
 
 
 @pytest.mark.skipif(
     bool(_missing_env()),
-    reason=(
-        "requires CANVAS_API_KEY, CANVAS_BASE_URL, CANVAS_SANDBOX_COURSE_ID, "
-        "and CANVAS_SANDBOX_WRITE_ENABLED=1"
-    ),
+    reason=f"missing required environment: {', '.join(_missing_env())}",
 )
 async def test_module_item_external_url_crud() -> None:
     """Create, read, list, update, and delete an ExternalUrl module item."""

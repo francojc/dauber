@@ -320,26 +320,35 @@ dauber/
       with one canonical source, generated harness adapters, and CI checks
       for embedded `dauber` invocations.
 
-26. **services/quizzes.py** *(planned v0.1.14)*
+26. **services/quizzes.py** *(planned v0.1.14; API shapes verified 2026-09-16)*
     - **Purpose:** Classic Quiz discovery and Canvas quiz-report lifecycle
     - **Public Interface:** `list_quizzes()`, `resolve_assignment_to_quiz()`,
       `list_reports()`, `create_report()`, `get_report()`,
       `wait_for_report()`, `download_report()` — all async, accept
       CanvasClient
     - **Dependencies:** core/client.py, CanvasError
-    - **Notes:** `list_quizzes()` paginates `/courses/{id}/quizzes` and
-      projects `id`, `assignment_id`, `title`, `quiz_type`, `published`,
-      `due_at`. `resolve_assignment_to_quiz()` matches on `assignment_id`,
-      never title; no match means New Quizzes / non-quiz and raises a
-      distinct `CanvasError`. `create_report()` POSTs
-      `quiz_report[report_type]` (and optional
-      `quiz_report[includes_all_versions]`) as bracket-notation form data.
-      `wait_for_report()` polls with 1s initial interval, exponential backoff
-      capped at 10s, default 5-minute timeout, and accepts an
-      `on_progress` callback so the CLI can report state without the service
-      writing to the terminal. `download_report()` follows the attachment
-      URL returned by Canvas (never constructed) via the existing
-      `CanvasClient.download()` and returns raw bytes.
+    - **Notes (verified against course `74806`, 2026-09-16):**
+      `list_quizzes()` paginates `/courses/{id}/quizzes`, which returns a bare
+      JSON array, and projects `id`, `assignment_id`, `title`, `quiz_type`,
+      `published`, `due_at`. `resolve_assignment_to_quiz()` matches on
+      `assignment_id`, never title; no match means New Quizzes / non-quiz and
+      raises a distinct `CanvasError`. `list_reports()` and `get_report()`
+      return bare JSON (array / object — no `quiz_reports` wrapper).
+      `create_report()` POSTs `quiz_report[report_type]` (and optional
+      `quiz_report[includes_all_versions]`) as bracket-notation form data and
+      is **get-or-create**: Canvas returns the same report `id` when one
+      exists for that type/version pair and re-triggers generation, so
+      regeneration needs no client-side dedupe. Report objects carry no
+      `workflow_state`; completion is signalled by a `file` key on the report
+      (not `attachment`), while failure and its Canvas `message` are only
+      visible via `progress_url` (`GET /api/v1/progress/{id}` →
+      `workflow_state`: queued/running/completed/failed). `wait_for_report()`
+      therefore polls both: 1s initial interval, exponential backoff capped
+      at 10s, default 5-minute timeout, plus an `on_progress` callback so the
+      CLI can report state without the service writing to the terminal.
+      `download_report()` GETs `file.url` from Canvas (never constructed) via
+      the existing `CanvasClient.download()` and returns raw bytes
+      (`text/csv`). Observed generation time: ~26s for a small survey.
 
 27. **cli/quizzes.py** *(planned v0.1.14)*
     - **Purpose:** Typer sub-app for Classic Quiz report commands
@@ -350,10 +359,17 @@ dauber/
       cli/_output.py, cli/_config_defaults.py
     - **Notes:** Positional `QUIZ_ID` is a Canvas Classic Quiz ID and is
       optional; `--assignment` is mutually exclusive with it. `download`
-      reuses a completed compatible report unless `--regenerate` is passed,
-      waits unless `--no-wait`, and writes bytes to `--output` (directory →
-      Canvas filename or `{title} Survey Student Analysis Report.csv`;
-      `.csv` suffix → exact path). Progress lines go to stderr via
+      reuses a completed compatible report (same `report_type` and
+      `includes_all_versions`, `file` present, attachment fetchable) unless
+      `--regenerate` is passed; because POST is get-or-create, regenerate is
+      simply another POST. It waits unless `--no-wait`, and writes bytes to
+      `--output` (directory → name derived from the stripped quiz title with
+      `:` replaced by `_`, e.g. `Capítulo 2_ Autoevaluación Survey Student
+      Analysis Report.csv`; `file.display_name` is fallback only because it
+      preserves the raw colon and stray trailing whitespace; `.csv` suffix →
+      exact path). `file.filename` is generic
+      (`quiz_student_analysis_report.csv`) and is never used for output
+      naming. Progress lines go to stderr via
       `rich.console.Console(stderr=True)` so `--format json|csv` stdout stays
       clean. Output helpers: create missing directory, refuse overwrite
       without `--force`, write temp sibling then `os.replace()`.
@@ -424,10 +440,15 @@ uv run pytest tests/cli/
 uv run python -m pytest --cov=dauber --cov-report=term-missing tests/
 
 # Opt-in Canvas sandbox integration tests; creates and deletes temporary unpublished content
-uv run python -m pytest tests/integration/ -m integration
+# (command-line -m overrides addopts = "-m 'not integration'"; add -rs to see skip reasons)
+CANVAS_SANDBOX_COURSE_ID=4341 CANVAS_SANDBOX_WRITE_ENABLED=1 \
+  uv run python -m pytest tests/integration/ -m integration -rs
 
 # Module-item unit and CLI tests
 uv run pytest tests/services/test_modules.py tests/cli/test_modules.py
+
+# Live Canvas quiz-report probe (v0.1.14)
+uv run python scripts/probe_quiz_reports.py --course 74806
 ```
 
 ### Coverage Targets
@@ -444,7 +465,9 @@ uv run pytest tests/services/test_modules.py tests/cli/test_modules.py
   service functions in CLI tests
 - **Integration:** `tests/integration/` is skipped by default and
   requires `CANVAS_API_KEY`, `CANVAS_BASE_URL`, and
-  `CANVAS_SANDBOX_COURSE_ID`
+  `CANVAS_SANDBOX_COURSE_ID` (write-enabled tests also need
+  `CANVAS_SANDBOX_WRITE_ENABLED=1`); skip reasons list only the missing
+  variables, so run with `-rs`
 - **Test Databases:** None (all external calls mocked)
 
 ## Release Implementation
@@ -458,6 +481,11 @@ uv run pytest tests/services/test_modules.py tests/cli/test_modules.py
 - Omitted update dates remain unchanged. Explicit clear flags send `null`.
 - Service and CLI tests cover request construction, validation, and clears;
   opt-in sandbox integration test covers create, update, clear, and cleanup.
+- Sandbox verified 2026-09-15 against course `4341`: create, update, and
+  `null` clears confirmed live.
+- Quiz report API probed on course `74806` (2026-09-16) via
+  `scripts/probe_quiz_reports.py`; verified shapes recorded in
+  `specs/dauber-quiz-report-export-spec.md` and in Key Module 26/27 notes.
 
 Classic Quiz reports:
 
@@ -571,3 +599,6 @@ Classic Quiz reports:
 | 2026-09-15 | Progress output to stderr, only final data to stdout | `--format json\|csv` must stay pipeable; the spec requires machine-readable output with no progress noise. | Print progress to stdout (breaks `jq` and CSV redirection); `--quiet` flag (extra surface, easy to forget) |
 | 2026-09-15 | Preserve CSV bytes end to end; no parsing or normalization | Downstream analysis (R, pandas, spreadsheets) depends on Canvas's exact columns, quoting, and encoding; transformation belongs in consumers, not dauber. | Parse and re-emit with `csv` module (risks quoting/line-ending drift); normalize headers (breaks column mapping) |
 | 2026-09-15 | New Quizzes detected by absence in `/quizzes` plus assignment `submission_types` check | Gives an actionable “unsupported” error instead of a confusing 404; title matching is unreliable across duplicated quiz names. | Title matching (rejected in the spec); attempting New Quizzes endpoints and failing opaquely |
+| 2026-09-16 | Poll both the report object (for `file`) and `progress_url` (for `workflow_state`/`message`) | Verified: report objects carry no `workflow_state`, so failure and its Canvas message are only visible on the progress endpoint. Polling the report alone would spin until timeout on a failed job. | Poll report only (no failure diagnosis); poll progress only (no attachment URL, needs a second fetch) |
+| 2026-09-16 | Derive output filename from the stripped quiz title; use `file.display_name` only as fallback | Verified: `file.filename` is generic and `display_name` preserves `:` plus stray trailing whitespace from quiz titles (`"Capítulo 8: Autoevaluación "`), which breaks the expected stable filenames. | Use `display_name` verbatim (colons and double spaces in output names); use `file.filename` (all exports collide on one name) |
+| 2026-09-16 | `--regenerate` implemented as another POST, no client-side report dedupe | Verified: Canvas quiz-report POST is get-or-create — it returns the existing report id for a type/version pair and restarts generation. | Maintain a local report cache/table (state that Canvas already owns and can drift) |

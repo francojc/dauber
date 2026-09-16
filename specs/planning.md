@@ -316,7 +316,7 @@ Git-tagged and documented, but **not published to PyPI** — PyPI jumped
 
 ### v0.1.14: Assignment Availability Windows + Classic Quiz Reports (IN PROGRESS)
 
-Availability windows (implemented — pending sandbox verification):
+Availability windows (implemented — sandbox verified 2026-09-15, course `4341`):
 
 - [x] Add `--unlock-at` and `--lock-at` to `assignments create` and `update`
 - [x] Include `unlock_at`, `due_at`, and `lock_at` in assignment list, show,
@@ -328,27 +328,37 @@ Availability windows (implemented — pending sandbox verification):
 - [x] Add service, CLI, and opt-in Canvas-sandbox tests for create, update, and
       clearing availability dates
 
-Classic Quiz reports (planned — full spec in
+Classic Quiz reports (planned — not started; full spec in
 `specs/dauber-quiz-report-export-spec.md`):
 
-- [ ] Probe live Canvas quiz-report API on course `74806` to lock the report
-      object shape (progress/attachment fields) before implementing polling
+- [x] Probe live Canvas quiz-report API on course `74806` (done 2026-09-16;
+      shapes recorded in the feature spec)
 - [ ] `services/quizzes.py`: paginated quiz discovery, assignment→quiz
-      resolution via `assignment_id`, report CRUD, polling (1s→10s backoff,
-      5-minute default timeout)
+      resolution via `assignment_id`, report CRUD, polling of both report
+      (`file`) and `progress_url` (`workflow_state`) with 1s→10s backoff and a
+      5-minute default timeout
 - [ ] `cli/quizzes.py`: `quizzes list|show|resolve-assignment` plus nested
       `quizzes reports list|create|show|download`
 - [ ] Reuse-vs-regenerate policy: same `report_type` and
-      `includes_all_versions`, completed state, fetchable attachment
-- [ ] Safe output: Canvas filename with derived fallback, directory creation,
-      overwrite refusal, temp-file + atomic rename, byte-preserving write
+      `includes_all_versions`, `file` present, attachment fetchable (404 →
+      re-POST once)
+- [ ] Safe output: filename derived from stripped quiz title (`display_name`
+      fallback), directory creation, overwrite refusal, temp-file + atomic
+      rename, byte-preserving write
 - [ ] New Quizzes detection with actionable error; progress output to stderr so
       JSON/CSV stdout stays machine-readable
 - [ ] Service + CLI tests (~30); README, CHANGELOG, and spec sync
 
-Open decisions (see implementation.md decision log): split `--force` into
-`--force` (overwrite) and `--regenerate` (ignore reusable report); positional
-`QUIZ_ID` optional and mutually exclusive with `--assignment`.
+Verified API behaviour (course `74806`, 2026-09-16) that shapes the checklist:
+`POST .../reports` is get-or-create (regenerate = another POST); completion
+appears as a `file` key on the report; failure and its message appear only on
+`progress_url`; `file.filename` is generic, `display_name` keeps `:` and stray
+whitespace, so filenames derive from the stripped quiz title; generation took
+~26s for a small survey.
+
+Resolved decisions (see implementation.md decision log): `--force` overwrites
+the output file, `--regenerate` re-POSTs; positional `QUIZ_ID` is optional and
+mutually exclusive with `--assignment`.
 
 ### v0.1.15: Announcement Operations (PLANNED)
 
@@ -414,9 +424,10 @@ Open decisions (see implementation.md decision log): split `--force` into
   can ship without it.
 - Agent-skill duplication can drift from CLI interfaces. Mitigation: canonical
   source, generated harness adapters, and CI command-invocation smoke tests.
-- Canvas quiz reports generate asynchronously and their attachments expire.
-  Mitigation: poll with backoff, reuse only completed reports, and regenerate
-  automatically when the attachment returns 404.
+- Canvas quiz reports generate asynchronously (~26s observed) and their
+  attachments expire. Mitigation: poll report + progress with backoff, reuse
+  only completed reports, and regenerate automatically when the attachment
+  returns 404.
 
 ## Success Metrics
 

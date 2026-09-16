@@ -628,7 +628,7 @@ With coverage:
 uv run python -m pytest --cov=dauber --cov-report=term-missing tests/
 ```
 
-Integration tests require live Canvas sandbox credentials. They create and delete temporary unpublished module content, so use a dedicated sandbox course:
+Integration tests require live Canvas sandbox credentials. Read-only checks run as-is; tests that create and delete temporary content (module items, assignment availability windows) need `CANVAS_SANDBOX_WRITE_ENABLED=1`. Use a dedicated sandbox course:
 
 ```bash
 CANVAS_SANDBOX_COURSE_ID=123 \
@@ -637,7 +637,7 @@ CANVAS_BASE_URL=https://your-institution.instructure.com \
 uv run python -m pytest tests/integration/ -m integration
 ```
 
-The ExternalUrl CRUD integration test creates and deletes a temporary module. Enable it explicitly:
+Write-enabled tests (`test_module_items.py`, `test_module_external_url.py`, `test_assignment_availability.py`) create and delete temporary content. Enable them explicitly:
 
 ```bash
 CANVAS_SANDBOX_COURSE_ID=123 \

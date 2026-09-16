@@ -78,6 +78,9 @@ Passing both positional `QUIZ_ID` and `--assignment` is error.
 
 ## Canvas API behavior
 
+Verified against course `74806` on 2026-09-16. Field names below are observed,
+not assumed.
+
 Use authenticated Canvas API client already configured by `dauber`.
 
 Classic Quiz discovery:
@@ -95,8 +98,80 @@ Report lifecycle:
 
 Implementation must use Canvas links/URLs returned by API rather than constructing attachment URLs.
 
+### Verified response shapes
+
+`GET /courses/{course_id}/quizzes` returns a **bare JSON array** (no wrapper).
+Quiz fields of interest: `id`, `assignment_id`, `title`, `quiz_type`
+(`graded_survey` for the autoevaluaciones), `published`, `due_at`,
+`permissions`, `quiz_reports_url`.
+
+`GET /courses/{course_id}/quizzes/{quiz_id}/reports` returns a **bare JSON
+array** of report stubs:
+
+```json
+{ "id": 71956, "report_type": "student_analysis",
+  "readable_type": "Análisis de estudiantes", "includes_all_versions": false,
+  "includes_sis_ids": true, "generatable": true, "anonymous": false,
+  "url": ".../reports/71956", "created_at": "...", "updated_at": "...",
+  "quiz_id": 98732 }
+```
+
+`POST .../reports` with `quiz_report[report_type]=student_analysis` is
+**get-or-create**: posting when a report already exists for that
+(`report_type`, `includes_all_versions`) pair returns the same report `id` and
+re-triggers generation (`updated_at` advances). Response adds `progress_url`;
+it does **not** include `file` until generation finishes.
+
+`GET .../reports/{report_id}` returns the same object; when complete it gains a
+`file` key (not `attachment`):
+
+```json
+"file": { "id": 6821649, "display_name": "Capítulo 2: Autoevaluación Survey Student Analysis Report.csv",
+  "filename": "quiz_student_analysis_report.csv", "content-type": "text/csv",
+  "url": "https://.../files/6821649/download?...", "size": 2779, "upload_status": "success" }
+```
+
+Report objects carry **no `workflow_state` and no `progress` object**. State
+lives at `progress_url` (`GET /api/v1/progress/{id}`):
+
+```json
+{ "id": 1423744, "context_type": "Quizzes::QuizStatistics",
+  "workflow_state": "completed", "completion": 100.0, "message": null }
+```
+
+Observed states: `queued`, `running`, `completed`, `failed`. Generation for a
+survey with a handful of submissions took ~26 seconds.
+
+`file.filename` is generic (`quiz_student_analysis_report.csv`) and must not be
+used for output naming. `file.display_name` is human-readable but inherits the
+quiz title verbatim, including `:` and stray trailing whitespace
+(`"Capítulo 8: Autoevaluación "` → double space in display_name), so derive the
+on-disk name from the stripped quiz title per the Output files section and keep
+display_name only as fallback.
+
+Downloads: `GET file.url` with the normal bearer header returns the CSV bytes
+directly (HTTP 200, `text/csv`). No HTML/JSON envelope. Canvas CSVs include SIS
+ID columns (`sis_id`, `section_sis_id`) by default.
+
+### Assignment → quiz map (course 74806)
+
+| Quiz ID | Assignment ID | Title | quiz_type |
+|---------|---------------|-------|-----------|
+| 98659 | 613133 | Capítulo 1: Autoevaluación | graded_survey |
+| 98732 | 614873 | Capítulo 2: Autoevaluación | graded_survey |
+| 98892 | 616448 | Capítulo 3: Autoevaluación | graded_survey |
+| 99160 | 618813 | Capítulo 4: Autoevaluación | graded_survey |
+| 99461 | 621808 | Capítulo 5: Autoevaluación | graded_survey |
+| 99654 | 623863 | Capítulo 6: Autoevaluación | graded_survey |
+| 99767 | 625931 | Capítulo 7: Autoevaluación | graded_survey |
+| 99873 | 626694 | Capítulo 8: Autoevaluación (title has trailing space) | graded_survey |
+
+All seven assignment IDs in the acceptance criteria resolve to Classic Quizzes.
+
 Polling:
 
+- Poll the report object for a `file` key **and** the `progress_url` for
+  `workflow_state`; `failed` progress carries the Canvas `message`.
 - Initial interval: 1 second.
 - Exponential backoff capped at 10 seconds.
 - Default timeout: 5 minutes; configurable with `--timeout SECONDS`.

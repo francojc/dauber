@@ -102,6 +102,22 @@
 - `assignments list` and `assignments show` output now includes Canvas
   assignment-group ID, name, and weight
 
+### Recent Accomplishments (v0.1.14)
+
+- Live Canvas sandbox verification of assignment availability windows passed
+  against course `4341` on 2026-09-15 (create, update, and `null` clears)
+- Integration-test environment guards now report only the variables actually
+  missing, plus a hint when `CANVAS_SANDBOX_ID` is set instead of
+  `CANVAS_SANDBOX_COURSE_ID`
+- Added `scripts/probe_quiz_reports.py`: read-only quiz discovery with an
+  opt-in `--create` report generation probe
+- Probed the live Classic Quiz report API on course `74806` (2026-09-16):
+  locked bare-array quiz/report responses, get-or-create `POST`, `file` key as
+  the completion signal, `progress_url` as the only failure channel, and the
+  assignment→quiz map for all 8 autoevaluaciones
+- v0.1.14 scope expanded to include Classic Quiz report export; feature spec
+  at `specs/dauber-quiz-report-export-spec.md`
+
 ### Recent Accomplishments (v0.1.12)
 
 - Guarded live Canvas sandbox coverage for ExternalUrl module-item create,
@@ -134,10 +150,15 @@ upstream by the 0.1.11 PyPI publish.
 - v0.1.14 implementation complete: assignment availability windows
   (`unlock_at`, `due_at`, `lock_at`), explicit date clearing, ISO validation,
   unit/CLI tests, and opt-in sandbox coverage.
+- Sandbox verification passed 2026-09-15 against course `4341`
+  (`CANVAS_SANDBOX_COURSE_ID=4341 CANVAS_SANDBOX_WRITE_ENABLED=1`): all 4
+  guarded integration tests pass; 319 unit tests pass, 4 deselected.
 - v0.1.14 scope expanded: Classic Quiz report export (`dauber quizzes`) folded
   into this release. Spec at `specs/dauber-quiz-report-export-spec.md`.
-- Pending: probe live quiz-report API shape, run guarded sandbox test for
-  availability windows, implement quizzes service + CLI, then release v0.1.14.
+- Live quiz-report probe completed 2026-09-16 on course `74806`: response
+  shapes, progress endpoint, `file` attachment, and the 8-quiz assignment→quiz
+  map recorded in `specs/dauber-quiz-report-export-spec.md`.
+- Pending: implement quizzes service + CLI and tests, then release v0.1.14.
 - v0.1.15: announcement operations (scheduling, locking, message-file input)
 - v0.2.0: agent-skill reset (canonical source, generated adapters, audit)
 - 319 unit tests passing (4 live-sandbox integration tests deselected by
@@ -157,28 +178,22 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Upcoming Milestones
 
-- [ ] v0.1.14: Assignment availability windows implemented; Classic Quiz
-      report export spec complete and scheduled; pending quiz implementation,
-      guarded Canvas sandbox verification, and release
-- [ ] v0.1.15: Announcement operations — scheduling/locking API verification,
-      `--message-file`, richer outputs, repaired announcement skill
-- [ ] v0.2.0: Agent skill reset — audit, remove low-value wrappers, canonical
-      source + generated Claude/Pi adapters, CI command smoke tests
-- [x] Phase 6: Polish (shell completion, README, docs) -- complete
+- [ ] v0.1.14: Assignment availability windows implemented and sandbox verified; Classic Quiz report export spec complete and scheduled; pending quiz implementation and release
+- [ ] v0.1.15: Announcement operations — scheduling/locking API verification, `--message-file`, richer outputs, repaired announcement skill
+- [ ] v0.2.0: Agent skill reset — audit, remove low-value wrappers, canonical source + generated Claude/Pi adapters, CI command smoke tests
 - [x] 0.1.0 release (tagged)
+- [x] Phase 6: Polish (shell completion, README, docs) -- complete
+- [x] v0.1.10: Pyright type-checking + CI, module-item validation fixes, sandbox CRUD verification — complete
+- [x] v0.1.11: Initial ExternalUrl CRUD (off-main side commit) — complete
+- [x] v0.1.12: ExternalUrl CRUD + bracket-notation form encoding — complete
+- [x] v0.1.13: Assignment-group metadata — complete
 - [x] v0.1.1: Anonymize + skill commands (tagged)
 - [x] v0.1.2: XDG-compliant config system (tagged)
 - [x] v0.1.3: Config-driven defaults (tagged)
 - [x] v0.1.4: Course option fix, issue #6 (tagged)
 - [x] v0.1.5: CSV output format (#8) + file-based rubric grading (#9)
-- [x] v0.1.6: Rubrics subcommand (import CSV, attach, skill, DOCX/PDF extraction) — complete (internal milestone, not released)
-- [x] v0.1.7: Pi Agent Skills support — complete (internal milestone, not released)
+- [x] v0.1.6: Rubrics subcommand (import CSV, attach, skill, DOCX/PDF extraction) — complete (internal milestone, not released) [x] v0.1.7: Pi Agent Skills support — complete (internal milestone, not released)
 - [x] v0.1.8: Rename to dauber, PyPI publish, CI, assessment fixes — complete
-- [x] v0.1.10: Pyright type-checking + CI, module-item validation fixes,
-  sandbox CRUD verification — complete
-- [x] v0.1.11: Initial ExternalUrl CRUD (off-main side commit) — complete
-- [x] v0.1.12: ExternalUrl CRUD + bracket-notation form encoding — complete
-- [x] v0.1.13: Assignment-group metadata — complete
 
 ### At-Risk Milestones
 
@@ -188,12 +203,12 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Build Health
 
-- **Last Successful Build:** 2026-04-06 (`uv sync` + `uv run pytest tests/`)
+- **Last Successful Build:** 2026-09-15 (`uv sync` + `uv run pytest tests/`)
 - **Build Warnings:** None
 
 ### Test Results
 
-- **Unit Tests:** 314 passing
+- **Unit Tests:** 319 passing (verified 2026-09-15)
   - core: config 4, client 11, cache 9, config_files 9
   - services: courses 9, assignments 14, rubrics 18, grading 12,
     assessments 30, modules 14, pages 15, discussions 15
@@ -201,7 +216,10 @@ upstream by the 0.1.11 PyPI publish.
     assessments 13, modules 11, pages 12, discussions 12,
     config 8, config_defaults 14, commands 10, output 6
   - smoke: 3
-- **Integration Tests:** read-only Canvas sandbox scaffold, skipped by default
+- **Integration Tests:** 4 passing against sandbox course `4341` on
+  2026-09-15 (assignment availability, connectivity, ExternalUrl, module
+  items); skipped by default via `addopts = "-m 'not integration'"`; run with
+  `-rs` to surface skip reasons
 - **Test Coverage:** 90% statement/branch coverage baseline via `uv run python -m pytest --cov=dauber --cov-report=term-missing tests/`
 
 ### Open Defects
@@ -340,6 +358,10 @@ upstream by the 0.1.11 PyPI publish.
   `AsyncBaseTransport` subclass instead of `respx` library
 - Pagination test hung because URL string matching was fragile;
   switched to parsing `request.url.params` dict directly
+- Integration tests appeared to skip for missing API credentials when only the
+  sandbox course id was wrong: the skip reason was a static string listing all
+  requirements. Fixed by rendering the reason from the missing-variable list,
+  plus a `CANVAS_SANDBOX_ID` typo hint
 
 ### Lessons Learned
 
@@ -350,16 +372,23 @@ upstream by the 0.1.11 PyPI publish.
   get_context to avoid needing real config/credentials
 - AsyncMock works well for service functions called from
   async_command-bridged CLI commands
+- Probe live Canvas endpoints before coding against them: the quiz-report API
+  differs from documented assumptions (bare arrays, `file` rather than
+  `attachment`, no `workflow_state` on the report object)
+- Static skip reasons hide the real cause; render them from actual state and
+  run pytest with `-rs`
 
 ## Next Steps
 
 ### Immediate Actions (Next Session)
 
-- Run guarded v0.1.14 Canvas sandbox test; confirm date handling and `null`
-  clears before release.
-- Probe the live Canvas quiz-report API on course `74806` (quiz discovery +
-  one `POST .../reports`) and record the real report/progress/attachment
-  fields in the spec before writing the poller.
+- Implement `services/quizzes.py` + `cli/quizzes.py` and register
+  `quizzes_app` in `cli/app.py`; add ~30 service/CLI tests.
+- Note for implementation: `POST .../reports` is get-or-create (same report id
+  returned), so `--regenerate` can simply POST again; completion is signalled
+  by a `file` key on the report, and failure only appears on the progress URL.
+- Release v0.1.14 once quiz export works for the seven Fall 2025
+  autoevaluaciones in course `74806`.
 
 ### Medium-term Goals (Next Few Sessions)
 
@@ -377,9 +406,9 @@ upstream by the 0.1.11 PyPI publish.
 ### Next Release
 
 v0.1.14: Assignment Availability Windows + Classic Quiz Reports.
-Availability windows implemented, pending guarded Canvas sandbox
-verification; quiz report export spec complete, implementation pending
-live API probe. Blocks release: quiz service + CLI + tests.
+Availability windows implemented and sandbox verified (course `4341`);
+quiz report export spec complete, implementation pending live API probe.
+Blocks release: quiz service + CLI + tests.
 
 ### Release History
 

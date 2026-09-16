@@ -18,16 +18,19 @@ pytestmark = pytest.mark.integration
 
 
 def _missing_env() -> list[str]:
-    return [
+    missing = [
         name
         for name in ("CANVAS_API_KEY", "CANVAS_BASE_URL", "CANVAS_SANDBOX_COURSE_ID")
         if not os.getenv(name)
     ]
+    if os.getenv("CANVAS_SANDBOX_ID") and not os.getenv("CANVAS_SANDBOX_COURSE_ID"):
+        missing.append("(CANVAS_SANDBOX_ID set; expected CANVAS_SANDBOX_COURSE_ID)")
+    return missing
 
 
 @pytest.mark.skipif(
     bool(_missing_env()),
-    reason="requires CANVAS_API_KEY, CANVAS_BASE_URL, and CANVAS_SANDBOX_COURSE_ID",
+    reason=f"missing required environment: {', '.join(_missing_env())}",
 )
 async def test_canvas_sandbox_course_connectivity() -> None:
     """Verify credentials can read the configured sandbox course."""
