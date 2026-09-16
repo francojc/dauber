@@ -1,17 +1,18 @@
 # Development Project Progress
 
 **Project:** dauber
-**Status:** v0.1.13 released (current)
-**Last Updated:** 2026-08-24
+**Status:** v0.1.13 released; v0.1.14 in progress (unreleased)
+**Last Updated:** 2026-09-15
 
 ## Current Status Overview
 
 ### Development Phase
 
-- **Current Phase:** v0.1.13 released
-- **Phase Progress:** v0.1.13 adds assignment-group metadata; v0.1.12 added
-  ExternalUrl module-item CRUD with bracket-notation form encoding; v0.1.11
-  was the initial off-main ExternalUrl release, superseded by v0.1.12
+- **Current Phase:** v0.1.14 in progress (unreleased)
+- **Phase Progress:** v0.1.14 combines assignment availability windows
+  (implemented, pending guarded sandbox verification) with Classic Quiz
+  report export (spec complete, implementation not started); v0.1.13 added
+  assignment-group metadata
 - **Overall Project Progress:** Phases 0–6 + v0.1.0–v0.1.13 milestones
   complete; published on PyPI as 0.1.8, 0.1.9, 0.1.11–0.1.13
 
@@ -133,7 +134,10 @@ upstream by the 0.1.11 PyPI publish.
 - v0.1.14 implementation complete: assignment availability windows
   (`unlock_at`, `due_at`, `lock_at`), explicit date clearing, ISO validation,
   unit/CLI tests, and opt-in sandbox coverage.
-- Pending: run guarded sandbox test against Canvas, then release v0.1.14.
+- v0.1.14 scope expanded: Classic Quiz report export (`dauber quizzes`) folded
+  into this release. Spec at `specs/dauber-quiz-report-export-spec.md`.
+- Pending: probe live quiz-report API shape, run guarded sandbox test for
+  availability windows, implement quizzes service + CLI, then release v0.1.14.
 - v0.1.15: announcement operations (scheduling, locking, message-file input)
 - v0.2.0: agent-skill reset (canonical source, generated adapters, audit)
 - 319 unit tests passing (4 live-sandbox integration tests deselected by
@@ -153,8 +157,9 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Upcoming Milestones
 
-- [ ] v0.1.14: Assignment availability windows implemented; pending guarded
-      Canvas sandbox verification and release
+- [ ] v0.1.14: Assignment availability windows implemented; Classic Quiz
+      report export spec complete and scheduled; pending quiz implementation,
+      guarded Canvas sandbox verification, and release
 - [ ] v0.1.15: Announcement operations — scheduling/locking API verification,
       `--message-file`, richer outputs, repaired announcement skill
 - [ ] v0.2.0: Agent skill reset — audit, remove low-value wrappers, canonical
@@ -279,6 +284,11 @@ upstream by the 0.1.11 PyPI publish.
   after migration use establishes need.
 - Validate assignment-date ordering for dates provided in one operation;
   Canvas remains final authority for date-window policy.
+- Add `dauber quizzes` (Classic Quiz reports) without new core-layer changes:
+  reuse `CanvasClient.get_paginated()`, bracket-notation `form_data`, and
+  `CanvasClient.download()`.
+- Hold any `quizzes-export` agent skill until after the v0.2.0 skill reset; a
+  skill added now would be rewritten during canonical-source migration.
 - Do not overload omitted update date options as clears. Use explicit clear
   flags that send `null` to Canvas.
 
@@ -347,6 +357,9 @@ upstream by the 0.1.11 PyPI publish.
 
 - Run guarded v0.1.14 Canvas sandbox test; confirm date handling and `null`
   clears before release.
+- Probe the live Canvas quiz-report API on course `74806` (quiz discovery +
+  one `POST .../reports`) and record the real report/progress/attachment
+  fields in the spec before writing the poller.
 
 ### Medium-term Goals (Next Few Sessions)
 
@@ -363,8 +376,10 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Next Release
 
-v0.1.14: Assignment Availability Windows — implemented, pending guarded
-Canvas sandbox verification and release.
+v0.1.14: Assignment Availability Windows + Classic Quiz Reports.
+Availability windows implemented, pending guarded Canvas sandbox
+verification; quiz report export spec complete, implementation pending
+live API probe. Blocks release: quiz service + CLI + tests.
 
 ### Release History
 

@@ -1,8 +1,8 @@
 # Development Project Planning
 
 **Project:** dauber
-**Status:** v0.1.13 released (current)
-**Last Updated:** 2026-08-24
+**Status:** v0.1.13 released; v0.1.14 in progress (unreleased)
+**Last Updated:** 2026-09-15
 
 ## Project Overview
 
@@ -37,6 +37,8 @@
       `dauber <cmd> --format json`
 - [x] Native support for Pi coding agent via Agent Skills format
       (`.pi/skills/`) alongside the existing Claude Code format
+- [ ] Export Canvas Classic Quiz reports (Student Analysis CSV) via
+      `dauber quizzes`
 
 #### Non-Goals
 
@@ -312,7 +314,9 @@ Git-tagged and documented, but **not published to PyPI** — PyPI jumped
 - [x] `assignments list` and `assignments show` output includes Canvas
       assignment-group ID, name, and weight
 
-### v0.1.14: Assignment Availability Windows (IMPLEMENTED – pending sandbox verification)
+### v0.1.14: Assignment Availability Windows + Classic Quiz Reports (IN PROGRESS)
+
+Availability windows (implemented — pending sandbox verification):
 
 - [x] Add `--unlock-at` and `--lock-at` to `assignments create` and `update`
 - [x] Include `unlock_at`, `due_at`, and `lock_at` in assignment list, show,
@@ -323,6 +327,28 @@ Git-tagged and documented, but **not published to PyPI** — PyPI jumped
       flags; omitted date options leave existing values unchanged
 - [x] Add service, CLI, and opt-in Canvas-sandbox tests for create, update, and
       clearing availability dates
+
+Classic Quiz reports (planned — full spec in
+`specs/dauber-quiz-report-export-spec.md`):
+
+- [ ] Probe live Canvas quiz-report API on course `74806` to lock the report
+      object shape (progress/attachment fields) before implementing polling
+- [ ] `services/quizzes.py`: paginated quiz discovery, assignment→quiz
+      resolution via `assignment_id`, report CRUD, polling (1s→10s backoff,
+      5-minute default timeout)
+- [ ] `cli/quizzes.py`: `quizzes list|show|resolve-assignment` plus nested
+      `quizzes reports list|create|show|download`
+- [ ] Reuse-vs-regenerate policy: same `report_type` and
+      `includes_all_versions`, completed state, fetchable attachment
+- [ ] Safe output: Canvas filename with derived fallback, directory creation,
+      overwrite refusal, temp-file + atomic rename, byte-preserving write
+- [ ] New Quizzes detection with actionable error; progress output to stderr so
+      JSON/CSV stdout stays machine-readable
+- [ ] Service + CLI tests (~30); README, CHANGELOG, and spec sync
+
+Open decisions (see implementation.md decision log): split `--force` into
+`--force` (overwrite) and `--regenerate` (ignore reusable report); positional
+`QUIZ_ID` optional and mutually exclusive with `--assignment`.
 
 ### v0.1.15: Announcement Operations (PLANNED)
 
@@ -388,6 +414,9 @@ Git-tagged and documented, but **not published to PyPI** — PyPI jumped
   can ship without it.
 - Agent-skill duplication can drift from CLI interfaces. Mitigation: canonical
   source, generated harness adapters, and CI command-invocation smoke tests.
+- Canvas quiz reports generate asynchronously and their attachments expire.
+  Mitigation: poll with backoff, reuse only completed reports, and regenerate
+  automatically when the attachment returns 404.
 
 ## Success Metrics
 

@@ -1,8 +1,8 @@
 # Development Implementation Details
 
 **Project:** dauber
-**Status:** v0.1.13 released (current)
-**Last Updated:** 2026-08-24
+**Status:** v0.1.13 released; v0.1.14 in progress (unreleased)
+**Last Updated:** 2026-09-15
 
 ## Architecture
 
@@ -33,6 +33,7 @@ dauber/
 │   │   ├── assessments.py
 │   │   ├── modules.py
 │   │   ├── pages.py
+│   │   ├── quizzes.py    # Classic Quiz discovery + report lifecycle
 │   │   └── discussions.py
 │   └── cli/              # Typer commands and helpers
 │       ├── __init__.py
@@ -49,6 +50,7 @@ dauber/
 │       ├── pages.py
 │       ├── discussions.py
 │       ├── rubrics.py    # Rubrics sub-app (list, show, create, import, attach)
+│       ├── quizzes.py    # Quizzes sub-app (list, show, resolve-assignment, reports)
 │       ├── _config_defaults.py # Config-driven CLI defaults
 │       └── commands.py    # Commands sub-app (install, --pi)
 ├── .claude/commands/     # Claude Code slash-command format
@@ -318,6 +320,44 @@ dauber/
       with one canonical source, generated harness adapters, and CI checks
       for embedded `dauber` invocations.
 
+26. **services/quizzes.py** *(planned v0.1.14)*
+    - **Purpose:** Classic Quiz discovery and Canvas quiz-report lifecycle
+    - **Public Interface:** `list_quizzes()`, `resolve_assignment_to_quiz()`,
+      `list_reports()`, `create_report()`, `get_report()`,
+      `wait_for_report()`, `download_report()` — all async, accept
+      CanvasClient
+    - **Dependencies:** core/client.py, CanvasError
+    - **Notes:** `list_quizzes()` paginates `/courses/{id}/quizzes` and
+      projects `id`, `assignment_id`, `title`, `quiz_type`, `published`,
+      `due_at`. `resolve_assignment_to_quiz()` matches on `assignment_id`,
+      never title; no match means New Quizzes / non-quiz and raises a
+      distinct `CanvasError`. `create_report()` POSTs
+      `quiz_report[report_type]` (and optional
+      `quiz_report[includes_all_versions]`) as bracket-notation form data.
+      `wait_for_report()` polls with 1s initial interval, exponential backoff
+      capped at 10s, default 5-minute timeout, and accepts an
+      `on_progress` callback so the CLI can report state without the service
+      writing to the terminal. `download_report()` follows the attachment
+      URL returned by Canvas (never constructed) via the existing
+      `CanvasClient.download()` and returns raw bytes.
+
+27. **cli/quizzes.py** *(planned v0.1.14)*
+    - **Purpose:** Typer sub-app for Classic Quiz report commands
+    - **Public Interface:** `quizzes_app` with `list`, `show`,
+      `resolve-assignment`, plus nested `reports` commands: `list`, `create`,
+      `show`, `download`
+    - **Dependencies:** services/quizzes.py, cli/_context.py, cli/_async.py,
+      cli/_output.py, cli/_config_defaults.py
+    - **Notes:** Positional `QUIZ_ID` is a Canvas Classic Quiz ID and is
+      optional; `--assignment` is mutually exclusive with it. `download`
+      reuses a completed compatible report unless `--regenerate` is passed,
+      waits unless `--no-wait`, and writes bytes to `--output` (directory →
+      Canvas filename or `{title} Survey Student Analysis Report.csv`;
+      `.csv` suffix → exact path). Progress lines go to stderr via
+      `rich.console.Console(stderr=True)` so `--format json|csv` stdout stays
+      clean. Output helpers: create missing directory, refuse overwrite
+      without `--force`, write temp sibling then `os.replace()`.
+
 ### Data Model
 
 - **Primary Data Structures:** Dicts and lists from Canvas API
@@ -409,7 +449,7 @@ uv run pytest tests/services/test_modules.py tests/cli/test_modules.py
 
 ## Release Implementation
 
-### v0.1.14: Assignment Availability Windows (implemented; pending sandbox verification)
+### v0.1.14: Assignment Availability Windows + Classic Quiz Reports
 
 - Assignment service payloads accept `unlock_at`, `due_at`, and `lock_at`;
   all assignment projections include those fields.
@@ -418,6 +458,20 @@ uv run pytest tests/services/test_modules.py tests/cli/test_modules.py
 - Omitted update dates remain unchanged. Explicit clear flags send `null`.
 - Service and CLI tests cover request construction, validation, and clears;
   opt-in sandbox integration test covers create, update, clear, and cleanup.
+
+Classic Quiz reports:
+
+- Quiz ID resolution is never inferred from assignment ID equality; look up
+  quiz `assignment_id` through the paginated quizzes endpoint.
+- Report creation and polling live in the service layer; the CLI only renders
+  state and writes files.
+- Attachment URLs always come from the Canvas report object; downloads use
+  `CanvasClient.download()` and preserve bytes exactly (no CSV parsing,
+  re-serializing, or re-encoding).
+- Errors carry report ID, last workflow state, and Canvas message when
+  available; tokens, headers, signed URLs, and CSV contents are never echoed.
+- New Quizzes (`Quizzes.Next`) exports are unsupported and fail with an
+  explicit non-zero exit rather than a silent empty result.
 
 ### v0.1.15: Announcement Operations
 
@@ -511,3 +565,9 @@ uv run pytest tests/services/test_modules.py tests/cli/test_modules.py
 | 2026-03-24 | Ship both Claude and Pi skill formats in the repo (Option A) | Avoids runtime conversion logic; both formats are reviewable in the repo; install command stays a simple copy with no frontmatter parsing. Files are small and change infrequently. | Convert at install time (simpler repo structure but adds a conversion code-path and a potential failure mode); ship Pi format only (breaks existing Claude users) |
 | 2026-03-24 | `--pi` defaults to local (`./.pi/skills/`), `--global` opt-in | Pi discovers skills from `.pi/skills/` in the project tree, so cwd is the natural default. This mirrors how Pi skills are used in practice and avoids accidental global installs. | Mirror Claude's `--local` default-to-global pattern (inverts Pi conventions); always require explicit scope flag (extra friction) |
 | 2026-03-24 | `--local` remains Claude-only; `--pi` and `--local` are mutually exclusive | The two flags target different harnesses and different directory conventions. Allowing both would be ambiguous and serve no real use case. | Reuse `--local` for Pi local installs (confusing: same flag, different paths); silent ignore of conflicting flags (hides user mistakes) |
+| 2026-09-15 | Positional `QUIZ_ID` optional, mutually exclusive with `--assignment` | Instructors work from assignment IDs (the real workflow in the spec's acceptance criteria); requiring a positional quiz ID makes the primary use case impossible to express. Error when both or neither are supplied. | Required positional (blocks `--assignment`-only usage); accept both silently (ambiguous precedence) |
+| 2026-09-15 | Split `--force` (overwrite output file) from `--regenerate` (ignore reusable report) | One flag doing both would prevent “reuse report but refresh my local file,” a normal retry path after a failed download. | Single `--force` with dual meaning (as originally specced); `--no-reuse` alias only |
+| 2026-09-15 | Reuse requires same `report_type`, same `includes_all_versions`, completed state, and a fetchable attachment | Canvas reports expire; a completed report with a dead attachment is worse than a fresh generation. Auto-regenerate once on attachment 404. | Reuse any completed report of matching type (stale attachment failures surface as download errors); always regenerate (slow, clutters Canvas) |
+| 2026-09-15 | Progress output to stderr, only final data to stdout | `--format json\|csv` must stay pipeable; the spec requires machine-readable output with no progress noise. | Print progress to stdout (breaks `jq` and CSV redirection); `--quiet` flag (extra surface, easy to forget) |
+| 2026-09-15 | Preserve CSV bytes end to end; no parsing or normalization | Downstream analysis (R, pandas, spreadsheets) depends on Canvas's exact columns, quoting, and encoding; transformation belongs in consumers, not dauber. | Parse and re-emit with `csv` module (risks quoting/line-ending drift); normalize headers (breaks column mapping) |
+| 2026-09-15 | New Quizzes detected by absence in `/quizzes` plus assignment `submission_types` check | Gives an actionable “unsupported” error instead of a confusing 404; title matching is unreliable across duplicated quiz names. | Title matching (rejected in the spec); attempting New Quizzes endpoints and failing opaquely |
