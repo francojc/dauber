@@ -20,6 +20,7 @@ from dauber.cli.discussions import discussions_app
 from dauber.cli.grading import grading_app
 from dauber.cli.modules import modules_app
 from dauber.cli.pages import pages_app
+from dauber.cli.quizzes import quizzes_app
 from dauber.cli.rubrics import rubrics_app
 
 app = typer.Typer(
@@ -37,6 +38,7 @@ app.add_typer(discussions_app)
 app.add_typer(rubrics_app)
 app.add_typer(assess_app)
 app.add_typer(grading_app)
+app.add_typer(quizzes_app)
 
 
 def _version_callback(value: bool) -> None:

@@ -24,6 +24,7 @@ You do not need to be a programmer to use it. You need a terminal, Python, and a
   - [modules](#dauber-modules)
   - [pages](#dauber-pages)
   - [discussions](#dauber-discussions)
+  - [quizzes](#dauber-quizzes)
   - [config](#dauber-config)
   - [commands](#dauber-commands)
 - [Configuration](#configuration)
@@ -432,6 +433,49 @@ dauber discussions list --course IS505
 dauber discussions list --course IS505 --announcements
 dauber discussions create --course IS505 "Reminder" --message "Project due Friday." --announcement --publish
 ```
+
+---
+
+### `dauber quizzes`
+
+Discover Canvas Classic Quizzes and export their reports, including the
+Student Analysis CSV. New Quizzes (Quizzes.Next) are not supported.
+
+```text
+dauber quizzes list [--course COURSE] [--search TEXT]
+dauber quizzes show [--course COURSE] QUIZ_ID
+dauber quizzes resolve-assignment [--course COURSE] ASSIGNMENT_ID
+dauber quizzes reports list [--course COURSE] QUIZ_ID
+dauber quizzes reports create [--course COURSE] QUIZ_ID [--type TYPE] [--all-versions]
+dauber quizzes reports show [--course COURSE] QUIZ_ID REPORT_ID
+dauber quizzes reports download [QUIZ_ID] [--assignment ID] [--type TYPE]
+    [--all-versions] [--output PATH] [--wait|--no-wait] [--force] [--regenerate]
+    [--timeout SECONDS]
+```
+
+Examples:
+
+```bash
+# resolve an assignment to its Classic Quiz
+dauber quizzes resolve-assignment 614873 --course 74806
+
+# download the Student Analysis CSV for several autoevaluaciones
+for assignment in 614873 616448 618813; do
+  dauber quizzes reports download --assignment "$assignment" \
+    --course 74806 --output _data/autoevaluaciones/F25/
+done
+```
+
+Notes:
+
+- Assignment IDs and quiz IDs are different Canvas identifiers.
+  `resolve-assignment` (or `--assignment`) bridges them.
+- `--output` accepts a directory (filename derived from the quiz title) or an
+  exact `.csv` path. Existing files are never overwritten without `--force`.
+- `--regenerate` requests a fresh report; without it, a completed report is
+  reused when Canvas still has its attachment.
+- Progress is written to stderr, so `--format json` and `--format csv` stay
+  machine-readable.
 
 ---
 

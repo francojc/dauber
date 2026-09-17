@@ -5,11 +5,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.1.14] - 2026-09-16
+
 ### Added
 
 - Assignment availability windows: `--unlock-at` and `--lock-at` for create and update, plus projections in list, show, create, and update output
 - Explicit `assignments update` clear flags: `--clear-unlock-at`, `--clear-due-at`, and `--clear-lock-at`
 - ISO 8601 date validation, supplied-date ordering checks, and opt-in Canvas sandbox coverage for availability windows
+- `dauber quizzes` sub-app: Classic Quiz discovery (`list`, `show`, `resolve-assignment`) and report lifecycle (`reports list|create|show|download`)
+- Quiz report export with asynchronous generation polling, `--regenerate` to force a new report, safe output (no overwrite without `--force`, atomic write, byte-preserving CSV), and stderr progress so JSON/CSV output stays clean
+- `scripts/probe_quiz_reports.py` for inspecting live quiz-report API responses
 
 ## [0.1.13] - 2026-08-20
 

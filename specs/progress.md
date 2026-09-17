@@ -1,7 +1,7 @@
 # Development Project Progress
 
 **Project:** dauber
-**Status:** v0.1.13 released; v0.1.14 in progress (unreleased)
+**Status:** v0.1.13 released; v0.1.14 ready for release
 **Last Updated:** 2026-09-15
 
 ## Current Status Overview
@@ -115,8 +115,9 @@
   locked bare-array quiz/report responses, get-or-create `POST`, `file` key as
   the completion signal, `progress_url` as the only failure channel, and the
   assignment→quiz map for all 8 autoevaluaciones
-- v0.1.14 scope expanded to include Classic Quiz report export; feature spec
-  at `specs/dauber-quiz-report-export-spec.md`
+- v0.1.14 scope expanded to include Classic Quiz report export (`dauber
+  quizzes`), now implemented; feature spec at
+  `specs/dauber-quiz-report-export-spec.md`
 
 ### Recent Accomplishments (v0.1.12)
 
@@ -154,11 +155,15 @@ upstream by the 0.1.11 PyPI publish.
   (`CANVAS_SANDBOX_COURSE_ID=4341 CANVAS_SANDBOX_WRITE_ENABLED=1`): all 4
   guarded integration tests pass; 319 unit tests pass, 4 deselected.
 - v0.1.14 scope expanded: Classic Quiz report export (`dauber quizzes`) folded
-  into this release. Spec at `specs/dauber-quiz-report-export-spec.md`.
+  into this release and implemented. Spec at
+  `specs/dauber-quiz-report-export-spec.md`.
 - Live quiz-report probe completed 2026-09-16 on course `74806`: response
   shapes, progress endpoint, `file` attachment, and the 8-quiz assignment→quiz
   map recorded in `specs/dauber-quiz-report-export-spec.md`.
-- Pending: implement quizzes service + CLI and tests, then release v0.1.14.
+- v0.1.14 quiz export implemented 2026-09-16: `services/quizzes.py`,
+  `cli/quizzes.py`, 43 new tests, README + CHANGELOG entries; acceptance run
+  exported all seven Fall 2025 autoevaluaciones with expected filenames.
+- Pending: release v0.1.14 (version bump, tag, PyPI publish).
 - v0.1.15: announcement operations (scheduling, locking, message-file input)
 - v0.2.0: agent-skill reset (canonical source, generated adapters, audit)
 - 319 unit tests passing (4 live-sandbox integration tests deselected by
@@ -178,7 +183,7 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Upcoming Milestones
 
-- [ ] v0.1.14: Assignment availability windows implemented and sandbox verified; Classic Quiz report export spec complete and scheduled; pending quiz implementation and release
+- [ ] v0.1.14: Assignment availability windows implemented and sandbox verified; Classic Quiz report export implemented and acceptance-run against course `74806`; pending release
 - [ ] v0.1.15: Announcement operations — scheduling/locking API verification, `--message-file`, richer outputs, repaired announcement skill
 - [ ] v0.2.0: Agent skill reset — audit, remove low-value wrappers, canonical source + generated Claude/Pi adapters, CI command smoke tests
 - [x] 0.1.0 release (tagged)
@@ -208,7 +213,9 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Test Results
 
-- **Unit Tests:** 319 passing (verified 2026-09-15)
+- **Unit Tests:** 362 passing (verified 2026-09-16)
+  - services: quizzes 21
+  - cli: quizzes 22
   - core: config 4, client 11, cache 9, config_files 9
   - services: courses 9, assignments 14, rubrics 18, grading 12,
     assessments 30, modules 14, pages 15, discussions 15
@@ -382,13 +389,8 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Immediate Actions (Next Session)
 
-- Implement `services/quizzes.py` + `cli/quizzes.py` and register
-  `quizzes_app` in `cli/app.py`; add ~30 service/CLI tests.
-- Note for implementation: `POST .../reports` is get-or-create (same report id
-  returned), so `--regenerate` can simply POST again; completion is signalled
-  by a `file` key on the report, and failure only appears on the progress URL.
-- Release v0.1.14 once quiz export works for the seven Fall 2025
-  autoevaluaciones in course `74806`.
+- Release v0.1.14: bump `version` in `pyproject.toml` (and
+  `src/dauber/__init__.py`, currently stale at 0.1.11), tag, and publish.
 
 ### Medium-term Goals (Next Few Sessions)
 
@@ -405,15 +407,15 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Next Release
 
-v0.1.14: Assignment Availability Windows + Classic Quiz Reports.
-Availability windows implemented and sandbox verified (course `4341`);
-quiz report export spec complete, implementation pending live API probe.
-Blocks release: quiz service + CLI + tests.
+v0.1.14: Assignment Availability Windows + Classic Quiz Reports. Both feature
+sets implemented and verified (sandbox course `4341`; live export on course
+`74806`). Blocks release: version bump, tag, and PyPI publish.
 
 ### Release History
 
 | Version | Date       | Key Changes                                              |
 |---------|------------|----------------------------------------------------------|
+| 0.1.14  | 2026-09-16 | Assignment availability windows; Classic Quiz report export (`dauber quizzes`) |
 | 0.1.13  | 2026-08-20 | Assignment-group metadata in list/show                    |
 | 0.1.12  | 2026-08-20 | ExternalUrl module-item CRUD, bracket-notation form encoding |
 | 0.1.11  | 2026-08-19 | Initial ExternalUrl CRUD (off-main side commit, superseded) |

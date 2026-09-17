@@ -1,7 +1,7 @@
 # Development Implementation Details
 
 **Project:** dauber
-**Status:** v0.1.13 released; v0.1.14 in progress (unreleased)
+**Status:** v0.1.13 released; v0.1.14 ready for release
 **Last Updated:** 2026-09-15
 
 ## Architecture
@@ -320,7 +320,7 @@ dauber/
       with one canonical source, generated harness adapters, and CI checks
       for embedded `dauber` invocations.
 
-26. **services/quizzes.py** *(planned v0.1.14; API shapes verified 2026-09-16)*
+26. **services/quizzes.py** *(v0.1.14; API shapes verified 2026-09-16)*
     - **Purpose:** Classic Quiz discovery and Canvas quiz-report lifecycle
     - **Public Interface:** `list_quizzes()`, `resolve_assignment_to_quiz()`,
       `list_reports()`, `create_report()`, `get_report()`,
@@ -350,7 +350,7 @@ dauber/
       the existing `CanvasClient.download()` and returns raw bytes
       (`text/csv`). Observed generation time: ~26s for a small survey.
 
-27. **cli/quizzes.py** *(planned v0.1.14)*
+27. **cli/quizzes.py** *(v0.1.14)*
     - **Purpose:** Typer sub-app for Classic Quiz report commands
     - **Public Interface:** `quizzes_app` with `list`, `show`,
       `resolve-assignment`, plus nested `reports` commands: `list`, `create`,
@@ -489,6 +489,8 @@ uv run python scripts/probe_quiz_reports.py --course 74806
 
 Classic Quiz reports:
 
+- Implemented in `services/quizzes.py` + `cli/quizzes.py`; `quizzes_app`
+  registered in `cli/app.py`. 43 new service/CLI tests; 362 unit tests total.
 - Quiz ID resolution is never inferred from assignment ID equality; look up
   quiz `assignment_id` through the paginated quizzes endpoint.
 - Report creation and polling live in the service layer; the CLI only renders

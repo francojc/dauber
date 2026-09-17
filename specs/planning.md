@@ -1,7 +1,7 @@
 # Development Project Planning
 
 **Project:** dauber
-**Status:** v0.1.13 released; v0.1.14 in progress (unreleased)
+**Status:** v0.1.13 released; v0.1.14 ready for release
 **Last Updated:** 2026-09-15
 
 ## Project Overview
@@ -37,7 +37,7 @@
       `dauber <cmd> --format json`
 - [x] Native support for Pi coding agent via Agent Skills format
       (`.pi/skills/`) alongside the existing Claude Code format
-- [ ] Export Canvas Classic Quiz reports (Student Analysis CSV) via
+- [x] Export Canvas Classic Quiz reports (Student Analysis CSV) via
       `dauber quizzes`
 
 #### Non-Goals
@@ -328,26 +328,29 @@ Availability windows (implemented — sandbox verified 2026-09-15, course `4341`
 - [x] Add service, CLI, and opt-in Canvas-sandbox tests for create, update, and
       clearing availability dates
 
-Classic Quiz reports (planned — not started; full spec in
+Classic Quiz reports (implemented — verified live on course `74806`;
+full spec in
 `specs/dauber-quiz-report-export-spec.md`):
 
 - [x] Probe live Canvas quiz-report API on course `74806` (done 2026-09-16;
       shapes recorded in the feature spec)
-- [ ] `services/quizzes.py`: paginated quiz discovery, assignment→quiz
+- [x] `services/quizzes.py`: paginated quiz discovery, assignment→quiz
       resolution via `assignment_id`, report CRUD, polling of both report
       (`file`) and `progress_url` (`workflow_state`) with 1s→10s backoff and a
       5-minute default timeout
-- [ ] `cli/quizzes.py`: `quizzes list|show|resolve-assignment` plus nested
+- [x] `cli/quizzes.py`: `quizzes list|show|resolve-assignment` plus nested
       `quizzes reports list|create|show|download`
-- [ ] Reuse-vs-regenerate policy: same `report_type` and
+- [x] Reuse-vs-regenerate policy: same `report_type` and
       `includes_all_versions`, `file` present, attachment fetchable (404 →
       re-POST once)
-- [ ] Safe output: filename derived from stripped quiz title (`display_name`
+- [x] Safe output: filename derived from stripped quiz title (`display_name`
       fallback), directory creation, overwrite refusal, temp-file + atomic
       rename, byte-preserving write
-- [ ] New Quizzes detection with actionable error; progress output to stderr so
+- [x] New Quizzes detection with actionable error; progress output to stderr so
       JSON/CSV stdout stays machine-readable
-- [ ] Service + CLI tests (~30); README, CHANGELOG, and spec sync
+- [x] Service + CLI tests (43 new); README, CHANGELOG, and spec sync
+- [x] Acceptance run: all seven Fall 2025 autoevaluaciones exported from
+      course `74806` with the expected filenames
 
 Verified API behaviour (course `74806`, 2026-09-16) that shapes the checklist:
 `POST .../reports` is get-or-create (regenerate = another POST); completion
