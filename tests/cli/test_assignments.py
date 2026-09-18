@@ -3,6 +3,7 @@
 import json
 from unittest.mock import AsyncMock, patch
 
+from click import unstyle
 from rich.console import Console
 from typer.testing import CliRunner
 
@@ -256,9 +257,9 @@ def test_assignments_create_rejects_invalid_or_unordered_dates():
         ],
     )
     assert invalid.exit_code == 2
-    assert "--unlock-at must be an ISO 8601" in invalid.output
+    assert "--unlock-at must be an ISO 8601" in unstyle(invalid.output)
     assert unordered.exit_code == 2
-    assert "Availability dates must satisfy" in unordered.output
+    assert "Availability dates must satisfy" in unstyle(unordered.output)
 
 
 def test_assignments_update_rejects_set_and_clear_same_date():
@@ -274,4 +275,4 @@ def test_assignments_update_rejects_set_and_clear_same_date():
         ],
     )
     assert result.exit_code == 2
-    assert "--due cannot be used with --clear-due-at" in result.output
+    assert "--due cannot be used with --clear-due-at" in unstyle(result.output)

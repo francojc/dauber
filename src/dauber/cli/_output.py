@@ -23,7 +23,7 @@ def format_output(
 ) -> None:
     """Format and print data according to the chosen output format."""
     if fmt == OutputFormat.JSON:
-        console.print(json.dumps(data, indent=2, default=str))
+        print(json.dumps(data, indent=2, default=str))
         return
 
     if fmt == OutputFormat.PLAIN:

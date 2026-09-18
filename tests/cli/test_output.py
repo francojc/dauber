@@ -1,6 +1,7 @@
 """Tests for dauber.cli._output — CSV format and format_output()."""
 
 import io
+import json
 import sys
 
 from dauber.cli._output import OutputFormat, format_output
@@ -16,6 +17,15 @@ def _capture_csv(data, headers=None):
     finally:
         sys.stdout = old_stdout
     return buf.getvalue()
+
+
+def test_json_ignores_forced_color(monkeypatch, capsys):
+    monkeypatch.setenv("FORCE_COLOR", "1")
+    data = {"message": "[bold]literal[/bold] " + "x" * 200, "id": 42}
+    format_output(data, OutputFormat.JSON)
+    output = capsys.readouterr().out
+    assert "\x1b" not in output
+    assert json.loads(output) == data
 
 
 # -- CSV: list of dicts --
