@@ -5,6 +5,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.1.15] - 2026-09-18
+
+Includes assignment availability windows and Classic Quiz report exports from v0.1.14, whose GitHub release failed CI and did not publish to PyPI.
+
+### Fixed
+
+- Strip ANSI styling before asserting assignment validation messages in CLI tests, fixing failures in CI on Python 3.11 and 3.12.
+- Write JSON output without Rich rendering so forced color cannot inject ANSI codes or alter literal content; add regression coverage.
+
 ## [0.1.14] - 2026-09-16
 
 ### Added

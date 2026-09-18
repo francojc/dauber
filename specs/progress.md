@@ -1,18 +1,15 @@
 # Development Project Progress
 
 **Project:** dauber
-**Status:** v0.1.13 released; v0.1.14 ready for release
-**Last Updated:** 2026-09-15
+**Status:** v0.1.14 tagged, not published to PyPI; v0.1.15 release preparation
+**Last Updated:** 2026-09-18
 
 ## Current Status Overview
 
 ### Development Phase
 
-- **Current Phase:** v0.1.14 in progress (unreleased)
-- **Phase Progress:** v0.1.14 combines assignment availability windows
-  (implemented, pending guarded sandbox verification) with Classic Quiz
-  report export (spec complete, implementation not started); v0.1.13 added
-  assignment-group metadata
+- **Current Phase:** v0.1.15 release preparation
+- **Phase Progress:** Assignment availability windows and Classic Quiz exports implemented and verified. v0.1.14 release failed CI; v0.1.15 carries its features plus ANSI-sensitive test and JSON-output fixes. Announcement operations move to v0.1.16; v0.2.0 skill reset unchanged.
 - **Overall Project Progress:** Phases 0–6 + v0.1.0–v0.1.13 milestones
   complete; published on PyPI as 0.1.8, 0.1.9, 0.1.11–0.1.13
 
@@ -163,8 +160,8 @@ upstream by the 0.1.11 PyPI publish.
 - v0.1.14 quiz export implemented 2026-09-16: `services/quizzes.py`,
   `cli/quizzes.py`, 43 new tests, README + CHANGELOG entries; acceptance run
   exported all seven Fall 2025 autoevaluaciones with expected filenames.
-- Pending: release v0.1.14 (version bump, tag, PyPI publish).
-- v0.1.15: announcement operations (scheduling, locking, message-file input)
+- Pending: tag and publish v0.1.15 from the validated commit; v0.1.14 is tagged but its release failed CI before PyPI publishing.
+- v0.1.16: announcement operations (scheduling, locking, message-file input)
 - v0.2.0: agent-skill reset (canonical source, generated adapters, audit)
 - 319 unit tests passing (4 live-sandbox integration tests deselected by
   default)
@@ -183,8 +180,9 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Upcoming Milestones
 
-- [ ] v0.1.14: Assignment availability windows implemented and sandbox verified; Classic Quiz report export implemented and acceptance-run against course `74806`; pending release
-- [ ] v0.1.15: Announcement operations — scheduling/locking API verification, `--message-file`, richer outputs, repaired announcement skill
+- [x] v0.1.14: Assignment availability windows and Classic Quiz exports verified; tagged, not published to PyPI (release CI failed)
+- [ ] v0.1.15: CI assertion and JSON-output fixes; carry v0.1.14 features to PyPI; pending release
+- [ ] v0.1.16: Announcement operations — scheduling/locking API verification, `--message-file`, richer outputs, repaired announcement skill
 - [ ] v0.2.0: Agent skill reset — audit, remove low-value wrappers, canonical source + generated Claude/Pi adapters, CI command smoke tests
 - [x] 0.1.0 release (tagged)
 - [x] Phase 6: Polish (shell completion, README, docs) -- complete
@@ -213,7 +211,7 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Test Results
 
-- **Unit Tests:** 362 passing (verified 2026-09-16)
+- **Unit Tests:** 363 passing (verified 2026-09-18)
   - services: quizzes 21
   - cli: quizzes 22
   - core: config 4, client 11, cache 9, config_files 9
@@ -389,12 +387,11 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Immediate Actions (Next Session)
 
-- Release v0.1.14: bump `version` in `pyproject.toml` (and
-  `src/dauber/__init__.py`, currently stale at 0.1.11), tag, and publish.
+- Validate v0.1.15, tag the fixed commit, and publish a GitHub release. Confirm PyPI upload; push-only CI intentionally skips publishing.
 
 ### Medium-term Goals (Next Few Sessions)
 
-- Implement v0.1.15 announcement operations after Canvas API verification.
+- Implement v0.1.16 announcement operations after Canvas API verification.
 - Complete v0.2.0 skill audit and canonical-source design.
 - Consider coverage threshold after one more baseline release.
 
@@ -407,15 +404,14 @@ upstream by the 0.1.11 PyPI publish.
 
 ### Next Release
 
-v0.1.14: Assignment Availability Windows + Classic Quiz Reports. Both feature
-sets implemented and verified (sandbox course `4341`; live export on course
-`74806`). Blocks release: version bump, tag, and PyPI publish.
+v0.1.15: CI Fixes + PyPI Release Recovery. Includes verified v0.1.14 features (sandbox course `4341`; live export on course `74806`). Pending validated tag, GitHub release, and successful PyPI publishing. Preserve v0.1.14 tag.
 
 ### Release History
 
 | Version | Date       | Key Changes                                              |
 |---------|------------|----------------------------------------------------------|
-| 0.1.14  | 2026-09-16 | Assignment availability windows; Classic Quiz report export (`dauber quizzes`) |
+| 0.1.15  | Pending | CI assertion and JSON-output fixes; carries v0.1.14 features to PyPI |
+| 0.1.14  | 2026-09-17 | Assignment availability windows; Classic Quiz report export; tagged, not published to PyPI (CI failed) |
 | 0.1.13  | 2026-08-20 | Assignment-group metadata in list/show                    |
 | 0.1.12  | 2026-08-20 | ExternalUrl module-item CRUD, bracket-notation form encoding |
 | 0.1.11  | 2026-08-19 | Initial ExternalUrl CRUD (off-main side commit, superseded) |

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dauber"
-version = "0.1.14"
+version = "0.1.15"
 description = "Command-line interface for the Canvas LMS API"
 readme = "README.md"
 license = "MIT"

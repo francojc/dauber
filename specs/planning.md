@@ -1,7 +1,7 @@
 # Development Project Planning
 
 **Project:** dauber
-**Status:** v0.1.13 released; v0.1.14 ready for release
+**Status:** v0.1.14 tagged, not published to PyPI; v0.1.15 release preparation
 **Last Updated:** 2026-09-15
 
 ## Project Overview
@@ -314,7 +314,9 @@ Git-tagged and documented, but **not published to PyPI** — PyPI jumped
 - [x] `assignments list` and `assignments show` output includes Canvas
       assignment-group ID, name, and weight
 
-### v0.1.14: Assignment Availability Windows + Classic Quiz Reports (IN PROGRESS)
+### v0.1.14: Assignment Availability Windows + Classic Quiz Reports (TAGGED)
+
+GitHub release failed CI; not published to PyPI. Features carry forward into v0.1.15.
 
 Availability windows (implemented — sandbox verified 2026-09-15, course `4341`):
 
@@ -363,7 +365,17 @@ Resolved decisions (see implementation.md decision log): `--force` overwrites
 the output file, `--regenerate` re-POSTs; positional `QUIZ_ID` is optional and
 mutually exclusive with `--assignment`.
 
-### v0.1.15: Announcement Operations (PLANNED)
+### v0.1.15: CI Fixes + PyPI Release Recovery (PREPARING)
+
+- [x] Fix ANSI-sensitive assignment validation assertions
+- [x] Keep JSON output free of Rich styling, with forced-color regression coverage
+- [x] Bump package and runtime versions to 0.1.15
+- [ ] Tag the validated commit and publish a GitHub release to trigger PyPI publishing
+- [ ] Confirm trusted-publisher upload succeeds; includes v0.1.14 features
+
+A push build does not publish. Preserve the existing v0.1.14 tag; release v0.1.15 from the fixed commit instead of rerunning the failed old release.
+
+### v0.1.16: Announcement Operations (PLANNED)
 
 - [ ] Extend discussion-topic create/update with announcement scheduling
       (`--delayed-post-at`) and locking (`--lock-at`), subject to Canvas API

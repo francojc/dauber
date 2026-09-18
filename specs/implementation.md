@@ -1,7 +1,7 @@
 # Development Implementation Details
 
 **Project:** dauber
-**Status:** v0.1.13 released; v0.1.14 ready for release
+**Status:** v0.1.14 tagged, not published to PyPI; v0.1.15 release preparation
 **Last Updated:** 2026-09-15
 
 ## Architecture
@@ -252,7 +252,7 @@ dauber/
     - **Dependencies:** core/client.py, CanvasError
     - **Notes:** Includes `_strip_html()` for message cleanup.
       Supports `only_announcements` filter. Flat JSON payload
-      (no wrapper key). Planned v0.1.15 extension: scheduled announcement
+      (no wrapper key). Planned v0.1.16 extension: scheduled announcement
       publication, locking, message-file input, and richer projected fields.
 
 20. **cli/discussions.py**
@@ -503,7 +503,13 @@ Classic Quiz reports:
 - New Quizzes (`Quizzes.Next`) exports are unsupported and fail with an
   explicit non-zero exit rather than a silent empty result.
 
-### v0.1.15: Announcement Operations
+### v0.1.15: CI Fixes + PyPI Release Recovery
+
+Assignment validation tests strip ANSI styling before message assertions. JSON output bypasses Rich rendering; forced-color regression coverage checks valid JSON and literal content preservation. Package and runtime versions are synchronized at 0.1.15.
+
+The v0.1.14 release run failed tests and did not publish. The fixed push run passed but skipped publishing by design: `.github/workflows/ci.yml` gates publishing on a GitHub `release` event. Publish a new v0.1.15 release from the validated commit; preserve the existing v0.1.14 tag.
+
+### v0.1.16: Announcement Operations
 
 - Keep announcements in `discussions` service and CLI: Canvas represents them
   as discussion topics. Do not add separate announcement service prematurely.
